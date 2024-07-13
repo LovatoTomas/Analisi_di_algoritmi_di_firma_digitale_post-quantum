@@ -6,6 +6,7 @@
 #include "../fips202.h"
 #include "../params.h"
 #include "../sign.h"
+#include "../poly.h"
 #include "../polyvec.h"
 #include "../packing.h"
 
