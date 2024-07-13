@@ -29,6 +29,12 @@ git config --global user.email "Email"
 apt install make
 ```
 
+Per poter generare ed elaborare messaggi di grande dimensione (ordine dei MegaBytes) è necessario aumentare lo spazio che i programmi possono utilizzare per lo stack:
+```sh
+sudo ulimit -s 524288
+```
+Con questo comando lo stack dei programmi può essere esteso fino a 524 MBytes.
+
 ## CRYSTAL Dilithium
 Il codice di questo progetto è stato ottenuto direttamente dal repository Git associato:
 ```sh
