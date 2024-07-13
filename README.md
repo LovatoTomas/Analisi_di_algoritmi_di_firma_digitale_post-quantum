@@ -31,9 +31,21 @@ apt install make
 
 Per poter generare ed elaborare messaggi di grande dimensione (ordine dei MegaBytes) è necessario aumentare lo spazio che i programmi possono utilizzare per lo stack:
 ```sh
-sudo ulimit -s 524288
+sudo su
+ulimit -s 524288
 ```
 Con questo comando lo stack dei programmi può essere esteso fino a 524 MBytes.
+
+## Metriche di performance
+Per ogni Signature Scheme (cioè per ognuno delle famiglie di algoritmi provate) le caratteristiche misurate sono le seguenti:
+- tempi e numero cicli CPU per l'operazione di generazione delle chiavi (privata e pubblica);
+- tempi e numero cicli CPU per l'operazione di firma di un messaggio;
+- tempi e numero cicli CPU per l'operazione di verifica della firma con parametri corretti;
+- tempi e numero cicli CPU per l'operazione di verifica della firma (corrotta) per un messaggio;
+- dimensioni delle chiavi (privata e pubblica)
+- dimensioni della firma
+Tutti questi valori vengono valutati sullo stesso hardware, nelle condizioni quanto più simili.
+Inoltre vengono valutati per diversi valori di lunghezza del messaggio, in generale fatte variare dai 64bytes ai circa 128Megabytes.
 
 ## CRYSTAL Dilithium
 Il codice di questo progetto è stato ottenuto direttamente dal repository Git associato:
@@ -55,9 +67,41 @@ In questa cartella è presente il codice "classico" di Dilithium, che effettua i
 Una volta raggiunta questa cartella è sufficiente compilare:
 ```sh
 make
+./test/test_dilitium2
+mv output.txt output_dilitium2.txt
+./test/test_dilitium2aes
+mv output.txt output_dilitium2aes.txt
+./test/test_dilitium3
+mv output.txt output_dilitium3.txt
+./test/test_dilitium3aes
+mv output.txt output_dilitium3aes.txt
+./test/test_dilitium5
+mv output.txt output_dilitium5.txt
+./test/test_dilitium5aes
+mv output.txt output_dilitium5aes.txt
 ```
 Nella cartella test saranno presenti i test inerenti alle "varianti" di Dilithium per:
 - generazioni di chiavi
 - firma di messaggi
 - verifica della firma
 
+### AVX2 Folder
+In questa cartella invece è presente il codice con delle ottimizzazioni nel calcolo di operazioni con vettori e matrici, tuttavia è compatibile solo con architettura x64 e x86.
+Le prestazioni di questo branch migliorano in tutte e tre le fasi della firma (generazione chiavi, firma e verifica).
+Una volta raggiunta questa cartella è sufficiente compilare:
+```sh
+make
+./test/test_dilitium2
+mv output.txt output_dilitium2.txt
+./test/test_dilitium2aes
+mv output.txt output_dilitium2aes.txt
+./test/test_dilitium3
+mv output.txt output_dilitium3.txt
+./test/test_dilitium3aes
+mv output.txt output_dilitium3aes.txt
+./test/test_dilitium5
+mv output.txt output_dilitium5.txt
+./test/test_dilitium5aes
+mv output.txt output_dilitium5aes.txt
+```
+Lo script di test è analogo al precedente poichè la firma dei metodi rimane la stessa.
