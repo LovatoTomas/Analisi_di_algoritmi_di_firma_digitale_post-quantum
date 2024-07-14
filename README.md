@@ -11,6 +11,8 @@ Gli algoritmi che verranno analizzati sono:
 Per il test di questi algoritmi verrà utilizzato l'ambiente WSL (Windows Subsystem for Linux) utilizzando le Distro Ubuntu 20.04 e Ubuntu 22.04.
 Qualora i test lo rendano necessario, verranno utilizzati diversi hardware per analizzare l'andamento delle prestazioni.
 
+# Raccolta dei dati
+
 ## Preparazione dell'ambiente:
 Dopo aver preparato l'ambiente WSL con la distro Ubuntu preferita è necessario installare un compilatore C e un Make per poter compilare le librerie dei vari algoritmi:
 ```sh
@@ -27,6 +29,7 @@ sudo apt-get install git
 git config --global user.name "Username"
 git config --global user.email "Email"
 apt install make
+apt install clang
 ```
 
 Per poter generare ed elaborare messaggi di grande dimensione (ordine dei MegaBytes) è necessario aumentare lo spazio che i programmi possono utilizzare per lo stack:
@@ -105,3 +108,75 @@ mv output.txt output_dilitium5.txt
 mv output.txt output_dilitium5aes.txt
 ```
 Lo script di test è analogo al precedente poichè la firma dei metodi rimane la stessa.
+
+# Analisi dei dati
+Per l'analisi dei dati raccolti nella fase precedente e la loro rappresentazione tramite grafici viene utilizzato uno script su python eseguito in ambiente linux. Le librerie necessarie sono Pandas, Seaborn e MatPlotLib.
+
+## Preparazione dell'ambiente
+È richiesta l'installazione di Python 3.12 nel proprio OS (Windows, Linux o Mac).
+```sh
+pip install pandas
+pip install matplotlib
+pip install seaborn
+```
+In caso di ambiente Windows, va aggiunto il percorso delle librerie / script Python alle variabili d'ambiente Path (del profilo utente o di sistema).
+
+In alternativa, se si installa Python su ambiente Linux (ad esempio WSL con Distro Ubuntu) i comandi sono i seguenti:
+```sh
+add-apt-repository ppa:deadsnakes/ppa
+apt install python3.12
+python3.12 --version
+apt install python3-pip
+```
+Successivamente installare le librerie necessarie come sopra.
+
+## Realizzazione dei grafici
+Eseguendo lo script Python presente nella root del progetto verrano generati automaticamente i grafici inerenti alle metriche di performance dei vari algoritmi provati:
+
+### Grafico 1.1
+Mette in relazione la lunghezza (in bytes) della chiave privata e pubblica generata in funzione della lunghezza del messaggio da firmare.
+Agisce sui risultati del singolo algoritmo.
+
+### Grafico 1.2
+Mette in relazione la lunghezza del messaggio originale con la lunghezza del messaggio firmato (unione del messaggio originale e della firma).
+Agisce sui risultati del singolo algoritmo.
+
+### Grafico 1.3
+Mette in relazione i tempi di generazione delle chiavi, i tempi di firma e di verifica con la lunghezza dei messaggi generati.
+Agisce sui risultati del singolo algoritmo.
+
+### Grafico 1.4
+Mette in relazione i tempi di generazione delle chiavi con la lunghezza dei messaggi generati.
+Agisce sui risultati del singolo algoritmo.
+
+### Grafico 1.5
+Mette in relazione i tempi di firma con la lunghezza dei messaggi generati.
+Agisce sui risultati del singolo algoritmo.
+
+### Grafico 1.6
+Mette in relazione i tempi di verifica della firma con la lunghezza dei messaggi generati.
+Agisce sui risultati del singolo algoritmo.
+
+### Grafico 2.1
+Mette in relazione la lunghezza (in bytes) della chiave privata e pubblica generata in funzione della lunghezza del messaggio da firmare.
+Mette in relazione i risultati d tutti gli algoritmi insieme.
+
+### Grafico 2.2
+Mette in relazione la lunghezza del messaggio originale con la lunghezza del messaggio firmato (unione del messaggio originale e della firma).
+Mette in relazione i risultati d tutti gli algoritmi insieme.
+
+### Grafico 2.3
+Mette in relazione i tempi di generazione delle chiavi, i tempi di firma e di verifica con la lunghezza dei messaggi generati.
+Mette in relazione i risultati d tutti gli algoritmi insieme.
+
+### Grafico 2.4
+Mette in relazione i tempi di generazione delle chiavi con la lunghezza dei messaggi generati.
+Mette in relazione i risultati d tutti gli algoritmi insieme.
+
+### Grafico 2.5
+Mette in relazione i tempi di firma con la lunghezza dei messaggi generati.
+Mette in relazione i risultati d tutti gli algoritmi insieme.
+
+### Grafico 2.6
+Mette in relazione i tempi di verifica della firma con la lunghezza dei messaggi generati.
+Mette in relazione i risultati d tutti gli algoritmi insieme.

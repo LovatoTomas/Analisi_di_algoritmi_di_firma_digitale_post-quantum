@@ -1,7 +1,7 @@
 /*
 Author: Tomas Lovato
-Version: 3
-Date: 2024/07/13 11:30
+Version: 4
+Date: 2024/07/13 21:30
 Description: performance test for dilithium
 */
 
@@ -46,7 +46,7 @@ static long average_long_int(long *t, size_t tlen) {
   return acc/tlen;
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
   size_t i, j;
   int ret;
@@ -69,6 +69,11 @@ int main(void)
 
   // Apertura del file di output:
   const char *filename = "output.txt";
+  if(argc > 1)
+  {
+    filename = argv[1];
+    printf("=== FILE OUTPUT: %s ===\n",filename);
+  }
   FILE *file = fopen(filename, "w");
   // Errore di apertua?
   if (file == NULL) {
