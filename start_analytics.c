@@ -30,21 +30,23 @@ int main(int argc, char **argv)
     {
         // REF DILITHIUM
         system("make -C ./CRYSTALS-dilithium/ref/");
-        system("./CRYSTALS-dilithium/ref/test/test_dilithium2 20240713_output_dilithium2.txt");
-        system("./CRYSTALS-dilithium/ref/test/test_dilithium2aes 20240713_output_dilithium2aes.txt");
-        system("./CRYSTALS-dilithium/ref/test/test_dilithium3 20240713_output_dilithium3.txt");
-        system("./CRYSTALS-dilithium/ref/test/test_dilithium3 20240713_output_dilithium3aes.txt");
-        system("./CRYSTALS-dilithium/ref/test/test_dilithium5 20240713_output_dilithium5.txt");
-        system("./CRYSTALS-dilithium/ref/test/test_dilithium5 20240713_output_dilithium5aes.txt");
+        // SCRIPT + NUMEFILE1NOSHA + NOMEFILE2SHA256 + NOMEFILE3SHA512 + NUM ITER + INCREMENT
+        system("./CRYSTALS-dilithium/ref/test/test_dilithium2 ./output/dilithium2_ref ./output/dilithium2_sha256_ref ./output/dilithium2_sha512_ref 100 2");
+        system("./CRYSTALS-dilithium/ref/test/test_dilithium3 ./output/dilithium3_ref ./output/dilithium3_sha256_ref ./output/dilithium3_sha512_ref 100 2");
+        system("./CRYSTALS-dilithium/ref/test/test_dilithium5 ./output/dilithium5_ref ./output/dilithium5_sha256_ref ./output/dilithium5_sha512_ref 100 2");
+        //system("./CRYSTALS-dilithium/ref/test/test_dilithium2aes ./output/dilithium2aes_ref ./output/dilithium2aes_sha256_ref ./output/dilithium2aes_sha512_ref 100 2");
+        //system("./CRYSTALS-dilithium/ref/test/test_dilithium3aes ./output/dilithium3aes_ref ./output/dilithium3aes_sha256_ref ./output/dilithium3aes_sha512_ref 100 2");
+        //system("./CRYSTALS-dilithium/ref/test/test_dilithium5aes ./output/dilithium5aes_ref ./output/dilithium5aes_sha256_ref ./output/dilithium5aes_sha512_ref 100 2");
 
         // AVX2 DILITHIUM
         system("make -C ./CRYSTALS-dilithium/avx2/");
-        system("./CRYSTALS-dilithium/avx2/test/test_dilithium2 20240713_output_dilithium2.txt");
-        system("./CRYSTALS-dilithium/avx2/test/test_dilithium2aes 20240713_output_dilithium2aes.txt");
-        system("./CRYSTALS-dilithium/avx2/test/test_dilithium3 20240713_output_dilithium3.txt");
-        system("./CRYSTALS-dilithium/avx2/test/test_dilithium3 20240713_output_dilithium3aes.txt");
-        system("./CRYSTALS-dilithium/avx2/test/test_dilithium5 20240713_output_dilithium5.txt");
-        system("./CRYSTALS-dilithium/avx2/test/test_dilithium5 20240713_output_dilithium5aes.txt");
+        // SCRIPT + NUMEFILE1NOSHA + NOMEFILE2SHA256 + NOMEFILE3SHA512 + NUM ITER + INCREMENT
+        system("./CRYSTALS-dilithium/avx2/test/test_dilithium2 ./output/dilithium2_avx2 ./output/dilithium2_sha256_avx2 ./output/dilithium2_sha512_avx2 100 2");
+        system("./CRYSTALS-dilithium/avx2/test/test_dilithium3 ./output/dilithium3_avx2 ./output/dilithium3_sha256_avx2 ./output/dilithium3_sha512_avx2 100 2");
+        system("./CRYSTALS-dilithium/avx2/test/test_dilithium5 ./output/dilithium5_avx2 ./output/dilithium5_sha256_avx2 ./output/dilithium5_sha512_avx2 100 2");
+        //system("./CRYSTALS-dilithium/avx2/test/test_dilithium2aes ./output/dilithium2aes_avx2 ./output/dilithium2aes_sha256_avx2 ./output/dilithium2aes_sha512_avx2 100 2");
+        //system("./CRYSTALS-dilithium/avx2/test/test_dilithium3aes ./output/dilithium3aes_avx2 ./output/dilithium3aes_sha256_avx2 ./output/dilithium3aes_sha512_avx2 100 2");
+        //system("./CRYSTALS-dilithium/avx2/test/test_dilithium5aes ./output/dilithium5aes_avx2 ./output/dilithium5aes_sha256_avx2 ./output/dilithium5aes_sha512_avx2 100 2");
     }
 
     if(falcon_do)
@@ -66,5 +68,5 @@ int main(int argc, char **argv)
 
     if(phyton_do)
         // PYTHON ANALYTICS
-        system("python 20240713_performancegraphs.py");
+        system("python3 20240713_performancegraphs.py");
 }

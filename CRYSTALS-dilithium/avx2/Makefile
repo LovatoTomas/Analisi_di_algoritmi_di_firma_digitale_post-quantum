@@ -8,7 +8,7 @@ SOURCES = sign.c packing.c polyvec.c poly.c ntt.S invntt.S pointwise.S \
   shuffle.S consts.c rejsample.c rounding.c
 HEADERS = align.h config.h params.h api.h sign.h packing.h polyvec.h poly.h ntt.h \
   consts.h shuffle.inc rejsample.h rounding.h symmetric.h randombytes.h
-KECCAK_SOURCES = $(SOURCES) fips202.c fips202x4.c f1600x4.S symmetric-shake.c
+KECCAK_SOURCES = $(SOURCES) fips202.c fips202x4.c f1600x4.S symmetric-shake.c -lcrypto
 KECCAK_HEADERS = $(HEADERS) fips202.h fips202x4.h
 AES_SOURCES = $(SOURCES) fips202.c aes256ctr.c
 AES_HEADERS = $(HEADERS) fips202.h aes256ctr.h

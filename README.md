@@ -41,14 +41,19 @@ Con questo comando lo stack dei programmi può essere esteso fino a 524 MBytes.
 
 ## Metriche di performance
 Per ogni Signature Scheme (cioè per ognuno delle famiglie di algoritmi provate) le caratteristiche misurate sono le seguenti:
-- tempi e numero cicli CPU per l'operazione di generazione delle chiavi (privata e pubblica);
-- tempi e numero cicli CPU per l'operazione di firma di un messaggio;
-- tempi e numero cicli CPU per l'operazione di verifica della firma con parametri corretti;
-- tempi e numero cicli CPU per l'operazione di verifica della firma (corrotta) per un messaggio;
-- dimensioni delle chiavi (privata e pubblica)
-- dimensioni della firma
+- tempi per l'operazione di generazione delle chiavi (privata e pubblica);
+- tempi per l'operazione di firma di un messaggio;
+- tempi CPU per l'operazione di verifica della firma;
+- dimensioni delle chiavi (privata e pubblica);
+- dimensioni della firma;
+- dimensioni di eventuali algoritmi di hash applicati sul messaggio;
 Tutti questi valori vengono valutati sullo stesso hardware, nelle condizioni quanto più simili.
-Inoltre vengono valutati per diversi valori di lunghezza del messaggio, in generale fatte variare dai 64bytes ai circa 128Megabytes.
+
+Inoltre vengono valutati per diversi valori di lunghezza del messaggio, in generale fatte variare dai 64bytes ai circa 16Megabytes.
+
+In realtà non ha molto senso applicare algoritmi di firma e verifica direttamente sui messaggi poichè messaggi grandi portano a grandi tempi di elaborazione, dunque propongo anche una variante molto più realistica, ovvero effettuo un processo di HASH sul messaggio (tramite SHA256 e SHA512) e poi sull'hashcode eseguo la firma.
+
+In questo modo i tempi di firma di grandi file si riducono notevolmente lasciando inalterato l'aspetto di sicurezza del processo di firma.
 
 ## CRYSTAL Dilithium
 Il codice di questo progetto è stato ottenuto direttamente dal repository Git associato:
@@ -70,18 +75,7 @@ In questa cartella è presente il codice "classico" di Dilithium, che effettua i
 Una volta raggiunta questa cartella è sufficiente compilare:
 ```sh
 make
-./test/test_dilitium2
-mv output.txt output_dilitium2.txt
-./test/test_dilitium2aes
-mv output.txt output_dilitium2aes.txt
-./test/test_dilitium3
-mv output.txt output_dilitium3.txt
-./test/test_dilitium3aes
-mv output.txt output_dilitium3aes.txt
-./test/test_dilitium5
-mv output.txt output_dilitium5.txt
-./test/test_dilitium5aes
-mv output.txt output_dilitium5aes.txt
+./test/test_dilitium[TIPO_ALGORITMO] [NOMEFILE1] [NOMEFILE2] [NOMEFILE3] [NUMERO_ITERAZIONI] [INCREMENTO]
 ```
 Nella cartella test saranno presenti i test inerenti alle "varianti" di Dilithium per:
 - generazioni di chiavi
@@ -94,23 +88,39 @@ Le prestazioni di questo branch migliorano in tutte e tre le fasi della firma (g
 Una volta raggiunta questa cartella è sufficiente compilare:
 ```sh
 make
-./test/test_dilitium2
-mv output.txt output_dilitium2.txt
-./test/test_dilitium2aes
-mv output.txt output_dilitium2aes.txt
-./test/test_dilitium3
-mv output.txt output_dilitium3.txt
-./test/test_dilitium3aes
-mv output.txt output_dilitium3aes.txt
-./test/test_dilitium5
-mv output.txt output_dilitium5.txt
-./test/test_dilitium5aes
-mv output.txt output_dilitium5aes.txt
+./test/test_dilitium[TIPO_ALGORITMO] [NOMEFILE1] [NOMEFILE2] [NOMEFILE3] [NUMERO_ITERAZIONI] [INCREMENTO]
 ```
 Lo script di test è analogo al precedente poichè la firma dei metodi rimane la stessa.
 
+## FALCON
+Il codice di questo progetto è stato ottenuto dal sito web ufficiale: https://falcon-sign.info/
+Anche questo Signature Scheme si basa sui reticoli (lattice) tuttavia ha caratteristiche molto diverse da CRYSTALS Dilithium:
+- è più leggera in termini di spazio, infatti le chiavi prodotte sono molto più brevi e in generale non richiede più di 30KB di RAM, perciò può essere facilmente eseguita su sistemi embedded
+- per via delle chiavi più brevi richiede più tempo di computazione per le fasi di firma e verifica della firma
+- in realtà il processo di firma può essere fatto in "diversi modi":
+    * Firma senza espansione della chiave: viene utilizzata direttamente la chiave breve prodotta nel keygen e l'algoritmo è hast-to-point non a tempo costante, quindi in base al messaggio i tempi di firma possono essere molto diversi. Questo può creare un problema di sicurezza per qualcuno che cerca di compromettere la chive.
+    * Firma senza chiave espansa a tempo costante: viene usato una funzione hash-to-point a tempo costante per rendere il tempo di firma indipendente dal messaggio a parità di lunghezza di esso.
+    * Firma con chiave espansa: pre-elabora la chiave privata per velocizzare la firma. E' utile con tante firme successive.
+    * Firma con chiave espansa a tempo costante: unisce gli ultimi due vantaggi.
+- anche la firma può essere fatta in diversi modi:
+    * Verifica classica
+    * Verifica a tempo costante: anche in questo caso viene usata una funzione hash-to-point a tempo costante per rendere più difficile compromettere la chiave.
+
+La domanda dunque è: quale di questi tempi utilizzare per i confronti con gli altri algoritmi (ad esempio con CRYSTAL Dilithium)?
+La scelta è ricaduta sulle seguenti varianti di firma e verifica:
+- Firma senza espansione di chiave a tempo costante: non sempre è possibile pre-elaborare la chiave / conviene farlo (per firme singole), tuttavia bisogna privilegiare la sicurezza usando una funzione hash-to-point a tempo costante.
+- Verifica a tempo costante: rende il processo più sicuro.
+
+La compilazione di questa libreria, come per la precedente, permette di scegliere se usare dei costrutti hardware per velocizzare alcuni calcoli, dunque anche di questa libreria sono stati effettuati test per la cosidetta versione "REF" e versione "AVX2".
+
 # Analisi dei dati
-Per l'analisi dei dati raccolti nella fase precedente e la loro rappresentazione tramite grafici viene utilizzato uno script su python eseguito in ambiente linux. Le librerie necessarie sono Pandas, Seaborn e MatPlotLib.
+Per l'analisi dei dati raccolti nella fase precedente e la loro rappresentazione tramite grafici vengono utilizzati due script in ambiente Linux:
+1 - Il primo è uno script C il cui compito è quello di:
+    - compilare tutti i codici sorgenti delle varie librerie e test da effettuare;
+    - avvia i test con i parametri scelti e redireziona gli output nei file corretti;
+    - avvia lo script di analisi (vedi successivo).
+2 - Il secondo è uno script in Python per l'analisi dei file di output, contenenti le statistiche sulle dimensioni e i tempi dei vari algoritmi.
+Le librerie necessarie alla sua esecuzione sono Pandas, Seaborn e MatPlotLib.
 
 ## Preparazione dell'ambiente
 È richiesta l'installazione di Python 3.12 nel proprio OS (Windows, Linux o Mac).
@@ -129,6 +139,22 @@ python3.12 --version
 apt install python3-pip
 ```
 Successivamente installare le librerie necessarie come sopra.
+
+## Avvio della fase di Analytics
+Per avviare i due script di raccolta informazioni è necessario eseguire le seguenti istruzioni nella root del repository:
+```sh
+gcc start_analytics.c -o start_analytics
+./start_analytics 1 1 1
+```
+I tre parametri (1 1 1) attivano le seguenti parti dell'algoritmo:
+1 - Compilazione e test di CRYSTALS Dilithium;
+2 - Compilazione e test di FALCON;
+3 - Avvio dello script Python per la produzione dei grafici;
+
+Di conseguenza per produrre i soli grafici è necessario eseguire:
+```sh
+./start_analytics 0 0 1
+```
 
 ## Realizzazione dei grafici
 Eseguendo lo script Python presente nella root del progetto verrano generati automaticamente i grafici inerenti alle metriche di performance dei vari algoritmi provati:
