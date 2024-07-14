@@ -46,23 +46,35 @@
 CC = clang
 CFLAGS = -Wall -Wextra -Wshadow -Wundef -O3 #-pg -fno-pie
 LD = clang
-LDFLAGS = #-pg -no-pie
+LDFLAGS = -lcrypto #-pg -no-pie
 LIBS = #-lm
 
 # =====================================================================
 
-OBJ = codec.o common.o falcon.o fft.o fpr.o keygen.o rng.o shake.o sign.o vrfy.o
+OBJ = randombytes.o codec.o common.o falcon.o fft.o fpr.o keygen.o rng.o shake.o sign.o vrfy.o
 
-all: test_falcon speed
+all: test_falcon speed test_falcon_msg test_falcon_sha256 test_falcon_sha512
 
 clean:
-	-rm -f $(OBJ) test_falcon test_falcon.o speed speed.o
+	-rm -f $(OBJ) test_falcon test_falcon.o speed speed.o randombytes randombytes.o test_falcon_msg test_falcon_msg.o test_falcon_sha256 test_falcon_sha256.o testtest_falcon_sha512 test_falcon_sha512.o
 
 test_falcon: test_falcon.o $(OBJ)
 	$(LD) $(LDFLAGS) -o test_falcon test_falcon.o $(OBJ) $(LIBS)
 
 speed: speed.o $(OBJ)
 	$(LD) $(LDFLAGS) -o speed speed.o $(OBJ) $(LIBS)
+
+test_falcon_msg: test_falcon_msg.o $(OBJ)
+	$(LD) $(LDFLAGS) -o test_falcon_msg test_falcon_msg.o $(OBJ) $(LIBS)
+
+test_falcon_sha256: test_falcon_sha256.o $(OBJ)
+	$(LD) $(LDFLAGS) -o test_falcon_sha256 test_falcon_sha256.o $(OBJ) $(LIBS)
+
+test_falcon_sha512: test_falcon_sha512.o $(OBJ)
+	$(LD) $(LDFLAGS) -o test_falcon_sha512 test_falcon_sha512.o $(OBJ) $(LIBS)
+
+randombytes.o: randombytes.c randombytes.h
+	$(CC) $(CFLAGS) -c -o randombytes.o randombytes.c
 
 codec.o: codec.c config.h inner.h fpr.h
 	$(CC) $(CFLAGS) -c -o codec.o codec.c

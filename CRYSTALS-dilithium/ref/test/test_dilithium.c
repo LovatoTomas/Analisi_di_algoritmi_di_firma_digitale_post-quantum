@@ -1,8 +1,8 @@
 /*
 Author: Tomas Lovato
-Version: 4
-Date: 2024/07/13 21:30
-Description: performance test for dilithium
+Version: 5
+Date: 2024/07/14 16:30
+Description: performance test per Dilithium, rimosso la misurazione del tempo per la firma non corretta (messaggio corrotto).
 */
 
 #include <stddef.h>
@@ -13,11 +13,11 @@ Description: performance test for dilithium
 #include "../sign.h"
 
 #define MINMLEN 64 // Minima lunghezza messaggio in bytes
-#define MAXMLEN 150000000 // Massima lunghezza messaggio in bytes
+#define MAXMLEN 18000000 // Massima lunghezza messaggio in bytes (circa 18MB)
 #define INCREMENT 1.2
-#define ITERATIONS 10
 #define VERBOSE_LEVEL 0 // 0 = Stampa del file; 1 = Stampa minima; 2 = Stampa delle chiavi
 long unsigned int MLEN = MINMLEN; // Message Length in Bytes
+int ITERATIONS = 10;
 
 // Codice per la stampa delle chiavi private e pubbliche
 void print_hex(const uint8_t *data, size_t len) {
@@ -57,15 +57,19 @@ int main(int argc, char **argv)
   uint8_t sm[MAXMLEN + CRYPTO_BYTES];
   uint8_t pk[CRYPTO_PUBLICKEYBYTES];
   uint8_t sk[CRYPTO_SECRETKEYBYTES];
-  clock_t start, end;       // Variabili per misurare i tempi di esecuzione di algoritmi
+  clock_t start, end;                   // Variabili per misurare i tempi di esecuzione di algoritmi
   double keygen_time[ITERATIONS];       // Valore dei tempi di keygen
   double signature_time[ITERATIONS];    // Valore dei tempi di firma
   double ok_check_time[ITERATIONS];     // Valore dei tempi di verifica
-  double cr_check_time[ITERATIONS];     // Valore dei tempi di verifica con messaggio corrotto
   long keygen_cycles[ITERATIONS];
   long signature_cycles[ITERATIONS];
   long ok_check_cycles[ITERATIONS];
-  long cr_check_cycles[ITERATIONS];
+
+  // Update numero iterazioni:
+  if(argc > 2)
+  {
+    ITERATIONS = atoi(argv[2]);
+  }
 
   // Apertura del file di output:
   const char *filename = "output.txt";
@@ -75,7 +79,7 @@ int main(int argc, char **argv)
     printf("=== FILE OUTPUT: %s ===\n",filename);
   }
   FILE *file = fopen(filename, "w");
-  // Errore di apertua?
+  // Errore di apertura?
   if (file == NULL) {
     perror("Errore nell'aprire il file");
     return -1;
@@ -166,44 +170,14 @@ int main(int argc, char **argv)
       {
         fprintf(stderr, "INFO - Verifica della firma riuscita!\n\n");
       }
-      // Corruzione volontaria della firma
-      randombytes((uint8_t *)&j, sizeof(j));
-      do {
-        randombytes(&b, 1);
-      } while(!b);
-      sm[j % (MLEN + CRYPTO_BYTES)] += b;
-      // Nuovo tentativo di verifica con corruzione
-      // AVVIO Misurazione del tempo di verifica della firma
-      start = clock();
-      ret = crypto_sign_open(m2, &mlen, sm, smlen, pk);
-      // TERMINE Misurazione del tempo di verifica
-      end = clock();
-      cr_check_cycles[i] = (long)end - start;
-      cr_check_time[i] = ((double) cr_check_cycles[i]) / CLOCKS_PER_SEC;
-      // OUTPUT
-      if(VERBOSE_LEVEL >= 1)
-      {
-        printf("Tempo di verifica della firma con messaggio corrotto: %f secondi\n", cr_check_time[i]);
-        printf("Cicli di clock CPU: %ld\n", cr_check_cycles[i]);
-      }
-      if(!ret) {
-        fprintf(stderr, "INFO - Verifica riuscita - Rarissimi casi...\n\n");
-        return -1;
-      }
-      if(VERBOSE_LEVEL >= 1)
-      {
-        printf("INFO - Verifica NON riuscita");
-        printf("\n===\n\n");
-      }
     }
 
     char output_line[512];
-    sprintf(output_line, "|%lu|%lu|%d|%d|%d|%f|%ld|%f|%ld|%f|%ld|%f|%ld|\r\n", 
+    sprintf(output_line, "|%lu|%lu|%d|%d|%d|%f|%ld|%f|%ld|%f|%ld|\r\n", 
       MLEN, smlen, CRYPTO_PUBLICKEYBYTES, CRYPTO_SECRETKEYBYTES, CRYPTO_BYTES, 
       average_double(keygen_time, ITERATIONS), average_long_int(keygen_cycles, ITERATIONS),
       average_double(signature_time, ITERATIONS), average_long_int(signature_cycles, ITERATIONS),
-      average_double(ok_check_time, ITERATIONS), average_long_int(ok_check_cycles, ITERATIONS),
-      average_double(cr_check_time, ITERATIONS), average_long_int(cr_check_cycles, ITERATIONS));
+      average_double(ok_check_time, ITERATIONS), average_long_int(ok_check_cycles, ITERATIONS));
     printf("%s", output_line);
 
     // Scrittura nel file
