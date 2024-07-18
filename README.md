@@ -113,6 +113,13 @@ La scelta è ricaduta sulle seguenti varianti di firma e verifica:
 
 La compilazione di questa libreria, come per la precedente, permette di scegliere se usare dei costrutti hardware per velocizzare alcuni calcoli, dunque anche di questa libreria sono stati effettuati test per la cosidetta versione "REF" e versione "AVX2".
 
+## SPHINCS+
+Per scaricare il codice della terza submission è sufficiente digitare:
+```sh
+git clone https://github.com/sphincs/sphincsplus.git
+```
+Nella root ci sono dei file python che permettono di eseguire test/benchmark per tutte le versioni disponibili dello Signature Scheme, scritte tutte in C e ciascuna con i propri script di test in C.
+
 # Analisi dei dati
 Per l'analisi dei dati raccolti nella fase precedente e la loro rappresentazione tramite grafici vengono utilizzati due script in ambiente Linux:
 1 - Il primo è uno script C il cui compito è quello di:
