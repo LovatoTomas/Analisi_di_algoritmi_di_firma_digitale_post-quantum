@@ -84,32 +84,32 @@ libpqcrystals_dilithium5aes_ref.so: $(SOURCES) $(HEADERS) symmetric-aes.c
 test/test_dilithium2: test/test_dilithium.c randombytes.c $(KECCAK_SOURCES) \
   $(KECCAK_HEADERS)
 	$(CC) $(CFLAGS) -DDILITHIUM_MODE=2 \
-	  -o $@ $< randombytes.c $(KECCAK_SOURCES)
+	  -o $@ $< randombytes.c $(KECCAK_SOURCES) -lcrypto
 
 test/test_dilithium3: test/test_dilithium.c randombytes.c $(KECCAK_SOURCES) \
   $(KECCAK_HEADERS)
 	$(CC) $(CFLAGS) -DDILITHIUM_MODE=3 \
-	  -o $@ $< randombytes.c $(KECCAK_SOURCES)
+	  -o $@ $< randombytes.c $(KECCAK_SOURCES) -lcrypto
 
 test/test_dilithium5: test/test_dilithium.c randombytes.c $(KECCAK_SOURCES) \
   $(KECCAK_HEADERS)
 	$(CC) $(CFLAGS) -DDILITHIUM_MODE=5 \
-	  -o $@ $< randombytes.c $(KECCAK_SOURCES)
+	  -o $@ $< randombytes.c $(KECCAK_SOURCES) -lcrypto
 
 test/test_dilithium2aes: test/test_dilithium.c randombytes.c $(AES_SOURCES) \
   $(AES_HEADERS)
 	$(CC) $(CFLAGS) -DDILITHIUM_MODE=2 -DDILITHIUM_USE_AES \
-	  -o $@ $< randombytes.c $(AES_SOURCES)
+	  -o $@ $< randombytes.c $(AES_SOURCES) -lcrypto
 
 test/test_dilithium3aes: test/test_dilithium.c randombytes.c $(AES_SOURCES) \
   $(AES_HEADERS)
 	$(CC) $(CFLAGS) -DDILITHIUM_MODE=3 -DDILITHIUM_USE_AES \
-	  -o $@ $< randombytes.c $(AES_SOURCES)
+	  -o $@ $< randombytes.c $(AES_SOURCES) -lcrypto
 
 test/test_dilithium5aes: test/test_dilithium.c randombytes.c $(AES_SOURCES) \
   $(AES_HEADERS)
 	$(CC) $(CFLAGS) -DDILITHIUM_MODE=5 -DDILITHIUM_USE_AES \
-	  -o $@ $< randombytes.c $(AES_SOURCES)
+	  -o $@ $< randombytes.c $(AES_SOURCES) -lcrypto
 
 test/test_vectors2: test/test_vectors.c $(KECCAK_SOURCES) \
   $(KECCAK_HEADERS)

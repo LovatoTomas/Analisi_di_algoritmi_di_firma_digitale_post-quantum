@@ -1,7 +1,7 @@
 /*
 Author: Tomas Lovato
-Version: 6
-Date: 2024/07/14 18:30
+Version: 7
+Date: 2024/07/30 14:30
 Description: performance test per Dilithium con
                           - messaggio originale
                           - hash messaggio sha256
@@ -16,8 +16,8 @@ Description: performance test per Dilithium con
 #include "../randombytes.h"
 #include "../sign.h"
 
-#define SHA256LEN 256
-#define SHA512LEN 512
+#define SHA256LEN 32
+#define SHA512LEN 64
 #define MINMLEN 64 // Minima lunghezza messaggio in bytes
 #define MAXMLEN 18000000 // Massima lunghezza messaggio in bytes (circa 18MB)
 #define VERBOSE_LEVEL 0 // 0 = Stampa del file; 1 = Stampa minima; 2 = Stampa delle chiavi
@@ -240,7 +240,7 @@ int main(int argc, char **argv)
 	const char *filename1 = "out_dilithium";
 	const char *filename2 = "out_dilithium_sha256";
 	const char *filename3 = "out_dilithium_sha512";
-	if(argc > 2)
+	if(argc > 3)
 	{
 		filename1 = argv[1];
 		printf("=== FILE OUTPUT 1: %s ===\n",filename1);
@@ -250,7 +250,7 @@ int main(int argc, char **argv)
 		printf("=== FILE OUTPUT 3: %s ===\n",filename3);
 	}
 
-  // Execute all on normale message
+  // Execute all on normal message
   loop(filename1, 0, 0);
   // Execute all on hash (sha256)
   loop(filename2, 1, 0);
