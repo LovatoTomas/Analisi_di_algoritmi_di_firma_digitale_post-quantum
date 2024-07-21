@@ -119,6 +119,30 @@ Per scaricare il codice della terza submission è sufficiente digitare:
 git clone https://github.com/sphincs/sphincsplus.git
 ```
 Nella root ci sono dei file python che permettono di eseguire test/benchmark per tutte le versioni disponibili dello Signature Scheme, scritte tutte in C e ciascuna con i propri script di test in C.
+Anche in questo caso le versioni utilizzate per i test sono state quella di riferimento (REF, che non contiene ottimizzazioni per l'uso specifico di hardware, quindi è compatibile con tutto) e la versione AVX2 (compatibile con hardware x86 e x64 per l'ottimizzazione di operazioni con i vettori).
+Per ognuna di queste due sono stati effettuati test per i vari livelli di sicurezza proposti da Sphincs+, rispettivamente 128bit, 192bit e 256bit (compatibili con i livelli di sicurezza offerti da Dilithium2, Dilithium3, Dilithium5, ad esempio).
+Per ogni sottocartella si possono avviare i test lanciando:
+```sh
+make all
+./test/spx
+```
+Dai test si nota una cosa molto particolare:
+1 - Le dimensioni delle chiavi sono molto ridotte rispetto ai precedenti
+2 - Il tempo di firma è elevato
+3 - Il tempo di firma è quasi costante al variare della lunghezza del messaggio, questo implica che Sphincs+ include già al suo interno un meccanismo di Hashing del messaggio che "ammortizza" la dipendenza dal contenuto.
+Nonostante ciò le prove effettuate sono sempre state le stesse, quindi:
+* firma con messaggio variabile
+* firma con hashing del messaggio con SHA-128
+* firma con hashing del messaggio con SHA-256
+Negli ultimi due tentativi si cerca di ridurre lo sforzo computazione di Sphincs+ nell'hashing dei messaggi lunghi offrendogli già degli hashcode corti.
+
+## RSA
+Un'altra idea è quella di confrontare le prestazioni di questi algoritmi quantum-safe con uno degli algoritmi attualmente più utilizzato, cioè RSA.
+Per l'esecuzione dei test è sufficiente l'uso della libreria OpenSSL già scaricata per le prove precedenti. La prova consisterà dunque nella scrittura di un solo file di test.
+Per l'RSA sono stati evitati i test che provano sulla lunghezza del messaggio variabile banalmente perchè RSA non supporta la firma di messaggi più lunghi della chiave stessa.
+Dunque per i test ci si è basati sugli hashcode dei messaggi, rispettivamente ottenuti con SHA-256 e SHA-512, dunque di dimensioni totali di 32 byte e 64 byte.
+Anche per RSA sono stati valutati i vari livelli di sicurezza (128bit, 192bit e 256bit) ottenuti con le chiavi di lunghezza 3072, 7680, 15360 (bits).
+Le metriche di performance utilizzate infine sono state le solite.
 
 # Analisi dei dati
 Per l'analisi dei dati raccolti nella fase precedente e la loro rappresentazione tramite grafici vengono utilizzati due script in ambiente Linux:
@@ -151,7 +175,7 @@ Successivamente installare le librerie necessarie come sopra.
 Per avviare i due script di raccolta informazioni è necessario eseguire le seguenti istruzioni nella root del repository:
 ```sh
 gcc start_analytics.c -o start_analytics
-./start_analytics 1 1 1
+./start_analytics 1 1 1 1 1
 ```
 I tre parametri (1 1 1) attivano le seguenti parti dell'algoritmo:
 1 - Compilazione e test di CRYSTALS Dilithium;
@@ -160,7 +184,7 @@ I tre parametri (1 1 1) attivano le seguenti parti dell'algoritmo:
 
 Di conseguenza per produrre i soli grafici è necessario eseguire:
 ```sh
-./start_analytics 0 0 1
+./start_analytics 0 0 0 0 1
 ```
 
 ## Realizzazione dei grafici

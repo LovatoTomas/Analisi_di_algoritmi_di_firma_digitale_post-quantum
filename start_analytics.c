@@ -19,14 +19,16 @@ int main(int argc, char **argv)
     int dilithium_do = 1;
     int falcon_do = 1;
     int sphincs_do = 1;
+    int rsa_do = 1;
     int phyton_do = 1;
-    if(argc > 4)
+    if(argc > 5)
     {
-        printf("=== PARAMETERS: %s %s %s %s ===\n", argv[1], argv[2], argv[3], argv[4]);
+        printf("=== PARAMETERS: %s %s %s %s %s ===\n", argv[1], argv[2], argv[3], argv[4], argv[5]);
         dilithium_do = atoi(argv[1]);
         falcon_do = atoi(argv[2]);
         sphincs_do = atoi(argv[3]);
-        phyton_do = atoi(argv[4]);
+        rsa_do = atoi(argv[4]);
+        phyton_do = atoi(argv[5]);
     }
 
     if(dilithium_do)
@@ -88,6 +90,14 @@ int main(int argc, char **argv)
         system("./SPHINCS+/avx2-sha2-128/test/spx ./output/sphincs128_avx2 ./output/sphincs128_sha256_avx2 ./output/sphincs128_sha512_avx2 100 2");
         system("./SPHINCS+/avx2-sha2-192/test/spx ./output/sphincs192_avx2 ./output/sphincs192_sha256_avx2 ./output/sphincs192_sha512_avx2 100 2");
         system("./SPHINCS+/avx2-sha2-256/test/spx ./output/sphincs256_avx2 ./output/sphincs256_sha256_avx2 ./output/sphincs256_sha512_avx2 100 2");
+    }
+
+    if(rsa_do)
+    {
+        // CLASSIC RSA
+        system("gcc ./RSA/test_rsa.c -o ./RSA/test_rsa -lcrypto");
+        // SCRIPT + NUMEFILE1NOSHA + NOMEFILE2SHA256 + NOMEFILE3SHA512 + NUM ITER + INCREMENT
+        system("./RSA/test_rsa ./output/rsa_128 ./output/rsa_192 ./output/rsa_256 100 2");
     }
 
     if(phyton_do)

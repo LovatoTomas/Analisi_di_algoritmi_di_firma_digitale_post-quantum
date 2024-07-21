@@ -1,7 +1,7 @@
 /*
 Author: Tomas Lovato
-Version: 7
-Date: 2024/07/30 14:30
+Version: 8
+Date: 2024/07/21 10:30
 Description: performance test per Dilithium con
                           - messaggio originale
                           - hash messaggio sha256
@@ -70,6 +70,7 @@ int loop(const char* filename, int sha256, int sha512)
     perror("Errore nell'aprire il file");
     return -1;
   }
+	printf("|MLEN|MTOTLEN|PUBLEN|PRVLEN|SIGLEN|KGTM|SIGTM|CHECKTM|HASHSZ|\r\n");
 
   for(MLEN = 64; MLEN < MAXMLEN; MLEN = MLEN * INCREMENT) 
   {
