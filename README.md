@@ -187,49 +187,47 @@ Di conseguenza per produrre i soli grafici è necessario eseguire:
 Eseguendo lo script Python presente nella root del progetto verrano generati automaticamente i grafici inerenti alle metriche di performance dei vari algoritmi provati:
 
 ### Grafico 1.1
-Mette in relazione la lunghezza (in bytes) della chiave privata e pubblica generata in funzione della lunghezza del messaggio da firmare.
-Agisce sui risultati del singolo algoritmo.
+Mette in relazione la lunghezza (in bytes) della chiave privata e pubblica generata tra i vari algoritmi selezionati.
+Gli algoritmi selezionati sono:
+- quelli di una stessa famiglia
+- algoritmi di famiglie diverse a parità di livello di sicurezza
 
 ### Grafico 1.2
 Mette in relazione la lunghezza del messaggio originale con la lunghezza del messaggio firmato (unione del messaggio originale e della firma).
-Agisce sui risultati del singolo algoritmo.
+Gli algoritmi selezionati sono:
+- quelli di una stessa famiglia
+- algoritmi di famiglie diverse a parità di livello di sicurezza
 
 ### Grafico 1.3
-Mette in relazione i tempi di generazione delle chiavi, i tempi di firma e di verifica con la lunghezza dei messaggi generati.
-Agisce sui risultati del singolo algoritmo.
+Mette in relazione i tempi di generazione delle chiavi con la lunghezza dei messaggi generati.
+Gli algoritmi selezionati sono:
+- quelli di una stessa famiglia
+- algoritmi di famiglie diverse a parità di livello di sicurezza
 
 ### Grafico 1.4
-Mette in relazione i tempi di generazione delle chiavi con la lunghezza dei messaggi generati.
-Agisce sui risultati del singolo algoritmo.
+Mette in relazione i tempi di firma con la lunghezza dei messaggi generati.
+Gli algoritmi selezionati sono:
+- quelli di una stessa famiglia
+- quelli di una stessa famiglia e configurazione ma che variano per applicazione di algoritmi di hash (SHA)
+- algoritmi di famiglie diverse a parità di livello di sicurezza
+- algoritmi di famiglie diverse a parità di livello di sicurezza, che variano per applicazione di algoritmi di hash (SHA)
 
 ### Grafico 1.5
-Mette in relazione i tempi di firma con la lunghezza dei messaggi generati.
-Agisce sui risultati del singolo algoritmo.
+Mette in relazione i tempi di firma con la lunghezza dei messaggi generati, ma tramite istogrammi.
+Gli algoritmi selezionati sono:
+- quelli di una stessa famiglia e configurazione ma che variano per applicazione di algoritmi di hash (SHA)
+- algoritmi di famiglie diverse a parità di livello di sicurezza, che variano per applicazione di algoritmi di hash (SHA)
 
 ### Grafico 1.6
 Mette in relazione i tempi di verifica della firma con la lunghezza dei messaggi generati.
-Agisce sui risultati del singolo algoritmo.
+Gli algoritmi selezionati sono:
+- quelli di una stessa famiglia
+- quelli di una stessa famiglia e configurazione ma che variano per applicazione di algoritmi di hash (SHA)
+- algoritmi di famiglie diverse a parità di livello di sicurezza
+- algoritmi di famiglie diverse a parità di livello di sicurezza, che variano per applicazione di algoritmi di hash (SHA)
 
-### Grafico 2.1
-Mette in relazione la lunghezza (in bytes) della chiave privata e pubblica generata in funzione della lunghezza del messaggio da firmare.
-Mette in relazione i risultati d tutti gli algoritmi insieme.
-
-### Grafico 2.2
-Mette in relazione la lunghezza del messaggio originale con la lunghezza del messaggio firmato (unione del messaggio originale e della firma).
-Mette in relazione i risultati d tutti gli algoritmi insieme.
-
-### Grafico 2.3
-Mette in relazione i tempi di generazione delle chiavi, i tempi di firma e di verifica con la lunghezza dei messaggi generati.
-Mette in relazione i risultati d tutti gli algoritmi insieme.
-
-### Grafico 2.4
-Mette in relazione i tempi di generazione delle chiavi con la lunghezza dei messaggi generati.
-Mette in relazione i risultati d tutti gli algoritmi insieme.
-
-### Grafico 2.5
-Mette in relazione i tempi di firma con la lunghezza dei messaggi generati.
-Mette in relazione i risultati d tutti gli algoritmi insieme.
-
-### Grafico 2.6
-Mette in relazione i tempi di verifica della firma con la lunghezza dei messaggi generati.
-Mette in relazione i risultati d tutti gli algoritmi insieme.
+### Grafico 1.7
+Mette in relazione i tempi di verifica della firma con la lunghezza dei messaggi generati, ma tramite istogrammi.
+Gli algoritmi selezionati sono:
+- quelli di una stessa famiglia e configurazione ma che variano per applicazione di algoritmi di hash (SHA)
+- algoritmi di famiglie diverse a parità di livello di sicurezza, che variano per applicazione di algoritmi di hash (SHA)
