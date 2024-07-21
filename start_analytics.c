@@ -61,14 +61,14 @@ int main(int argc, char **argv)
         // SCRIPT + NOMEFILE1 + NOMEFILE2 + NUM ITER + INCREMENT
         system("./FALCON/ref/test_falcon_msg ./output/falcon2_ref ./output/falcon5_ref 100 2");
         system("./FALCON/ref/test_falcon_sha256 ./output/falcon2_ref_sha256 ./output/falcon5_ref_sha256 100 2");
-        system("./FALCON/ref/test_falcon_sha512 ./output/falcon5_ref_sha512 ./output/falcon5_ref_sha512 100 2");
+        system("./FALCON/ref/test_falcon_sha512 ./output/falcon2_ref_sha512 ./output/falcon5_ref_sha512 100 2");
 
         // AVX2 FALCON
         system("make -C ./FALCON/avx2/");
         // SCRIPT + NOMEFILE1 + NOMEFILE2 + NUM ITER + INCREMENT
         system("./FALCON/avx2/test_falcon_msg ./output/falcon2_avx2 ./output/falcon5_avx2 100 2");
         system("./FALCON/avx2/test_falcon_sha256 ./output/falcon2_avx2_sha256 ./output/falcon5_avx2_sha256 100 2");
-        system("./FALCON/avx2/test_falcon_sha512 ./output/falcon5_avx2_sha512 ./output/falcon5_avx2_sha512 100 2");
+        system("./FALCON/avx2/test_falcon_sha512 ./output/falcon2_avx2_sha512 ./output/falcon5_avx2_sha512 100 2");
     }
 
     if(sphincs_do)
