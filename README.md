@@ -32,13 +32,6 @@ apt install make
 apt install clang
 ```
 
-Per poter generare ed elaborare messaggi di grande dimensione (ordine dei MegaBytes) è necessario aumentare lo spazio che i programmi possono utilizzare per lo stack:
-```sh
-sudo su
-ulimit -s 524288
-```
-Con questo comando lo stack dei programmi può essere esteso fino a 524 MBytes.
-
 ## Metriche di performance
 Per ogni Signature Scheme (cioè per ognuno delle famiglie di algoritmi provate) le caratteristiche misurate sono le seguenti:
 - tempi per l'operazione di generazione delle chiavi (privata e pubblica);

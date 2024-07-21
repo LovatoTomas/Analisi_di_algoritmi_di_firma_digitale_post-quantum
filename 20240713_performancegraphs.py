@@ -22,7 +22,7 @@ def read_data(filename):
             fields = line.split('|')
             data.append([int(fields[1]), int(fields[2]), int(fields[3]), int(fields[4]), int(fields[5]), float(fields[6]), float(fields[7]), float(fields[8]), int(fields[9])])
 
-    columns = ['msg_len', 'signed_msg_len', 'pub_key_size', 'priv_key_size', 'signature_size', 'keygen_time', 'sign_time', 'verify_time_correct', 'hash_len']
+    columns = ['msg_len', 'signed_msg_len', 'pub_key_size', 'priv_key_size', 'signature_size', 'keygen_time', 'sign_time', 'verify_time', 'hash_len']
 
     df = pd.DataFrame(data, columns=columns)
     return df
@@ -38,169 +38,271 @@ def save_or_show_plot(filename):
         plt.savefig(filename)
     plt.clf()
 
-# Leggere il file caricato
-file_path = './output/dilithium2_avx2'
-df = read_data(file_path)
-
-# Grafico della dimensione delle chiavi al variare della lunghezza del messaggio
-plt.figure(figsize=(10, 6))
-plt.plot(df['msg_len'], df['pub_key_size'], label='Public Key Size')
-plt.plot(df['msg_len'], df['priv_key_size'], label='Private Key Size')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Key Size (bytes)')
-plt.title('Key Sizes vs Message Length')
-plt.legend()
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/key_sizes_vs_message_length.png')
-
-# Grafico della dimensione del messaggio originale e firmato al variare della lunghezza del messaggio
-plt.figure(figsize=(10, 6))
-plt.plot(df['msg_len'], df['msg_len'], label='Original Message Length')
-plt.plot(df['msg_len'], df['signed_msg_len'], label='Signed Message Length')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Length (bytes)')
-plt.title('Original and Signed Message Length vs Message Length')
-plt.legend()
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/original_and_signed_message_length.png')
-
-# Grafico dei tempi di keygen, firma e verifica al variare della lunghezza del messaggio
-plt.figure(figsize=(10, 6))
-plt.plot(df['msg_len'], df['keygen_time'], label='Keygen Time')
-plt.plot(df['msg_len'], df['sign_time'], label='Sign Time')
-plt.plot(df['msg_len'], df['verify_time_correct'], label='Verify Time (Correct)')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Time (seconds)')
-plt.title('Keygen, Sign, and Verify Times vs Message Length')
-plt.legend()
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/keygen_sign_verify_times.png')
-
-# Grafico del tempo di keygen al variare della lunghezza del messaggio
-plt.figure(figsize=(10, 6))
-plt.plot(df['msg_len'], df['keygen_time'], label='Keygen Time')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Time (seconds)')
-plt.title('Keygen Time vs Message Length')
-plt.legend()
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/keygen_time_vs_message_length.png')
-
-# Grafico del tempo di firma al variare della lunghezza del messaggio
-plt.figure(figsize=(10, 6))
-plt.plot(df['msg_len'], df['sign_time'], label='Sign Time')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Time (seconds)')
-plt.title('Sign Time vs Message Length')
-plt.legend()
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/sign_time_vs_message_length.png')
-
-# Grafico del tempo di verifica al variare della lunghezza del messaggio
-plt.figure(figsize=(10, 6))
-plt.plot(df['msg_len'], df['verify_time_correct'], label='Verify Time (Correct)')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Time (seconds)')
-plt.title('Verify Time vs Message Length')
-plt.legend()
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/verify_time_vs_message_length.png')
-
 # Funzione per leggere e unire i dati da più file
 def read_multiple_files(filenames):
     dataframes = [read_data(file) for file in filenames]
     for df, file in zip(dataframes, filenames):
         df['algorithm'] = file.split('/')[2]  # estrai il nome dell'algoritmo dal nome del file
+        # Aggiungi colonna per distinguere tra REF e AVX2
+        if 'avx2' in file:
+            df['version'] = 'AVX2'
+        else:
+            df['version'] = 'REF'
     return pd.concat(dataframes, ignore_index=True)
 
-# Leggere i file di esempio (sostituire con i nomi reali dei file)
-file_paths = ['./output/dilithium2_avx2', './output/dilithium2_sha256_avx2', './output/falcon2_avx2', './output/falcon2_avx2_sha256']
-df_all = read_multiple_files(file_paths)
+# Dizionario per mappare i nomi degli algoritmi ai nuovi nomi
+algorithm_name_mapping = {
+    'dilithium2_ref': 'Dilithium 2',
+    'dilithium3_ref': 'Dilithium 3',
+    'dilithium5_ref': 'Dilithium 5',
+    'dilithium2_avx2': 'Dilithium 2',
+    'dilithium3_avx2': 'Dilithium 3',
+    'dilithium5_avx2': 'Dilithium 5',
+    'falcon2_ref': 'Falcon 2',
+    'falcon5_ref': 'Falcon 5',
+    'falcon2_avx2': 'Falcon 2',
+    'falcon5_avx2': 'Falcon 5',
+    'sphincs128_ref': 'SPHINCS+ 128',
+    'sphincs192_ref': 'SPHINCS+ 192',
+    'sphincs256_ref': 'SPHINCS+ 256',
+    'sphincs128_avx2': 'SPHINCS+ 128',
+    'sphincs192_avx2': 'SPHINCS+ 192',
+    'sphincs256_avx2': 'SPHINCS+ 256',
+    'rsa_128': 'RSA 128',
+    'rsa_192': 'RSA 192',
+    'rsa_256': 'RSA 256'
+}
 
-# 2.1 Confronto della dimensione delle chiavi tra algoritmi
-plt.figure(figsize=(10, 6))
-sns.lineplot(x='msg_len', y='pub_key_size', hue='algorithm', data=df_all, marker='o')
-sns.lineplot(x='msg_len', y='priv_key_size', hue='algorithm', data=df_all, marker='o')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Key Size (bytes)')
-plt.title('Key Sizes vs Message Length (Comparison)')
-plt.legend()
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/comparison_key_sizes_vs_message_length.png')
+### ================================================
+### ====== CONFRONTO TRA DIMENSIONI DI CHIAVI ======
+### ================================================
 
-# 2.2 Confronto della dimensione del messaggio firmato tra algoritmi, mostrando anche il messaggio originale
-plt.figure(figsize=(10, 6))
-sns.lineplot(x='msg_len', y='msg_len', hue='algorithm', data=df_all, marker='o', legend='full')
-sns.lineplot(x='msg_len', y='signed_msg_len', hue='algorithm', data=df_all, marker='o', legend='full')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Length (bytes)')
-plt.title('Original and Signed Message Length vs Message Length (Comparison)')
-plt.legend()
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/comparison_original_and_signed_message_length.png')
+# Gruppi di file da confrontare + nome di salvataggio grafo
+file_groups = [[['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref'], 'KC_dilithium.png', 'Dilithium Versions'],
+               [['./output/falcon2_ref', './output/falcon5_ref'], 'KC_falcon.png', 'Falcon Versions'],
+               [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref'], 'KC_sphincs.png', 'Sphincs+ Versions'],
+               [['./output/rsa_128', './output/rsa_192', './output/rsa_256'], 'KC_rsa.png', 'RSA Versions'],
+               [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/rsa_128'], 'KC_128bit_security_level.png', 'Security Level 128'],
+               [['./output/dilithium3_ref', './output/sphincs192_ref', './output/rsa_192'], 'KC_192bit_security_level.png', 'Security Level 192'],
+               [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/rsa_256'], 'KC_256bit_security_level.png', 'Security Level 256']]
 
-# 2.3 Confronto dei tempi di keygen, firma e verifica tra algoritmi
-plt.figure(figsize=(10, 6))
-sns.lineplot(x='msg_len', y='keygen_time', hue='algorithm', data=df_all, marker='o')
-sns.lineplot(x='msg_len', y='sign_time', hue='algorithm', data=df_all, marker='o')
-sns.lineplot(x='msg_len', y='verify_time_correct', hue='algorithm', data=df_all, marker='o')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Time (seconds)')
-plt.title('Keygen, Sign, and Verify Times vs Message Length (Comparison)')
-plt.legend()
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/comparison_keygen_sign_verify_times.png')
+for file_paths in file_groups:
+    # Lettura del gruppo di files
+    df_all = read_multiple_files(file_paths[0])
+    # Applicazione del mapping ai nomi degli algoritmi
+    df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
+    # Calcola le dimensioni medie delle chiavi pubbliche e private per ogni algoritmo
+    avg_key_sizes = df_all.groupby('algorithm')[['pub_key_size', 'priv_key_size']].mean().reset_index()
+    # Trasformazione dei dati per il grafico a barre
+    avg_key_sizes = pd.melt(avg_key_sizes, id_vars=['algorithm'], value_vars=['pub_key_size', 'priv_key_size'],
+                            var_name='Key Type', value_name='Key Size')
+    # Aggiornamento dei nomi dei tipi di chiave per la legenda
+    avg_key_sizes['Key Type'] = avg_key_sizes['Key Type'].replace({
+        'pub_key_size': 'Public Key Size',
+        'priv_key_size': 'Private Key Size'
+    })
+    # Creazione del grafico a barre
+    plt.figure(figsize=(12, 8))
+    sns.barplot(x='algorithm', y='Key Size', hue='Key Type', data=avg_key_sizes)
+    plt.xlabel('Algorithm')
+    plt.ylabel('Key Size (bytes)')
+    plt.title('Average Key Sizes per Algorithm - ' + file_paths[2])
+    plt.legend(title='Key Type', loc='upper right')
+    plt.grid(True)
+    # Imposta i tick dell'asse Y con intervalli di 256 o 512
+    plt.yticks(range(0, int(avg_key_sizes['Key Size'].max()) + 512, 256))  # Intervalli di 256
+    save_or_show_plot('./plot/Key_Sizes/' + file_paths[1])
+    plt.close()
 
-# Confronto del tempo di keygen tra algoritmi
-plt.figure(figsize=(10, 6))
-sns.lineplot(x='msg_len', y='keygen_time', hue='algorithm', data=df_all, marker='o')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Keygen Time (seconds)')
-plt.title('Keygen Time vs Message Length (Comparison)')
-plt.legend(title='Algorithm')
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/comparison_keygen_time_vs_message_length.png')
 
-# Confronto del tempo di firma tra algoritmi
-plt.figure(figsize=(10, 6))
-sns.lineplot(x='msg_len', y='sign_time', hue='algorithm', data=df_all, marker='o')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Sign Time (seconds)')
-plt.title('Sign Time vs Message Length (Comparison)')
-plt.legend(title='Algorithm')
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/comparison_sign_time_vs_message_length.png')
 
-# Confronto del tempo di verifica tra algoritmi
-plt.figure(figsize=(10, 6))
-sns.lineplot(x='msg_len', y='verify_time_correct', hue='algorithm', data=df_all, marker='o')
-plt.xlabel('Message Length (bytes)')
-plt.ylabel('Verify Time (seconds)')
-plt.title('Verify Time vs Message Length (Comparison)')
-plt.legend(title='Algorithm')
-plt.grid(True)
-plt.xscale('log')
-plt.yscale('log')
-save_or_show_plot('./plot/comparison_verify_time_vs_message_length.png')
+
+### ================================================
+### ========= DIMENSIONI DI INPUT E OUTPUT =========
+### ================================================
+
+# Gruppi di file da confrontare + nome di salvataggio grafo
+file_groups = [[['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref'], 'IO_dilithium.png', 'Dilithium Versions'],
+               [['./output/falcon2_ref', './output/falcon5_ref'], 'KC_falcon.png', 'Falcon Versions'],
+               [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref'], 'IO_sphincs.png', 'Sphincs+ Versions'],
+               [['./output/rsa_128', './output/rsa_192', './output/rsa_256'], 'IO_rsa.png', 'RSA Versions'],
+               [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/rsa_128'], 'IO_128bit_security_level.png', 'Security Level 128'],
+               [['./output/dilithium3_ref', './output/sphincs192_ref', './output/rsa_192'], 'IO_192bit_security_level.png', 'Security Level 192'],
+               [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/rsa_256'], 'IO_256bit_security_level.png', 'Security Level 256']]
+
+for file_paths in file_groups:
+    # Lettura del gruppo di files
+    df_all = read_multiple_files(file_paths[0])
+    # Applicazione del mapping ai nomi degli algoritmi
+    df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
+    # Creazione del grafico a barre
+    plt.figure(figsize=(12, 8))
+    # Linea per la dimensione del messaggio originale
+    sns.lineplot(x='msg_len', y='msg_len', data=df_all, marker='o', color='black', label='Original Message Length')
+    # Linee per le dimensioni dei messaggi firmati
+    sns.lineplot(x='msg_len', y='signed_msg_len', hue='algorithm', data=df_all, marker='o')
+    plt.xlabel('Message Length (bytes)')
+    plt.ylabel('Length (bytes)')
+    plt.title('Original and Signed Message Length vs Message Length - ' + file_paths[2])
+    plt.legend(title='Key Type', loc='upper right')
+    plt.grid(True)
+    plt.xscale('log')
+    plt.yscale('log')
+    save_or_show_plot('./plot/Message_IO/' + file_paths[1])
+    plt.close()
+
+
+
+
+### ================================================
+### ======== TEMPI DI KEYGEN TRA ALGORITMI =========
+### ================================================
+
+# Funzione per creare il grafico con simboli diversi per REF e AVX2
+def create_keygen_time_plot(df_all, output_file):
+    plt.figure(figsize=(12, 8))
+    
+    # Definisci la palette di colori per gli algoritmi
+    palette = sns.color_palette("tab10", n_colors=len(df_all['algorithm'].unique()))
+    color_mapping = {algorithm: color for algorithm, color in zip(df_all['algorithm'].unique(), palette)}
+    
+    # Definisci i marcatori per le versioni
+    markers = {'REF': 'o', 'AVX2': 'X'}
+    
+    # Disegna le linee
+    for algorithm in df_all['algorithm'].unique():
+        for version in ['REF', 'AVX2']:
+            subset = df_all[(df_all['algorithm'] == algorithm) & (df_all['version'] == version)]
+            if not subset.empty:
+                sns.lineplot(x='msg_len', y='keygen_time', data=subset, marker=markers[version], color=color_mapping[algorithm], label=f'{algorithm} {version}')
+    
+    plt.xlabel('Message Length (bytes)')
+    plt.ylabel('Keygen Time (seconds)')
+    plt.title('Keygen Time vs Message Length - ' + file_paths[2])
+    plt.legend(title='Algorithm and Version')
+    plt.grid(True)
+    plt.xscale('log')
+    plt.yscale('log')
+    save_or_show_plot(output_file)
+    plt.close()
+
+# Gruppi di file da confrontare + nome di salvataggio grafo
+file_groups = [[['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref', './output/dilithium2_avx2', './output/dilithium3_avx2', './output/dilithium5_avx2'], 'TM_KG_dilithium.png', 'Dilithium Versions'],
+               [['./output/falcon2_ref', './output/falcon5_ref', './output/falcon2_avx2', './output/falcon5_avx2'], 'TM_KG_falcon.png', 'Falcon Versions'],
+               [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref', './output/sphincs128_avx2', './output/sphincs192_avx2', './output/sphincs256_avx2'], 'TM_KG_sphincs.png', 'Sphincs+ Versions'],
+               [['./output/rsa_128', './output/rsa_192', './output/rsa_256'], 'TM_KG_rsa.png', 'RSA Versions'],
+               [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/dilithium2_avx2', './output/falcon2_avx2', './output/sphincs128_avx2', './output/rsa_128'], 'TM_KG_128bit_security_level.png', 'Security Level 128'],
+               [['./output/dilithium3_ref', './output/sphincs192_ref', './output/dilithium3_avx2', './output/sphincs192_avx2', './output/rsa_192'], 'TM_KG_192bit_security_level.png', 'Security Level 192'],
+               [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/dilithium5_avx2', './output/falcon5_avx2', './output/sphincs256_avx2', './output/rsa_256'], 'TM_KG_256bit_security_level.png', 'Security Level 256']]
+
+for file_paths in file_groups:
+    # Lettura del gruppo di files
+    df_all = read_multiple_files(file_paths[0])
+    # Applicazione del mapping ai nomi degli algoritmi
+    df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
+    # Creazione del grafico con simboli diversi per REF e AVX2
+    create_keygen_time_plot(df_all, './plot/Time_Keygen/' + file_paths[1])
+
+
+
+
+### ================================================
+### ======== TEMPI DI FIRMA TRA ALGORITMI ==========
+### ================================================
+
+# Funzione per creare il grafico con simboli diversi per REF e AVX2
+def create_sign_time_plot(df_all, output_file):
+    plt.figure(figsize=(12, 8))
+    
+    # Definisci la palette di colori per gli algoritmi
+    palette = sns.color_palette("tab10", n_colors=len(df_all['algorithm'].unique()))
+    color_mapping = {algorithm: color for algorithm, color in zip(df_all['algorithm'].unique(), palette)}
+    
+    # Definisci i marcatori per le versioni
+    markers = {'REF': 'o', 'AVX2': 'X'}
+    
+    # Disegna le linee
+    for algorithm in df_all['algorithm'].unique():
+        for version in ['REF', 'AVX2']:
+            subset = df_all[(df_all['algorithm'] == algorithm) & (df_all['version'] == version)]
+            if not subset.empty:
+                sns.lineplot(x='msg_len', y='sign_time', data=subset, marker=markers[version], color=color_mapping[algorithm], label=f'{algorithm} {version}')
+    
+    plt.xlabel('Message Length (bytes)')
+    plt.ylabel('Sign Time (seconds)')
+    plt.title('Sign Time vs Message Length - ' + file_paths[2])
+    plt.legend(title='Algorithm and Version')
+    plt.grid(True)
+    plt.xscale('log')
+    plt.yscale('log')
+    save_or_show_plot(output_file)
+    plt.close()
+
+# Gruppi di file da confrontare + nome di salvataggio grafo
+file_groups = [[['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref', './output/dilithium2_avx2', './output/dilithium3_avx2', './output/dilithium5_avx2'], 'TM_SG_dilithium.png', 'Dilithium Versions'],
+               [['./output/falcon2_ref', './output/falcon5_ref', './output/falcon2_avx2', './output/falcon5_avx2'], 'TM_SG_falcon.png', 'Falcon Versions'],
+               [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref', './output/sphincs128_avx2', './output/sphincs192_avx2', './output/sphincs256_avx2'], 'TM_SG_sphincs.png', 'Sphincs+ Versions'],
+               [['./output/rsa_128', './output/rsa_192', './output/rsa_256'], 'TM_SG_rsa.png', 'RSA Versions'],
+               [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/dilithium2_avx2', './output/falcon2_avx2', './output/sphincs128_avx2', './output/rsa_128'], 'TM_SG_128bit_security_level.png', 'Security Level 128'],
+               [['./output/dilithium3_ref', './output/sphincs192_ref', './output/dilithium3_avx2', './output/sphincs192_avx2', './output/rsa_192'], 'TM_SG_192bit_security_level.png', 'Security Level 192'],
+               [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/dilithium5_avx2', './output/falcon5_avx2', './output/sphincs256_avx2', './output/rsa_256'], 'TM_SG_256bit_security_level.png', 'Security Level 256']]
+
+for file_paths in file_groups:
+    # Lettura del gruppo di files
+    df_all = read_multiple_files(file_paths[0])
+    # Applicazione del mapping ai nomi degli algoritmi
+    df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
+    # Creazione del grafico con simboli diversi per REF e AVX2
+    create_sign_time_plot(df_all, './plot/Time_Sign/' + file_paths[1])
+
+
+
+
+### ================================================
+### ======= TEMPI DI VERIFICA TRA ALGORITMI ========
+### ================================================
+
+# Funzione per creare il grafico con simboli diversi per REF e AVX2
+def create_verify_time_plot(df_all, output_file):
+    plt.figure(figsize=(12, 8))
+    
+    # Definisci la palette di colori per gli algoritmi
+    palette = sns.color_palette("tab10", n_colors=len(df_all['algorithm'].unique()))
+    color_mapping = {algorithm: color for algorithm, color in zip(df_all['algorithm'].unique(), palette)}
+    
+    # Definisci i marcatori per le versioni
+    markers = {'REF': 'o', 'AVX2': 'X'}
+    
+    # Disegna le linee
+    for algorithm in df_all['algorithm'].unique():
+        for version in ['REF', 'AVX2']:
+            subset = df_all[(df_all['algorithm'] == algorithm) & (df_all['version'] == version)]
+            if not subset.empty:
+                sns.lineplot(x='msg_len', y='verify_time', data=subset, marker=markers[version], color=color_mapping[algorithm], label=f'{algorithm} {version}')
+    
+    plt.xlabel('Message Length (bytes)')
+    plt.ylabel('Verify Time (seconds)')
+    plt.title('Verify Time vs Message Length - ' + file_paths[2])
+    plt.legend(title='Algorithm and Version')
+    plt.grid(True)
+    plt.xscale('log')
+    plt.yscale('log')
+    save_or_show_plot(output_file)
+    plt.close()
+
+# Gruppi di file da confrontare + nome di salvataggio grafo
+file_groups = [[['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref', './output/dilithium2_avx2', './output/dilithium3_avx2', './output/dilithium5_avx2'], 'TM_VF_dilithium.png', 'Dilithium Versions'],
+               [['./output/falcon2_ref', './output/falcon5_ref', './output/falcon2_avx2', './output/falcon5_avx2'], 'TM_VF_falcon.png', 'Falcon Versions'],
+               [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref', './output/sphincs128_avx2', './output/sphincs192_avx2', './output/sphincs256_avx2'], 'TM_VF_sphincs.png', 'Sphincs+ Versions'],
+               [['./output/rsa_128', './output/rsa_192', './output/rsa_256'], 'TM_VF_rsa.png', 'RSA Versions'],
+               [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/dilithium2_avx2', './output/falcon2_avx2', './output/sphincs128_avx2', './output/rsa_128'], 'TM_VF_128bit_security_level.png', 'Security Level 128'],
+               [['./output/dilithium3_ref', './output/sphincs192_ref', './output/dilithium3_avx2', './output/sphincs192_avx2', './output/rsa_192'], 'TM_VF_192bit_security_level.png', 'Security Level 192'],
+               [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/dilithium5_avx2', './output/falcon5_avx2', './output/sphincs256_avx2', './output/rsa_256'], 'TM_VF_256bit_security_level.png', 'Security Level 256']]
+
+for file_paths in file_groups:
+    # Lettura del gruppo di files
+    df_all = read_multiple_files(file_paths[0])
+    # Applicazione del mapping ai nomi degli algoritmi
+    df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
+    # Creazione del grafico con simboli diversi per REF e AVX2
+    create_verify_time_plot(df_all, './plot/Time_Verify/' + file_paths[1])
