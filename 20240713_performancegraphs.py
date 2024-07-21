@@ -320,6 +320,57 @@ for file_paths in file_groups:
 
 
 
+### =========================================================
+### === TEMPI DI FIRMA TRA ALGORITMI con SHA - ISTOGRAMMI ===
+### =========================================================
+
+# Funzione per creare il grafico a barre con il tempo medio di firma
+def create_sign_time_histogram_plot(df_all, output_file, title):
+    plt.figure(figsize=(16, 10))
+    
+    # Calcola il tempo medio di firma per ogni combinazione di algoritmo e versione
+    avg_sign_times = df_all.groupby(['algorithm', 'version'])['sign_time'].mean().reset_index()
+    
+    # Crea il grafico a barre
+    sns.barplot(x='algorithm', y='sign_time', hue='version', data=avg_sign_times)
+    
+    plt.xlabel('Algorithm')
+    plt.ylabel('Average Sign Time (seconds)')
+    plt.title('Average Sign Time by Algorithm and Version - ' + title)
+    plt.legend(title='Version')
+    plt.grid(True)
+    plt.yscale('log')
+    save_or_show_plot(output_file)
+    plt.close()
+
+# Gruppi di file da confrontare + nome di salvataggio grafo
+file_groups = [# WITH SHA-256
+               [['./output/dilithium2_sha256_ref', './output/dilithium3_sha256_ref', './output/dilithium5_sha256_ref', './output/dilithium2_sha256_avx2', './output/dilithium3_sha256_avx2', './output/dilithium5_sha256_avx2'], 'TM_SG_dilithium_sha256_H.png', 'Dilithium Versions with SHA-256'],
+               [['./output/falcon2_ref_sha256', './output/falcon5_ref_sha256', './output/falcon2_avx2_sha256', './output/falcon5_avx2_sha256'], 'TM_SG_falcon_sha256_H.png', 'Falcon Versions with SHA-256'],
+               [['./output/sphincs128_sha256_ref', './output/sphincs192_sha256_ref', './output/sphincs256_sha256_ref', './output/sphincs128_sha256_avx2', './output/sphincs192_sha256_avx2', './output/sphincs256_sha256_avx2'], 'TM_SG_sphincs_sha256_H.png', 'Sphincs+ Versions with SHA-256'],
+               # WITH SHA-512
+               [['./output/dilithium2_sha512_ref', './output/dilithium3_sha512_ref', './output/dilithium5_sha512_ref', './output/dilithium2_sha512_avx2', './output/dilithium3_sha512_avx2', './output/dilithium5_sha512_avx2'], 'TM_SG_dilithium_sha512_H.png', 'Dilithium Versions with SHA-512'],
+               [['./output/falcon2_ref_sha512', './output/falcon5_ref_sha512', './output/falcon2_avx2_sha512', './output/falcon5_avx2_sha512'], 'TM_SG_falcon_sha512_H.png', 'Falcon Versions with SHA-512'],
+               [['./output/sphincs128_sha512_ref', './output/sphincs192_sha512_ref', './output/sphincs256_sha512_ref', './output/sphincs128_sha512_avx2', './output/sphincs192_sha512_avx2', './output/sphincs256_sha512_avx2'], 'TM_SG_sphincs_sha512_H.png', 'Sphincs+ Versions with SHA-512'],
+               # DIFFERENT SECURITY LEVELS WITH SHA-256
+               [['./output/dilithium2_sha256_ref', './output/falcon2_ref_sha256', './output/sphincs128_sha256_ref', './output/dilithium2_sha256_avx2', './output/falcon2_avx2_sha256', './output/sphincs128_sha256_avx2', './output/rsa_128'], 'TM_SG_128bit_security_level_sha256_H.png', 'Security Level 128 with SHA-256'],
+               [['./output/dilithium3_sha256_ref', './output/sphincs192_sha256_ref', './output/dilithium3_sha256_avx2', './output/sphincs192_sha256_avx2', './output/rsa_192'], 'TM_SG_192bit_security_level_sha256_H.png', 'Security Level 192 with SHA-256'],
+               [['./output/dilithium5_sha256_ref', './output/falcon5_ref_sha256', './output/sphincs256_sha256_ref', './output/dilithium5_sha256_avx2', './output/falcon5_avx2_sha256', './output/sphincs256_sha256_avx2', './output/rsa_256'], 'TM_SG_256bit_security_level_sha256_H.png', 'Security Level 256 with SHA-256'],
+               # DIFFERENT SECURITY LEVELS WITH SHA-512
+               [['./output/dilithium2_sha512_ref', './output/falcon2_ref_sha512', './output/sphincs128_sha512_ref', './output/dilithium2_sha512_avx2', './output/falcon2_avx2_sha512', './output/sphincs128_sha512_avx2', './output/rsa_128'], 'TM_SG_128bit_security_level_sha512_H.png', 'Security Level 128 with SHA-512'],
+               [['./output/dilithium3_sha512_ref', './output/sphincs192_sha512_ref', './output/dilithium3_sha512_avx2', './output/sphincs192_sha512_avx2', './output/rsa_192'], 'TM_SG_192bit_security_level_sha512_H.png', 'Security Level 192 with SHA-512'],
+               [['./output/dilithium5_sha512_ref', './output/falcon5_ref_sha512', './output/sphincs256_sha512_ref', './output/dilithium5_sha512_avx2', './output/falcon5_avx2_sha512', './output/sphincs256_sha512_avx2', './output/rsa_256'], 'TM_SG_256bit_security_level_sha512_H.png', 'Security Level 256 with SHA-512']
+            ]
+
+for file_paths in file_groups:
+    # Lettura del gruppo di files
+    df_all = read_multiple_files(file_paths[0])
+    # Applicazione del mapping ai nomi degli algoritmi
+    df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
+    # Creazione del grafico con simboli diversi per REF e AVX2
+    create_sign_time_histogram_plot(df_all, './plot/Time_Sign/' + file_paths[1], file_paths[2])
+
+
 ### ================================================
 ### ======= TEMPI DI VERIFICA TRA ALGORITMI ========
 ### ================================================
@@ -397,3 +448,56 @@ for file_paths in file_groups:
     df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
     # Creazione del grafico con simboli diversi per REF e AVX2
     create_verify_time_plot(df_all, './plot/Time_Verify/' + file_paths[1])
+
+
+
+
+### ============================================================
+### === TEMPI DI VERIFICA TRA ALGORITMI con SHA - ISTOGRAMMI ===
+### ============================================================
+
+# Funzione per creare il grafico a barre con il tempo medio di firma
+def create_sign_time_histogram_plot(df_all, output_file, title):
+    plt.figure(figsize=(16, 10))
+    
+    # Calcola il tempo medio di firma per ogni combinazione di algoritmo e versione
+    avg_sign_times = df_all.groupby(['algorithm', 'version'])['verify_time'].mean().reset_index()
+    
+    # Crea il grafico a barre
+    sns.barplot(x='algorithm', y='verify_time', hue='version', data=avg_sign_times)
+    
+    plt.xlabel('Algorithm')
+    plt.ylabel('Average Verify Time (seconds)')
+    plt.title('Average Verify Time by Algorithm and Version - ' + title)
+    plt.legend(title='Version')
+    plt.grid(True)
+    plt.yscale('log')
+    save_or_show_plot(output_file)
+    plt.close()
+
+# Gruppi di file da confrontare + nome di salvataggio grafo
+file_groups = [# WITH SHA-256
+               [['./output/dilithium2_sha256_ref', './output/dilithium3_sha256_ref', './output/dilithium5_sha256_ref', './output/dilithium2_sha256_avx2', './output/dilithium3_sha256_avx2', './output/dilithium5_sha256_avx2'], 'TM_VF_dilithium_sha256_H.png', 'Dilithium Versions with SHA-256'],
+               [['./output/falcon2_ref_sha256', './output/falcon5_ref_sha256', './output/falcon2_avx2_sha256', './output/falcon5_avx2_sha256'], 'TM_VF_falcon_sha256_H.png', 'Falcon Versions with SHA-256'],
+               [['./output/sphincs128_sha256_ref', './output/sphincs192_sha256_ref', './output/sphincs256_sha256_ref', './output/sphincs128_sha256_avx2', './output/sphincs192_sha256_avx2', './output/sphincs256_sha256_avx2'], 'TM_VF_sphincs_sha256_H.png', 'Sphincs+ Versions with SHA-256'],
+               # WITH SHA-512
+               [['./output/dilithium2_sha512_ref', './output/dilithium3_sha512_ref', './output/dilithium5_sha512_ref', './output/dilithium2_sha512_avx2', './output/dilithium3_sha512_avx2', './output/dilithium5_sha512_avx2'], 'TM_VF_dilithium_sha512_H.png', 'Dilithium Versions with SHA-512'],
+               [['./output/falcon2_ref_sha512', './output/falcon5_ref_sha512', './output/falcon2_avx2_sha512', './output/falcon5_avx2_sha512'], 'TM_VF_falcon_sha512_H.png', 'Falcon Versions with SHA-512'],
+               [['./output/sphincs128_sha512_ref', './output/sphincs192_sha512_ref', './output/sphincs256_sha512_ref', './output/sphincs128_sha512_avx2', './output/sphincs192_sha512_avx2', './output/sphincs256_sha512_avx2'], 'TM_VF_sphincs_sha512_H.png', 'Sphincs+ Versions with SHA-512'],
+               # DIFFERENT SECURITY LEVELS WITH SHA-256
+               [['./output/dilithium2_sha256_ref', './output/falcon2_ref_sha256', './output/sphincs128_sha256_ref', './output/dilithium2_sha256_avx2', './output/falcon2_avx2_sha256', './output/sphincs128_sha256_avx2', './output/rsa_128'], 'TM_VF_128bit_security_level_sha256_H.png', 'Security Level 128 with SHA-256'],
+               [['./output/dilithium3_sha256_ref', './output/sphincs192_sha256_ref', './output/dilithium3_sha256_avx2', './output/sphincs192_sha256_avx2', './output/rsa_192'], 'TM_VF_192bit_security_level_sha256_H.png', 'Security Level 192 with SHA-256'],
+               [['./output/dilithium5_sha256_ref', './output/falcon5_ref_sha256', './output/sphincs256_sha256_ref', './output/dilithium5_sha256_avx2', './output/falcon5_avx2_sha256', './output/sphincs256_sha256_avx2', './output/rsa_256'], 'TM_VF_256bit_security_level_sha256_H.png', 'Security Level 256 with SHA-256'],
+               # DIFFERENT SECURITY LEVELS WITH SHA-512
+               [['./output/dilithium2_sha512_ref', './output/falcon2_ref_sha512', './output/sphincs128_sha512_ref', './output/dilithium2_sha512_avx2', './output/falcon2_avx2_sha512', './output/sphincs128_sha512_avx2', './output/rsa_128'], 'TM_VF_128bit_security_level_sha512_H.png', 'Security Level 128 with SHA-512'],
+               [['./output/dilithium3_sha512_ref', './output/sphincs192_sha512_ref', './output/dilithium3_sha512_avx2', './output/sphincs192_sha512_avx2', './output/rsa_192'], 'TM_VF_192bit_security_level_sha512_H.png', 'Security Level 192 with SHA-512'],
+               [['./output/dilithium5_sha512_ref', './output/falcon5_ref_sha512', './output/sphincs256_sha512_ref', './output/dilithium5_sha512_avx2', './output/falcon5_avx2_sha512', './output/sphincs256_sha512_avx2', './output/rsa_256'], 'TM_VF_256bit_security_level_sha512_H.png', 'Security Level 256 with SHA-512']
+            ]
+
+for file_paths in file_groups:
+    # Lettura del gruppo di files
+    df_all = read_multiple_files(file_paths[0])
+    # Applicazione del mapping ai nomi degli algoritmi
+    df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
+    # Creazione del grafico con simboli diversi per REF e AVX2
+    create_sign_time_histogram_plot(df_all, './plot/Time_Verify/' + file_paths[1], file_paths[2])

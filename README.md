@@ -145,6 +145,7 @@ Per l'analisi dei dati raccolti nella fase precedente e la loro rappresentazione
     - avvia lo script di analisi (vedi successivo).
 2 - Il secondo è uno script in Python per l'analisi dei file di output, contenenti le statistiche sulle dimensioni e i tempi dei vari algoritmi.
 Le librerie necessarie alla sua esecuzione sono Pandas, Seaborn e MatPlotLib.
+Per rendere il tutto più responsivo si può aggiungere una libreria per il display delle progress-bar (tqdm).
 
 ## Preparazione dell'ambiente
 È richiesta l'installazione di Python 3.12 nel proprio OS (Windows, Linux o Mac).
@@ -152,6 +153,8 @@ Le librerie necessarie alla sua esecuzione sono Pandas, Seaborn e MatPlotLib.
 pip install pandas
 pip install matplotlib
 pip install seaborn
+pip install tqdm
+
 ```
 In caso di ambiente Windows, va aggiunto il percorso delle librerie / script Python alle variabili d'ambiente Path (del profilo utente o di sistema).
 
