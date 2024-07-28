@@ -231,3 +231,39 @@ Mette in relazione i tempi di verifica della firma con la lunghezza dei messaggi
 Gli algoritmi selezionati sono:
 - quelli di una stessa famiglia e configurazione ma che variano per applicazione di algoritmi di hash (SHA)
 - algoritmi di famiglie diverse a parità di livello di sicurezza, che variano per applicazione di algoritmi di hash (SHA)
+
+# Verifica dei dati ottenuti
+Come in ogni ricerca scientifica che si rispetti, bisogna fare almeno una controprova per essere sicuri di non aver generato dati errati.
+Dunque ho deciso di rieffettuare parte dei test (sopratutto quelli legati ai tempi) con una libreria diversa che già incorpora al suo interno implementazioni di CRYSTALS Dilithium, FALCON e SPHINCS+ e che le "interfaccia" in maniera comune.
+GLi aspetti che maggiormente mi interessano da queste verifiche, come già anticipato, sono i tempi di keygen, firma e verifica. Le dimensioni delle chiavi e della firma sono già verificate con i dati / report rilasciati dal NIST.
+
+La libreria in questione è liboqs: https://github.com/open-quantum-safe/liboqs/tree/main
+Procediamo ad installarla sullo stesso ambiente:
+```sh
+    sudo apt install astyle cmake gcc ninja-build libssl-dev python3-pytest python3-pytest-xdist unzip xsltproc doxygen graphviz python3-yaml valgrind
+    git clone --recursive https://github.com/open-quantum-safe/liboqs.git
+    cd liboqs
+    sudo apt-get update
+    sudo apt-get install -y cmake gcc libssl-dev make
+    mkdir build
+    cd build
+    cmake -DBUILD_SHARED_LIBS=ON ..
+    make
+    sudo make install
+```
+In questo caso installiamo solo la libreria, non ne scarichiamo i sorgenti per modificarli come nei precedenti casi.
+Per verificare l'installazione:
+```sh
+ls /usr/local/lib | grep liboqs
+ls /usr/lib | grep liboqs
+sudo ldconfig
+```
+
+Dentro la cartella "liboqs_double_check" sono stati inseriti due script Python che:
+* check_install.py: verifica se liboqs è stata correttamente installata e quali signature scheme sono disponibili
+* double_check.py: esegue delle prove e calcola la media dei tempi su più tentativi di keygen/firma/verifica per ciascun algoritmo
+
+Allo stato attuale, i test con questa libreria sono stati fatti sugli stessi algoritmi delle sezioni precedenti MA solo sulle versioni AVX2, quindi con le ottimizzazioni per hardware x64 e x86 per il calcolo di operazioni con vettori o matrici.
+
+I primi test (riguardanti messaggi di piccole dimensioni) sono risultati molto positivi, in quanto portano a tempistiche comparabili con quelle già ottenute.
+Nei prossimi commit verranno incluse prove più approfondite e una generazione dei grafici a partire dagli output su file.
