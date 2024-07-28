@@ -1,3 +1,10 @@
+#
+#Author: Tomas Lovato
+#Version: 1
+#Date: 2024/07/28 10:30
+#Description: verifica installazione liboqs
+#
+
 import ctypes
 
 liboqs = ctypes.CDLL("liboqs.so")

@@ -42,7 +42,7 @@ Per ogni Signature Scheme (cioè per ognuno delle famiglie di algoritmi provate)
 - dimensioni di eventuali algoritmi di hash applicati sul messaggio;
 Tutti questi valori vengono valutati sullo stesso hardware, nelle condizioni quanto più simili.
 
-Inoltre vengono valutati per diversi valori di lunghezza del messaggio, in generale fatte variare dai 64bytes ai circa 16Megabytes.
+Inoltre vengono valutati per diversi valori di lunghezza del messaggio, in generale fatte variare dai 32 bytes ai circa 16 Megabytes.
 
 In realtà non ha molto senso applicare algoritmi di firma e verifica direttamente sui messaggi poichè messaggi grandi portano a grandi tempi di elaborazione, dunque propongo anche una variante molto più realistica, ovvero effettuo un processo di HASH sul messaggio (tramite SHA256 e SHA512) e poi sull'hashcode eseguo la firma.
 
@@ -132,7 +132,7 @@ Negli ultimi due tentativi si cerca di ridurre lo sforzo computazione di Sphincs
 ## RSA
 Un'altra idea è quella di confrontare le prestazioni di questi algoritmi quantum-safe con uno degli algoritmi attualmente più utilizzato, cioè RSA.
 Per l'esecuzione dei test è sufficiente l'uso della libreria OpenSSL già scaricata per le prove precedenti. La prova consisterà dunque nella scrittura di un solo file di test.
-Per l'RSA sono stati evitati i test che provano sulla lunghezza del messaggio variabile banalmente perchè RSA non supporta la firma di messaggi più lunghi della chiave stessa.
+Per l'RSA sono stati evitati i test che provano la firma e verifica direttamente su messaggi lunghi banalmente perchè RSA non supporta la firma di messaggi più lunghi della chiave stessa. Tuttavia al variare della lunghezza del messaggio sono stati trattati i casi di applicazione di SHA256 e SHA512 sul messaggio.
 Dunque per i test ci si è basati sugli hashcode dei messaggi, rispettivamente ottenuti con SHA-256 e SHA-512, dunque di dimensioni totali di 32 byte e 64 byte.
 Anche per RSA sono stati valutati i vari livelli di sicurezza (128bit, 192bit e 256bit) ottenuti con le chiavi di lunghezza 3072, 7680, 15360 (bits).
 Le metriche di performance utilizzate infine sono state le solite.
@@ -193,7 +193,7 @@ Gli algoritmi selezionati sono:
 - algoritmi di famiglie diverse a parità di livello di sicurezza
 
 ### Grafico 1.2
-Mette in relazione la lunghezza del messaggio originale con la lunghezza del messaggio firmato (unione del messaggio originale e della firma).
+Per ogni algoritmo in input mostra la lunghezza della firma prodotta, indipendentemente dalla lunghezza del messaggio.
 Gli algoritmi selezionati sono:
 - quelli di una stessa famiglia
 - algoritmi di famiglie diverse a parità di livello di sicurezza
@@ -265,5 +265,6 @@ Dentro la cartella "liboqs_double_check" sono stati inseriti due script Python c
 
 Allo stato attuale, i test con questa libreria sono stati fatti sugli stessi algoritmi delle sezioni precedenti MA solo sulle versioni AVX2, quindi con le ottimizzazioni per hardware x64 e x86 per il calcolo di operazioni con vettori o matrici.
 
-I primi test (riguardanti messaggi di piccole dimensioni) sono risultati molto positivi, in quanto portano a tempistiche comparabili con quelle già ottenute.
-Nei prossimi commit verranno incluse prove più approfondite e una generazione dei grafici a partire dagli output su file.
+Nella stessa cartella sono presenti i file di output con i dati estrapolati dalle prove. Lo script di analytics utilizzato per le fasi precedenti è in grado di elaborare tali dati e generare dei grafici (gli stessi) che mettano in relazione le mie prove con quelle delle libreria.
+Si nota che i risultati sono molto simili, quasi sempre sullo stesso ordine di grandezza, questo rende "valide" le mie prove passate.
+Le metriche e le tecniche utilizzate per l'estrapolazione di dati sono sempre le stesse.

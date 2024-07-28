@@ -13,9 +13,6 @@ Descrizione: raccoglie i dati di tutti gli algoritmi richiamando gli algoritmi d
 
 int main(int argc, char **argv)
 {
-    // ENVIRONEMNT
-    system("ulimit -s 524288");
-
     int dilithium_do = 1;
     int falcon_do = 1;
     int sphincs_do = 1;
@@ -96,8 +93,8 @@ int main(int argc, char **argv)
     {
         // CLASSIC RSA
         system("gcc ./RSA/test_rsa.c -o ./RSA/test_rsa -lcrypto");
-        // SCRIPT + NUMEFILE1NOSHA + NOMEFILE2SHA256 + NOMEFILE3SHA512 + NUM ITER + INCREMENT
-        system("./RSA/test_rsa ./output/rsa_128 ./output/rsa_192 ./output/rsa_256 100 2");
+        // SCRIPT + RSA128SHA256 + RSA128SHA512 + RSA192SHA256 + RSA192SHA512 + RSA256SHA256 + RSA256SHA512 + NUM ITER + INCREMENT
+        system("./RSA/test_rsa ./output/rsa_128_sha256 ./output/rsa_128_sha512 ./output/rsa_192_sha256 ./output/rsa_192_sha512 ./output/rsa_256_sha256 ./output/rsa_256_sha512 100 2");
     }
 
     if(phyton_do)

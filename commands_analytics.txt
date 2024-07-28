@@ -1,0 +1,38 @@
+make -C ./CRYSTALS-dilithium/ref/
+./CRYSTALS-dilithium/ref/test/test_dilithium2 ./output/dilithium2_ref ./output/dilithium2_sha256_ref ./output/dilithium2_sha512_ref 100 2
+./CRYSTALS-dilithium/ref/test/test_dilithium3 ./output/dilithium3_ref ./output/dilithium3_sha256_ref ./output/dilithium3_sha512_ref 100 2
+./CRYSTALS-dilithium/ref/test/test_dilithium5 ./output/dilithium5_ref ./output/dilithium5_sha256_ref ./output/dilithium5_sha512_ref 100 2
+
+make -C ./CRYSTALS-dilithium/avx2/
+./CRYSTALS-dilithium/avx2/test/test_dilithium2 ./output/dilithium2_avx2 ./output/dilithium2_sha256_avx2 ./output/dilithium2_sha512_avx2 100 2
+./CRYSTALS-dilithium/avx2/test/test_dilithium3 ./output/dilithium3_avx2 ./output/dilithium3_sha256_avx2 ./output/dilithium3_sha512_avx2 100 2
+./CRYSTALS-dilithium/avx2/test/test_dilithium5 ./output/dilithium5_avx2 ./output/dilithium5_sha256_avx2 ./output/dilithium5_sha512_avx2 100 2
+
+make -C ./FALCON/ref/
+./FALCON/ref/test_falcon_msg ./output/falcon2_ref ./output/falcon5_ref 100 2
+./FALCON/ref/test_falcon_sha256 ./output/falcon2_ref_sha256 ./output/falcon5_ref_sha256 100 2
+./FALCON/ref/test_falcon_sha512 ./output/falcon2_ref_sha512 ./output/falcon5_ref_sha512 100 2
+
+make -C ./FALCON/avx2/
+./FALCON/avx2/test_falcon_msg ./output/falcon2_avx2 ./output/falcon5_avx2 100 2
+./FALCON/avx2/test_falcon_sha256 ./output/falcon2_avx2_sha256 ./output/falcon5_avx2_sha256 100 2
+./FALCON/avx2/test_falcon_sha512 ./output/falcon2_avx2_sha512 ./output/falcon5_avx2_sha512 100 2
+
+make -C ./SPHINCS+/ref-sha2-128/ all
+make -C ./SPHINCS+/ref-sha2-192/ all
+make -C ./SPHINCS+/ref-sha2-256/ all
+./SPHINCS+/ref-sha2-128/test/spx ./output/sphincs128_ref ./output/sphincs128_sha256_ref ./output/sphincs128_sha512_ref 100 2
+./SPHINCS+/ref-sha2-192/test/spx ./output/sphincs192_ref ./output/sphincs192_sha256_ref ./output/sphincs192_sha512_ref 100 2
+./SPHINCS+/ref-sha2-256/test/spx ./output/sphincs256_ref ./output/sphincs256_sha256_ref ./output/sphincs256_sha512_ref 100 2
+
+make -C ./SPHINCS+/avx2-sha2-128/ all
+make -C ./SPHINCS+/avx2-sha2-192/ all
+make -C ./SPHINCS+/avx2-sha2-256/ all
+./SPHINCS+/avx2-sha2-128/test/spx ./output/sphincs128_avx2 ./output/sphincs128_sha256_avx2 ./output/sphincs128_sha512_avx2 100 2
+./SPHINCS+/avx2-sha2-192/test/spx ./output/sphincs192_avx2 ./output/sphincs192_sha256_avx2 ./output/sphincs192_sha512_avx2 100 2
+./SPHINCS+/avx2-sha2-256/test/spx ./output/sphincs256_avx2 ./output/sphincs256_sha256_avx2 ./output/sphincs256_sha512_avx2 100 2
+
+gcc ./RSA/test_rsa.c -o ./RSA/test_rsa -lcrypto
+./RSA/test_rsa ./output/rsa_128_sha256 ./output/rsa_128_sha512 ./output/rsa_192_sha256 ./output/rsa_192_sha512 ./output/rsa_256_sha256 ./output/rsa_256_sha512 100 2
+
+python3 20240713_performancegraphs.py

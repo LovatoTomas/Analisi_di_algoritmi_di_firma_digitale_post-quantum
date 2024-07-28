@@ -1,11 +1,8 @@
 /*
 Author: Tomas Lovato
-Version: 8
-Date: 2024/07/21 10:30
-Description: performance test per Dilithium con
-                          - messaggio originale
-                          - hash messaggio sha256
-                          - hash messaggio sha512
+Version: 9
+Date: 2024/07/28 15:30
+Description: modifica dei parametri di test
 */
 
 #include <stddef.h>
@@ -18,12 +15,12 @@ Description: performance test per Dilithium con
 
 #define SHA256LEN 32
 #define SHA512LEN 64
-#define MINMLEN 64 // Minima lunghezza messaggio in bytes
+#define MINMLEN 32 // Minima lunghezza messaggio in bytes
 #define MAXMLEN 18000000 // Massima lunghezza messaggio in bytes (circa 18MB)
 #define VERBOSE_LEVEL 0 // 0 = Stampa del file; 1 = Stampa minima; 2 = Stampa delle chiavi
 long unsigned int MLEN = MINMLEN; // Message Length in Bytes
 int INCREMENT = 2;
-long unsigned int ITERATIONS = 10;
+long unsigned int ITERATIONS = 100;
 
 // Codice per la stampa delle chiavi private e pubbliche
 void print_hex(const uint8_t *data, size_t len) {
@@ -72,7 +69,7 @@ int loop(const char* filename, int sha256, int sha512)
   }
 	printf("|MLEN|MTOTLEN|PUBLEN|PRVLEN|SIGLEN|KGTM|SIGTM|CHECKTM|HASHSZ|\r\n");
 
-  for(MLEN = 64; MLEN < MAXMLEN; MLEN = MLEN * INCREMENT) 
+  for(MLEN = MINMLEN; MLEN < MAXMLEN; MLEN = MLEN * INCREMENT) 
   {
     for(i = 0; i < ITERATIONS; i++)
     {

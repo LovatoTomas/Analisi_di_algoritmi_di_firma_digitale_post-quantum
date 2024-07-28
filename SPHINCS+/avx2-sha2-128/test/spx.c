@@ -1,8 +1,8 @@
 /*
 Autore: Tomas Lovato
-Data: 2024/07/20 11:30
-Versione:: 1
-Descrizione: effettua test completi su SPHINCS+
+Data: 2024/07/28 15:30
+Versione: 2
+Descrizione: modifica dei parametri di test
 */
 
 #include <stdio.h>
@@ -18,12 +18,12 @@ Descrizione: effettua test completi su SPHINCS+
 
 #define SHA256LEN 32
 #define SHA512LEN 64
-#define MINMLEN 64 // Minima lunghezza messaggio in bytes
+#define MINMLEN 32 // Minima lunghezza messaggio in bytes
 #define MAXMLEN 18000000 // Massima lunghezza messaggio in bytes (circa 18MB)
 #define VERBOSE_LEVEL 0 // 0 = Stampa del file; 1 = Stampa minima; 2 = Stampa delle chiavi
 long unsigned int MLEN = MINMLEN; // Message Length in Bytes
 double INCREMENT = 2;
-int ITERATIONS = 10;
+int ITERATIONS = 100;
 
 void print_time_taken(const char *operation, clock_t start, clock_t end) {
     double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
@@ -65,7 +65,7 @@ int loop(const char* filename, int sha256, int sha512)
     printf("|MLEN|MTOTLEN|PUBLEN|PRVLEN|SIGLEN|KGTM|SIGTM|CHECKTM|HASHSZ|\r\n");
 
     // Avvio i test al variare delle dimensioni del messaggio
-    for (MLEN = 64; MLEN <= MAXMLEN; MLEN = (size_t)(MLEN * INCREMENT)) 
+    for (MLEN = MINMLEN; MLEN <= MAXMLEN; MLEN = (size_t)(MLEN * INCREMENT)) 
     {
         double keygen_time[ITERATIONS];       // Valore dei tempi di keygen
         double signature_time[ITERATIONS];    // Valore dei tempi di firma
@@ -91,11 +91,20 @@ int loop(const char* filename, int sha256, int sha512)
             // Gestione tempo keygen
             keygen_cycles[round] = end - start;
             keygen_time[round] = (double)(keygen_cycles[round]) / CLOCKS_PER_SEC;
-
-            // Generazione di un messaggio random
-            m = malloc(MLEN);
-            sm = malloc(SPX_BYTES + MLEN);
-            mout = malloc(SPX_BYTES + MLEN);
+       
+            if(sha512 && MLEN < SHA512LEN)
+            {
+                m = malloc(SHA512LEN);
+                sm = malloc(SPX_BYTES + SHA512LEN);
+                mout = malloc(SPX_BYTES + SHA512LEN);
+            }
+            else
+            {
+                m = malloc(MLEN);
+                sm = malloc(SPX_BYTES + MLEN);
+                mout = malloc(SPX_BYTES + MLEN);
+            }
+            // Generazione di un messaggio random     
             randombytes(m, MLEN);
             // Calcolo HASH SHA256 del messaggio:
             SHA256(m, MLEN, hash256);

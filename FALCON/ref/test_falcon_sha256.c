@@ -1,8 +1,8 @@
 /*
 Author: Tomas Lovato
-Version: 1
-Date: 2024/07/14 10:30
-Description: performance test per Falcon, con SHA-256 applicata al messaggio
+Version: 2
+Date: 2024/07/28 15:30
+Description: modifica dei parametri di test
 */
 
 #include <stdio.h>
@@ -14,7 +14,7 @@ Description: performance test per Falcon, con SHA-256 applicata al messaggio
 #include "randombytes.h"
 
 #define SHALEN 32
-#define MINMLEN 64 // Minima lunghezza messaggio in bytes
+#define MINMLEN 32 // Minima lunghezza messaggio in bytes
 #define MAXMLEN 18000000 // Massima lunghezza messaggio in bytes (circa 18MB)
 int INCREMENT = 2;
 int ITERATIONS = 100;
@@ -333,7 +333,7 @@ main(int argc, char *argv[])
 		return -1;
 	}
 	printf("|MLEN|MTOTLEN|PUBLEN|PRVLEN|SIGLEN|KGTM|SIGTM|CHECKTM|HASHSZ|\r\n");
-	for(MLEN = 64; MLEN < MAXMLEN; MLEN = MLEN * INCREMENT) 
+	for(MLEN = MINMLEN; MLEN < MAXMLEN; MLEN = MLEN * INCREMENT) 
 	{
 		test_speed_falcon(9, ITERATIONS, MLEN); 
 		// 9 --> 2^9 = 256 bit di chiave --> equivale a un livello di sicurezza classico a 128bit
@@ -352,7 +352,7 @@ main(int argc, char *argv[])
 		return -1;
 	}
 	printf("|MLEN|MTOTLEN|PUBLEN|PRVLEN|SIGLEN|KGTM|SIGTM|CHECKTM|HASHSZ|\r\n");
-	for(MLEN = 64; MLEN < MAXMLEN; MLEN = MLEN * INCREMENT) 
+	for(MLEN = MINMLEN; MLEN < MAXMLEN; MLEN = MLEN * INCREMENT) 
 	{
 		test_speed_falcon(10, ITERATIONS, MLEN); 
 		// 10 --> 2^10 = 512 bit di chiave --> equivale a un livello di sicurezza classico a 256bit

@@ -1,8 +1,8 @@
 /*
 Author: Tomas Lovato
-Version: 1
-Date: 2024/07/21 10:30
-Description: full test for RSA (for differenet security levels)
+Version: 2
+Date: 2024/07/28 16:30
+Description: Modificato con lo standard di output delle altre prove
 */
 
 #include <stdio.h>
@@ -12,15 +12,18 @@ Description: full test for RSA (for differenet security levels)
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 #include <openssl/err.h>
+#include <openssl/sha.h>
 #include "randombytes.c"
 
-#define SHA256LEN 32    // Minima lungehza dell'hashcode - SHA 256
-#define SHA512LEN 64    // Massima lunghezza dell0hashcode - SHA 512
+#define SHA256LEN 32    // Minima lunghezza dell'hashcode - SHA 256
+#define SHA512LEN 64    // Massima lunghezza dell'hashcode - SHA 512
+#define MINMLEN 32      // Minima lunghezza messaggio in bytes
+#define MAXMLEN 18000000 // Massima lunghezza messaggio in bytes (circa 18MB)
 #define VERBOSE_LEVEL 0 // 0 = Stampa del file; 1 = Stampa minima; 2 = Stampa delle chiavi
-#define KEYGEN_ITERATIONS 5
+#define KEYGEN_ITERATIONS 20
 long unsigned int MLEN = SHA256LEN; // Message Length in Bytes
 double INCREMENT = 2;
-long unsigned int ITERATIONS = 10;
+long unsigned int ITERATIONS = 100;
 
 void print_time_taken(clock_t start, clock_t end, const char *operation) 
 {
@@ -38,7 +41,7 @@ static double average_double(double *t, size_t tlen) {
   return acc/tlen;
 }
 
-void test_rsa(int bits, const char* filename) 
+void test_rsa(int bits, const char* filename1, const char* filename2) 
 {
     clock_t start, end;
     RSA *keypair = RSA_new();
@@ -53,11 +56,20 @@ void test_rsa(int bits, const char* filename)
     long ok_check_cycles[ITERATIONS];
 
     // Apertura file
-    FILE *file = fopen(filename, "w");
+    FILE *file1 = fopen(filename1, "w");
     // Errore di apertura?
-    if (file == NULL) {
+    if (file1 == NULL) {
         perror("Errore nell'aprire il file");
-        return -1;
+        return;
+    }
+
+    // Apertura file
+    FILE *file2 = fopen(filename2, "w");
+    // Errore di apertura?
+    if (file2 == NULL) {
+        perror("Errore nell'aprire il file");
+        fclose(file1);
+        return;
     }
 
     // Do key-generation test
@@ -87,30 +99,34 @@ void test_rsa(int bits, const char* filename)
         keygen_time[round] = ((double) (end - start)) / CLOCKS_PER_SEC;
     }
 
-    // Get keys lenght
+    // Get keys length
     int priv_len = i2d_RSAPrivateKey(keypair, NULL);
     int pub_len = i2d_RSA_PUBKEY(keypair, NULL);
-	printf("\r\n|MLEN|MTOTLEN|PUBLEN|PRVLEN|SIGLEN|KGTM|SIGTM|CHECKTM|HASHSZ|\r\n");
+    printf("\r\n|MLEN|MTOTLEN|PUBLEN|PRVLEN|SIGLEN|KGTM|SIGTM|CHECKTM|HASHSZ|\r\n");
 
-    // Test over different message sizes
-    for (MLEN = SHA256LEN; MLEN <= SHA512LEN; MLEN = (long unsigned int)((double)(MLEN) * INCREMENT)) 
+    // Test over different message sizes with SHA256
+    for (MLEN = MINMLEN; MLEN <= MAXMLEN; MLEN = (long unsigned int)((double)(MLEN) * INCREMENT)) 
     {
-        if(VERBOSE_LEVEL >= 1) printf("=== MESSAGE HASHCODE SIZE: %d", MLEN);
+        if(VERBOSE_LEVEL >= 1) printf("=== MESSAGE HASHCODE SIZE: %lu", MLEN);
         // Test multiple times
         unsigned int sig_len;
         for(int round = 0; round < ITERATIONS; round++)
         {
-            unsigned char *hashcode = malloc(MLEN);
-            // Generazione del messaggio --> In questo caso il messaggio è già l'hash del "messaggio originale"
-            randombytes(hashcode, MLEN);
+            unsigned char *message = malloc(MLEN);
+            unsigned char *hashcode = malloc(SHA256LEN);
+            // Generazione del messaggio casuale
+            randombytes(message, MLEN);
+
+            // Calcolo dell'hash del messaggio
+            SHA256(message, MLEN, hashcode);
 
             // Sign the message
             unsigned char *sig = malloc(RSA_size(keypair));
             start = clock();
-            RSA_sign(NID_sha256, hashcode, MLEN, sig, &sig_len, keypair);
+            RSA_sign(NID_sha256, hashcode, SHA256LEN, sig, &sig_len, keypair);
             end = clock();
             if(VERBOSE_LEVEL >= 2) print_time_taken(start, end, "Signing");
-            if(VERBOSE_LEVEL >= 2) printf("Signature lenght: %u\r\n", sig_len);
+            if(VERBOSE_LEVEL >= 2) printf("Signature length: %u\r\n", sig_len);
 
             // Signature Time management
             signature_cycles[round] = end - start;
@@ -118,7 +134,7 @@ void test_rsa(int bits, const char* filename)
 
             // Verify the signature
             start = clock();
-            int result = RSA_verify(NID_sha256, hashcode, MLEN, sig, sig_len, keypair);
+            int result = RSA_verify(NID_sha256, hashcode, SHA256LEN, sig, sig_len, keypair);
             end = clock();
             if(VERBOSE_LEVEL >= 2) print_time_taken(start, end, "Verification");
 
@@ -127,36 +143,112 @@ void test_rsa(int bits, const char* filename)
             ok_check_time[round] = ((double) (end - start)) / CLOCKS_PER_SEC;
 
             if (result == 1) {
-                if(VERBOSE_LEVEL >= 2) printf("Signature is valid for message size %zu bytes.\n", MLEN);
+                if(VERBOSE_LEVEL >= 2) printf("Signature is valid for message size %lu bytes.\n", MLEN);
             } else {
-                printf("Signature is invalid for message size %zu bytes.\n", MLEN);
+                printf("Signature is invalid for message size %lu bytes.\n", MLEN);
             }
 
-            free(hashcode);
+            free(message);
             free(sig);
         }
 
         // Print result:
         char output_line[512];
-        sprintf(output_line, "|%lu|%lu|%d|%d|%d|%f|%f|%f|%lu|\r\n", 
-            MLEN, sig_len, pub_len, priv_len, sig_len - MLEN, 
+        sprintf(output_line, "|%lu|%u|%d|%d|%d|%f|%f|%f|%d|\r\n", 
+            MLEN, sig_len, pub_len, priv_len, sig_len - SHA256LEN, 
             average_double(keygen_time, KEYGEN_ITERATIONS), 
             average_double(signature_time, ITERATIONS),
-            average_double(ok_check_time, ITERATIONS), MLEN);
+            average_double(ok_check_time, ITERATIONS), SHA256LEN);
         printf("%s", output_line);
 
         // Scrittura nel file
-        if (fprintf(file, "%s", output_line) < 0) {
-        perror("Errore nella scrittura del file");
-        fclose(file);
-        return -1;
+        if (fprintf(file1, "%s", output_line) < 0) {
+            perror("Errore nella scrittura del file");
+            fclose(file1);
+            fclose(file2);
+            return;
+        }
+    }
+
+    printf("\r\n|MLEN|MTOTLEN|PUBLEN|PRVLEN|SIGLEN|KGTM|SIGTM|CHECKTM|HASHSZ|\r\n");
+
+    // Test over different message sizes with SHA512
+    for (MLEN = MINMLEN; MLEN <= MAXMLEN; MLEN = (long unsigned int)((double)(MLEN) * INCREMENT)) 
+    {
+        if(VERBOSE_LEVEL >= 1) printf("=== MESSAGE HASHCODE SIZE: %lu", MLEN);
+        // Test multiple times
+        unsigned int sig_len;
+        for(int round = 0; round < ITERATIONS; round++)
+        {
+            unsigned char *message = malloc(MLEN);
+            unsigned char *hashcode = malloc(SHA512LEN);
+            // Generazione del messaggio casuale
+            randombytes(message, MLEN);
+
+            // Calcolo dell'hash del messaggio
+            SHA512(message, MLEN, hashcode);
+
+            // Sign the message
+            unsigned char *sig = malloc(RSA_size(keypair));
+            start = clock();
+            RSA_sign(NID_sha512, hashcode, SHA512LEN, sig, &sig_len, keypair);
+            end = clock();
+            if(VERBOSE_LEVEL >= 2) print_time_taken(start, end, "Signing");
+            if(VERBOSE_LEVEL >= 2) printf("Signature length: %u\r\n", sig_len);
+
+            // Signature Time management
+            signature_cycles[round] = end - start;
+            signature_time[round] = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+            // Verify the signature
+            start = clock();
+            int result = RSA_verify(NID_sha512, hashcode, SHA512LEN, sig, sig_len, keypair);
+            end = clock();
+            if(VERBOSE_LEVEL >= 2) print_time_taken(start, end, "Verification");
+
+            // Validation Time management
+            ok_check_cycles[round] = end - start;
+            ok_check_time[round] = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+            if (result == 1) {
+                if(VERBOSE_LEVEL >= 2) printf("Signature is valid for message size %lu bytes.\n", MLEN);
+            } else {
+                printf("Signature is invalid for message size %lu bytes.\n", MLEN);
+            }
+
+            free(message);
+            free(sig);
+        }
+
+        // Print result:
+        char output_line[512];
+        sprintf(output_line, "|%lu|%u|%d|%d|%d|%f|%f|%f|%d|\r\n", 
+            MLEN, sig_len, pub_len, priv_len, sig_len - SHA512LEN, 
+            average_double(keygen_time, KEYGEN_ITERATIONS), 
+            average_double(signature_time, ITERATIONS),
+            average_double(ok_check_time, ITERATIONS), SHA512LEN);
+        printf("%s", output_line);
+
+        // Scrittura nel file
+        if (fprintf(file2, "%s", output_line) < 0) {
+            perror("Errore nella scrittura del file");
+            fclose(file1);
+            fclose(file2);
+            return;
         }
     }
 
     // Chiusura del file:
-    if (fclose(file) != 0) {
+    if (fclose(file1) != 0) {
         perror("Errore nella chiusura del file");
-        return -1;
+        fclose(file2);
+        return;
+    }
+
+    // Chiusura del file:
+    if (fclose(file2) != 0) {
+        perror("Errore nella chiusura del file");
+        return;
     }
 
     RSA_free(keypair);
@@ -165,32 +257,41 @@ void test_rsa(int bits, const char* filename)
 
 int main(int argc, char **argv)
 {  
-	// Update del fattore di scala dei messaggi:
-	if(argc > 5)
-	{
-		printf("=== INCREMENT: %s - ATTENTION: FORCED TO 2! ===\n", argv[5]);
-	}
+    // Update del fattore di scala dei messaggi:
+    if(argc > 8)
+    {
+        printf("=== INCREMENT: %s - ATTENTION: FORCED TO 2! ===\n", argv[8]);
+    }
 
-	// Update delle iterazioni su cui fare media:
-	if(argc > 4)
-	{
-		ITERATIONS = (long unsigned int)atoi(argv[4]);
-		printf("=== ITERATIONS: %s ===\n", argv[4]);
-	}
+    // Update delle iterazioni su cui fare media:
+    if(argc > 7)
+    {
+        ITERATIONS = (long unsigned int)atoi(argv[7]);
+        printf("=== ITERATIONS: %s ===\n", argv[7]);
+    }
 
-	// Apertura del file di output:
-	const char *filename1 = "out_rsa_128_hashed";
-	const char *filename2 = "out_rsa_192_hashed";
-	const char *filename3 = "out_rsa_256_hashed";
-	if(argc > 3)
-	{
-		filename1 = argv[1];
-		printf("=== FILE OUTPUT 1: %s ===\n",filename1);
-		filename2 = argv[2];
-		printf("=== FILE OUTPUT 2: %s ===\n",filename2);
-		filename3 = argv[3];
-		printf("=== FILE OUTPUT 3: %s ===\n",filename3);
-	}
+    // Apertura del file di output:
+    const char *filename1 = "out_rsa_128_sha256";
+    const char *filename2 = "out_rsa_128_sha512";
+    const char *filename3 = "out_rsa_192_sha256";
+    const char *filename4 = "out_rsa_192_sha512";
+    const char *filename5 = "out_rsa_256_sha256";
+    const char *filename6 = "out_rsa_256_sha512";
+    if(argc > 6)
+    {
+        filename1 = argv[1];
+        printf("=== FILE OUTPUT 1: %s ===\n",filename1);
+        filename2 = argv[2];
+        printf("=== FILE OUTPUT 2: %s ===\n",filename2);
+        filename3 = argv[3];
+        printf("=== FILE OUTPUT 3: %s ===\n",filename3);
+        filename4 = argv[4];
+        printf("=== FILE OUTPUT 4: %s ===\n",filename4);
+        filename5 = argv[5];
+        printf("=== FILE OUTPUT 5: %s ===\n",filename5);
+        filename6 = argv[6];
+        printf("=== FILE OUTPUT 6: %s ===\n",filename6);
+    }
 
     
     // La stime per i livelli di sicurezza sono variabili. Secondo il NIST:
@@ -201,11 +302,11 @@ int main(int argc, char **argv)
 
     // Execute all on normal message
     if(VERBOSE_LEVEL >= 1) printf("=== TEST LEVEL 128, KEY SIZE: %d ===\r\n", rsa_key_lengths[0]);
-    test_rsa(rsa_key_lengths[0], filename1);
+    test_rsa(rsa_key_lengths[0], filename1, filename2);
     if(VERBOSE_LEVEL >= 1) printf("=== TEST LEVEL 192, KEY SIZE: %d ===\r\n", rsa_key_lengths[1]);
-    test_rsa(rsa_key_lengths[1], filename2);
+    test_rsa(rsa_key_lengths[1], filename3, filename4);
     if(VERBOSE_LEVEL >= 1) printf("=== TEST LEVEL 256, KEY SIZE: %d ===\r\n", rsa_key_lengths[2]);
-    test_rsa(rsa_key_lengths[2], filename3);
+    test_rsa(rsa_key_lengths[2], filename5, filename6);
 
     return 0;
 }
