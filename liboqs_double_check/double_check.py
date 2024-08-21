@@ -70,7 +70,7 @@ message_sizes = [2**i for i in range(5, 25)]
 iterations = 100
 
 # Dizionario per associare i nomi dei file di output a ciascun algoritmo
-output_files = {scheme: f"risultati_{scheme}" for scheme in schemes}
+output_files = {scheme: f"risultati_{scheme}_avx2" for scheme in schemes}
 
 # Funzione per misurare i tempi di keygen, firma e verifica per ogni schema e lunghezza del messaggio.
 def measure_times(scheme_name, message_size):

@@ -36,9 +36,6 @@ int main(int argc, char **argv)
         system("./CRYSTALS-dilithium/ref/test/test_dilithium2 ./output/dilithium2_ref ./output/dilithium2_sha256_ref ./output/dilithium2_sha512_ref 100 2");
         system("./CRYSTALS-dilithium/ref/test/test_dilithium3 ./output/dilithium3_ref ./output/dilithium3_sha256_ref ./output/dilithium3_sha512_ref 100 2");
         system("./CRYSTALS-dilithium/ref/test/test_dilithium5 ./output/dilithium5_ref ./output/dilithium5_sha256_ref ./output/dilithium5_sha512_ref 100 2");
-        //system("./CRYSTALS-dilithium/ref/test/test_dilithium2aes ./output/dilithium2aes_ref ./output/dilithium2aes_sha256_ref ./output/dilithium2aes_sha512_ref 100 2");
-        //system("./CRYSTALS-dilithium/ref/test/test_dilithium3aes ./output/dilithium3aes_ref ./output/dilithium3aes_sha256_ref ./output/dilithium3aes_sha512_ref 100 2");
-        //system("./CRYSTALS-dilithium/ref/test/test_dilithium5aes ./output/dilithium5aes_ref ./output/dilithium5aes_sha256_ref ./output/dilithium5aes_sha512_ref 100 2");
 
         // AVX2 DILITHIUM
         system("make -C ./CRYSTALS-dilithium/avx2/");
@@ -46,9 +43,6 @@ int main(int argc, char **argv)
         system("./CRYSTALS-dilithium/avx2/test/test_dilithium2 ./output/dilithium2_avx2 ./output/dilithium2_sha256_avx2 ./output/dilithium2_sha512_avx2 100 2");
         system("./CRYSTALS-dilithium/avx2/test/test_dilithium3 ./output/dilithium3_avx2 ./output/dilithium3_sha256_avx2 ./output/dilithium3_sha512_avx2 100 2");
         system("./CRYSTALS-dilithium/avx2/test/test_dilithium5 ./output/dilithium5_avx2 ./output/dilithium5_sha256_avx2 ./output/dilithium5_sha512_avx2 100 2");
-        //system("./CRYSTALS-dilithium/avx2/test/test_dilithium2aes ./output/dilithium2aes_avx2 ./output/dilithium2aes_sha256_avx2 ./output/dilithium2aes_sha512_avx2 100 2");
-        //system("./CRYSTALS-dilithium/avx2/test/test_dilithium3aes ./output/dilithium3aes_avx2 ./output/dilithium3aes_sha256_avx2 ./output/dilithium3aes_sha512_avx2 100 2");
-        //system("./CRYSTALS-dilithium/avx2/test/test_dilithium5aes ./output/dilithium5aes_avx2 ./output/dilithium5aes_sha256_avx2 ./output/dilithium5aes_sha512_avx2 100 2");
     }
 
     if(falcon_do)
@@ -99,7 +93,7 @@ int main(int argc, char **argv)
 
     if(phyton_do)
         // PYTHON ANALYTICS
-        system("python3 20240713_performancegraphs.py");
+        system("python3 start_performancegraphs.py");
 
     // Per eseguire un comando sulla stessa shell
     // execl("/bin/sh", "sh", "-c", "./SPHINCS+/ref-sha2-128/test/spx ./output/sphincs128_ref ./output/sphincs128_sha256_ref ./output/sphincs128_sha512_ref 100 2", NULL);
