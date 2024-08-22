@@ -271,13 +271,17 @@ int main(int argc, char **argv)
     }
 
     // Apertura del file di output:
-    const char *filename1 = "out_rsa_128_sha256";
-    const char *filename2 = "out_rsa_128_sha512";
-    const char *filename3 = "out_rsa_192_sha256";
-    const char *filename4 = "out_rsa_192_sha512";
-    const char *filename5 = "out_rsa_256_sha256";
-    const char *filename6 = "out_rsa_256_sha512";
-    if(argc > 6)
+    const char *filename1 = "out_rsa_80_sha256";
+    const char *filename2 = "out_rsa_80_sha512";
+    const char *filename3 = "out_rsa_112_sha256";
+    const char *filename4 = "out_rsa_112_sha512";
+    const char *filename5 = "out_rsa_128_sha256";
+    const char *filename6 = "out_rsa_128_sha512";
+    const char *filename7 = "out_rsa_192_sha256";
+    const char *filename8 = "out_rsa_192_sha512";
+    const char *filename9 = "out_rsa_256_sha256";
+    const char *filename10 = "out_rsa_256_sha512";
+    if(argc > 10)
     {
         filename1 = argv[1];
         printf("=== FILE OUTPUT 1: %s ===\n",filename1);
@@ -291,22 +295,36 @@ int main(int argc, char **argv)
         printf("=== FILE OUTPUT 5: %s ===\n",filename5);
         filename6 = argv[6];
         printf("=== FILE OUTPUT 6: %s ===\n",filename6);
+        filename7 = argv[7];
+        printf("=== FILE OUTPUT 7: %s ===\n",filename7);
+        filename8 = argv[8];
+        printf("=== FILE OUTPUT 8: %s ===\n",filename8);
+        filename9 = argv[9];
+        printf("=== FILE OUTPUT 9: %s ===\n",filename9);
+        filename10 = argv[10];
+        printf("=== FILE OUTPUT 10: %s ===\n",filename10);
     }
 
     
     // La stime per i livelli di sicurezza sono variabili. Secondo il NIST:
+    // - key da 1024 bit = livello di sicurezza 80 bit di un protocollo a chiave simmetrica con 80bit di chiave simmetrica
+    // - key da 2048 bit = livello di sicurezza 112 bit di un protocollo a chiave simmetrica con 112bit di chiave simmetrica
     // - key da 3072 bit = livello di sicurezza 128 bit di un protocollo a chiave simmetrica come AES128
     // - key da 7680 bit = livello di sicurezza 192 bit di un protocollo a chiave simmetrica come AES192
     // - key da 15360 bit = livello di sicurezza 256 bit di un protocollo a chiave simmetrica come AES256
-    int rsa_key_lengths[] = {3072, 7680, 15360};
+    int rsa_key_lengths[] = {1024, 2048, 3072, 7680, 15360};
 
     // Execute all on normal message
-    if(VERBOSE_LEVEL >= 1) printf("=== TEST LEVEL 128, KEY SIZE: %d ===\r\n", rsa_key_lengths[0]);
+    if(VERBOSE_LEVEL >= 1) printf("=== TEST LEVEL 80, KEY SIZE: %d ===\r\n", rsa_key_lengths[0]);
     test_rsa(rsa_key_lengths[0], filename1, filename2);
-    if(VERBOSE_LEVEL >= 1) printf("=== TEST LEVEL 192, KEY SIZE: %d ===\r\n", rsa_key_lengths[1]);
+    if(VERBOSE_LEVEL >= 1) printf("=== TEST LEVEL 112, KEY SIZE: %d ===\r\n", rsa_key_lengths[1]);
     test_rsa(rsa_key_lengths[1], filename3, filename4);
-    if(VERBOSE_LEVEL >= 1) printf("=== TEST LEVEL 256, KEY SIZE: %d ===\r\n", rsa_key_lengths[2]);
+    if(VERBOSE_LEVEL >= 1) printf("=== TEST LEVEL 128, KEY SIZE: %d ===\r\n", rsa_key_lengths[2]);
     test_rsa(rsa_key_lengths[2], filename5, filename6);
+    if(VERBOSE_LEVEL >= 1) printf("=== TEST LEVEL 192, KEY SIZE: %d ===\r\n", rsa_key_lengths[3]);
+    test_rsa(rsa_key_lengths[3], filename7, filename8);
+    if(VERBOSE_LEVEL >= 1) printf("=== TEST LEVEL 256, KEY SIZE: %d ===\r\n", rsa_key_lengths[4]);
+    test_rsa(rsa_key_lengths[4], filename9, filename10);
 
     return 0;
 }
