@@ -120,8 +120,8 @@ algorithm_name_mapping = {
 plot_colors = {
     'Private Key Size': '#0a8270',
     'Public Key Size': '#321c6a',
-    'REF': '#37cc30',
-    'AVX2': '#c031cc'
+    'REF': '#9b0014',
+    'AVX2': '#1b8dc1'
 }
 
 ### ================================================
@@ -134,9 +134,9 @@ file_groups = [
     [['./output/falcon2_ref', './output/falcon5_ref'], 'KC_falcon.png', 'Falcon Versions'],
     [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref'], 'KC_sphincs.png', 'Sphincs+ Versions'],
     [['./output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'KC_rsa.png', 'RSA Versions'],
-    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/rsa_128'], 'KC_128bit_security_level.png', 'Security Level 1 & 2'],
-    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/rsa_192'], 'KC_192bit_security_level.png', 'Security Level 3'],
-    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/rsa_256'], 'KC_256bit_security_level.png', 'Security Level 5'],
+    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/rsa_128_sha256'], 'KC_128bit_security_level.png', 'Security Level 1 & 2'],
+    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/rsa_192_sha256'], 'KC_192bit_security_level.png', 'Security Level 3'],
+    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/rsa_256_sha256'], 'KC_256bit_security_level.png', 'Security Level 5'],
     [['./output/dilithium2_avx2', './output/dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/KC_dilithium.png', 'Dilithium Version - Double Check'],
     [['./output/falcon2_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/KC_falcon.png', 'Falcon Version - Double Check'],
     [['./output/sphincs128_avx2', './output/sphincs192_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/KC_sphincs.png', 'Sphincs+ Version - Double Check']
@@ -214,9 +214,9 @@ file_groups = [
     [['./output/falcon2_ref', './output/falcon5_ref'], 'KC_falcon.png', 'Falcon Versions'],
     [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref'], 'IO_sphincs.png', 'Sphincs+ Versions'],
     [['./output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'IO_rsa.png', 'RSA Versions'],
-    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/rsa_128'], 'IO_128bit_security_level.png', 'Security Level 1 & 2'],
-    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/rsa_192'], 'IO_192bit_security_level.png', 'Security Level 3'],
-    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/rsa_256'], 'IO_256bit_security_level.png', 'Security Level 5'],
+    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/rsa_128_sha256'], 'IO_128bit_security_level.png', 'Security Level 1 & 2'],
+    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/rsa_192_sha256'], 'IO_192bit_security_level.png', 'Security Level 3'],
+    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/rsa_256_sha256'], 'IO_256bit_security_level.png', 'Security Level 5'],
     [['./output/dilithium2_avx2', './output/dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/IO_dilithium.png', 'Dilithium Version - Double Check'],
     [['./output/falcon2_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/IO_falcon.png', 'Falcon Version - Double Check'],
     [['./output/sphincs128_avx2', './output/sphincs192_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/IO_sphincs.png', 'Sphincs+ Version - Double Check']
