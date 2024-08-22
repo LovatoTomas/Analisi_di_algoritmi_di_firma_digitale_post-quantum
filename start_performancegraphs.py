@@ -644,7 +644,7 @@ with tqdm(total=len(file_groups), desc="Generating Verify Time Plots", unit="plo
 ### ============================================================
 
 # Funzione per creare il grafico a barre con il tempo medio di firma
-def create_sign_time_histogram_plot(df_all, output_file, title):
+def create_verify_time_histogram_plot(df_all, output_file, title):
     plt.figure(figsize=(12,7))
     
     # Calcola il tempo medio di firma per ogni combinazione di algoritmo e versione
@@ -698,4 +698,4 @@ with tqdm(total=len(file_groups), desc="Generating Verify Time H-Plots", unit="p
         # Applicazione del mapping ai nomi degli algoritmi
         df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
         # Creazione del grafico con simboli diversi per REF e AVX2
-        create_sign_time_histogram_plot(df_all, './plot/Time_Verify/' + file_paths[1], file_paths[2])
+        create_verify_time_histogram_plot(df_all, './plot/Time_Verify/' + file_paths[1], file_paths[2])

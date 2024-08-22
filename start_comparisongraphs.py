@@ -119,6 +119,10 @@ def create_keygen_time_histogram(df_all, output_file, title):
 
     # Calcola la media dei tempi di keygen per ogni algoritmo e versione
     df_mean_keygen_time = df_all.groupby(['algorithm', 'device'])['keygen_time'].mean().reset_index()
+    # Forzare l'ordine degli algoritmi come appare nell'elenco di input
+    df_mean_keygen_time['algorithm'] = pd.Categorical(df_mean_keygen_time['algorithm'], 
+                                                categories=df_all['algorithm'].unique(), 
+                                                ordered=True)
     
     # Crea un grafico a barre
     sns.barplot(x='algorithm', y='keygen_time', hue='device', data=df_mean_keygen_time, palette=plot_colors)
@@ -308,6 +312,10 @@ def create_sign_time_histogram_plot(df_all, output_file, title):
     
     # Calcola il tempo medio di firma per ogni combinazione di algoritmo e versione
     avg_sign_times = df_all.groupby(['algorithm', 'device'])['sign_time'].mean().reset_index()
+    # Forzare l'ordine degli algoritmi come appare nell'elenco di input
+    avg_sign_times['algorithm'] = pd.Categorical(avg_sign_times['algorithm'], 
+                                                categories=df_all['algorithm'].unique(), 
+                                                ordered=True)
     
     # Crea il grafico a barre
     sns.barplot(x='algorithm', y='sign_time', hue='device', data=avg_sign_times, palette=plot_colors)
@@ -450,14 +458,18 @@ with tqdm(total=len(file_groups), desc="Generating Verify Time Plots", unit="plo
 ### ============================================================
 
 # Funzione per creare il grafico a barre con il tempo medio di firma
-def create_sign_time_histogram_plot(df_all, output_file, title):
+def create_verify_time_histogram_plot(df_all, output_file, title):
     plt.figure(figsize=(12,7))
     
     # Calcola il tempo medio di firma per ogni combinazione di algoritmo e versione
-    avg_sign_times = df_all.groupby(['algorithm', 'device'])['verify_time'].mean().reset_index()
+    avg_verify_times = df_all.groupby(['algorithm', 'device'])['verify_time'].mean().reset_index()
+    # Forzare l'ordine degli algoritmi come appare nell'elenco di input
+    avg_verify_times['algorithm'] = pd.Categorical(avg_verify_times['algorithm'], 
+                                                categories=df_all['algorithm'].unique(), 
+                                                ordered=True)
     
     # Crea il grafico a barre
-    sns.barplot(x='algorithm', y='verify_time', hue='device', data=avg_sign_times, palette=plot_colors)
+    sns.barplot(x='algorithm', y='verify_time', hue='device', data=avg_verify_times, palette=plot_colors)
     
     plt.xlabel('Algorithm')
     plt.ylabel('Average Verify Time (seconds)')
@@ -499,4 +511,4 @@ with tqdm(total=len(file_groups), desc="Generating Verify Time H-Plots", unit="p
         # Applicazione del mapping ai nomi degli algoritmi
         df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
         # Creazione del grafico con simboli diversi per REF e AVX2
-        create_sign_time_histogram_plot(df_all, './plot/comparison/Time_Verify/' + file_paths[1], file_paths[2])
+        create_verify_time_histogram_plot(df_all, './plot/comparison/Time_Verify/' + file_paths[1], file_paths[2])
