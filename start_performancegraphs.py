@@ -36,7 +36,7 @@ def save_or_show_plot(filename):
         directory = os.path.dirname(filename)
         if not os.path.exists(directory):
             os.makedirs(directory)
-        plt.savefig(filename)
+        plt.savefig(filename, bbox_inches='tight')
     plt.clf()
 
 # Funzione per leggere e unire i dati da più file
@@ -50,6 +50,8 @@ def read_multiple_files(filenames):
         else:
             df['version'] = 'REF'
     return pd.concat(dataframes, ignore_index=True)
+
+plt.rcParams.update({'font.size': 14})
 
 # Dizionario per mappare i nomi degli algoritmi ai nuovi nomi
 algorithm_name_mapping = {
@@ -111,14 +113,14 @@ algorithm_name_mapping = {
     'rsa_192_sha512': 'RSA 7680',
     'rsa_256_sha256': 'RSA 15360',
     'rsa_256_sha512': 'RSA 15360',
-    'risultati_Dilithium2_avx2': 'Dilithium 2 LIBOQS',
-    'risultati_Dilithium3_avx2': 'Dilithium 3 LIBOQS',
-    'risultati_Dilithium5_avx2': 'Dilithium 5 LIBOQS',
-    'risultati_Falcon-512_avx2': 'Falcon 512 LIBOQS',
-    'risultati_Falcon-1024_avx2': 'Falcon 1024 LIBOQS',
-    'risultati_SPHINCS+-SHA2-128f-simple_avx2': 'SPHINCS+ 128 LIBOQS',
-    'risultati_SPHINCS+-SHA2-192f-simple_avx2': 'SPHINCS+ 192 LIBOQS',
-    'risultati_SPHINCS+-SHA2-256f-simple_avx2': 'SPHINCS+ 256 LIBOQS'
+    'risultati_Dilithium2_avx2': 'Dilithium 2\nLIBOQS',
+    'risultati_Dilithium3_avx2': 'Dilithium 3\nLIBOQS',
+    'risultati_Dilithium5_avx2': 'Dilithium 5\nLIBOQS',
+    'risultati_Falcon-512_avx2': 'Falcon 512\nLIBOQS',
+    'risultati_Falcon-1024_avx2': 'Falcon 1024\nLIBOQS',
+    'risultati_SPHINCS+-SHA2-128f-simple_avx2': 'SPHINCS+ 128\nLIBOQS',
+    'risultati_SPHINCS+-SHA2-192f-simple_avx2': 'SPHINCS+ 192\nLIBOQS',
+    'risultati_SPHINCS+-SHA2-256f-simple_avx2': 'SPHINCS+ 256\nLIBOQS'
 }
 
 plot_colors = {
@@ -134,16 +136,16 @@ plot_colors = {
 
 # Gruppi di file da confrontare + nome di salvataggio grafo
 file_groups = [
-    [['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref'], 'KC_dilithium.png', 'Dilithium Versions'],
-    [['./output/falcon2_ref', './output/falcon5_ref'], 'KC_falcon.png', 'Falcon Versions'],
-    [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref'], 'KC_sphincs.png', 'Sphincs+ Versions'],
-    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'KC_rsa.png', 'RSA Versions'],
-    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/rsa_128_sha256'], 'KC_128bit_security_level.png', 'Security Level 1 & 2'],
-    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/rsa_192_sha256'], 'KC_192bit_security_level.png', 'Security Level 3'],
-    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/rsa_256_sha256'], 'KC_256bit_security_level.png', 'Security Level 5'],
-    [['./output/dilithium2_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './output/dilithium3_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/KC_dilithium.png', 'Dilithium Version - Double Check'],
-    [['./output/falcon2_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/KC_falcon.png', 'Falcon Version - Double Check'],
-     [['./output/sphincs128_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './output/sphincs192_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/KC_sphincs.png', 'Sphincs+ Version - Double Check']
+    [['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref'], 'KC_dilithium.png', 'Dilithium Versions',12, 4],
+    [['./output/falcon2_ref', './output/falcon5_ref'], 'KC_falcon.png', 'Falcon Versions',12, 4],
+    [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref'], 'KC_sphincs.png', 'Sphincs+ Versions',12, 4],
+    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'KC_rsa.png', 'RSA Versions',12, 4],
+    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/rsa_128_sha256'], 'KC_128bit_security_level.png', 'Security Level 1 & 2',12, 4],
+    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/rsa_192_sha256'], 'KC_192bit_security_level.png', 'Security Level 3',12, 4],
+    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/rsa_256_sha256'], 'KC_256bit_security_level.png', 'Security Level 5',12, 4],
+    [['./output/dilithium2_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './output/dilithium3_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/KC_dilithium.png', 'Dilithium Version - Double Check',12, 4],
+    [['./output/falcon2_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/KC_falcon.png', 'Falcon Version - Double Check',12, 4],
+     [['./output/sphincs128_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './output/sphincs192_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/KC_sphincs.png', 'Sphincs+ Version - Double Check',12, 4]
 ]
 
 # Aggiungi una progress bar
@@ -168,7 +170,7 @@ with tqdm(total=len(file_groups), desc="Generating Key Sizes Plots", unit="plot"
                                                     categories=df_all['algorithm'].unique(), 
                                                     ordered=True)
         # Creazione del grafico a barre
-        plt.figure(figsize=(16, 5))
+        plt.figure(figsize=(file_paths[3], file_paths[4]))
         sns.barplot(x='algorithm', y='Key Size', hue='Key Type', data=avg_key_sizes, palette=plot_colors)
         plt.xlabel('Algorithm')
         plt.ylabel('Key Size (bytes)')
@@ -208,28 +210,28 @@ algorithm_colors = {
     'RSA 3072': '#ff3df3',
     'RSA 7680': '#e43af2',
     'RSA 15360': '#c031cc',
-    'Dilithium 2 LIBOQS': '#7a3eff',
-    'Dilithium 3 LIBOQS': '#5c2fbf',
-    'Dilithium 5 LIBOQS': '#4a2699',
-    'Falcon 512 LIBOQS': '#99ffcc',
-    'Falcon 1024 LIBOQS': '#66ff99',
-    'SPHINCS+ 128 LIBOQS': '#ccccff',
-    'SPHINCS+ 192 LIBOQS': '#9999ff',
-    'SPHINCS+ 256 LIBOQS': '#6666ff'
+    'Dilithium 2\nLIBOQS': '#7a3eff',
+    'Dilithium 3\nLIBOQS': '#5c2fbf',
+    'Dilithium 5\nLIBOQS': '#4a2699',
+    'Falcon 512\nLIBOQS': '#99ffcc',
+    'Falcon 1024\nLIBOQS': '#66ff99',
+    'SPHINCS+ 128\nLIBOQS': '#ccccff',
+    'SPHINCS+ 192\nLIBOQS': '#9999ff',
+    'SPHINCS+ 256\nLIBOQS': '#6666ff'
 }
 
 # Gruppi di file da confrontare + nome di salvataggio grafo
 file_groups = [
-    [['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref'], 'IO_dilithium.png', 'Dilithium Versions'],
-    [['./output/falcon2_ref', './output/falcon5_ref'], 'KC_falcon.png', 'Falcon Versions'],
-    [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref'], 'IO_sphincs.png', 'Sphincs+ Versions'],
-    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'IO_rsa.png', 'RSA Versions'],
-    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/rsa_128_sha256'], 'IO_128bit_security_level.png', 'Security Level 1 & 2'],
-    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/rsa_192_sha256'], 'IO_192bit_security_level.png', 'Security Level 3'],
-    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/rsa_256_sha256'], 'IO_256bit_security_level.png', 'Security Level 5'],
-    [['./output/dilithium2_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './output/dilithium3_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/IO_dilithium.png', 'Dilithium Version - Double Check'],
-    [['./output/falcon2_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/IO_falcon.png', 'Falcon Version - Double Check'],
-     [['./output/sphincs128_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './output/sphincs192_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/IO_sphincs.png', 'Sphincs+ Version - Double Check']
+    [['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref'], 'IO_dilithium.png', 'Dilithium Versions',12, 4],
+    [['./output/falcon2_ref', './output/falcon5_ref'], 'KC_falcon.png', 'Falcon Versions',12, 4],
+    [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref'], 'IO_sphincs.png', 'Sphincs+ Versions',12, 4],
+    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'IO_rsa.png', 'RSA Versions',12, 4],
+    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/rsa_128_sha256'], 'IO_128bit_security_level.png', 'Security Level 1 & 2',12, 4],
+    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/rsa_192_sha256'], 'IO_192bit_security_level.png', 'Security Level 3',12, 4],
+    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/rsa_256_sha256'], 'IO_256bit_security_level.png', 'Security Level 5',12, 4],
+    [['./output/dilithium2_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './output/dilithium3_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/IO_dilithium.png', 'Dilithium Version - Double Check',12, 4],
+    [['./output/falcon2_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/IO_falcon.png', 'Falcon Version - Double Check',12, 4],
+     [['./output/sphincs128_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './output/sphincs192_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/IO_sphincs.png', 'Sphincs+ Version - Double Check',12, 4]
 ]
 
 # Aggiungi una progress bar
@@ -240,7 +242,7 @@ with tqdm(total=len(file_groups), desc="Generating Signature Size Plots", unit="
         # Applicazione del mapping ai nomi degli algoritmi
         df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
         # Creazione del grafico a barre
-        plt.figure(figsize=(16,10))
+        plt.figure(figsize=(file_paths[3], file_paths[4]))
         
         # Grafico a istogrammi per le dimensioni delle firme
         sns.barplot(x='algorithm', y='signature_size', hue="algorithm", data=df_all, palette=algorithm_colors)
@@ -265,7 +267,7 @@ with tqdm(total=len(file_groups), desc="Generating Signature Size Plots", unit="
 
 # Funzione per creare il grafico con la media dei tempi di keygen
 def create_keygen_time_histogram(df_all, output_file, title):
-    plt.figure(figsize=(12,7))
+    plt.figure(figsize=(file_paths[3], file_paths[4]))
 
     # Calcola la media dei tempi di keygen per ogni algoritmo e versione
     df_mean_keygen_time = df_all.groupby(['algorithm', 'version'])['keygen_time'].mean().reset_index()
@@ -291,16 +293,16 @@ def create_keygen_time_histogram(df_all, output_file, title):
 
 # Gruppi di file da confrontare + nome di salvataggio grafo
 file_groups = [
-    [['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref', './output/dilithium2_avx2', './output/dilithium3_avx2', './output/dilithium5_avx2'], 'TM_KG_dilithium.png', 'Dilithium Versions'],
-    [['./output/falcon2_ref', './output/falcon5_ref', './output/falcon2_avx2', './output/falcon5_avx2'], 'TM_KG_falcon.png', 'Falcon Versions'],
-    [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref', './output/sphincs128_avx2', './output/sphincs192_avx2', './output/sphincs256_avx2'], 'TM_KG_sphincs.png', 'Sphincs+ Versions'],
-    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'TM_KG_rsa.png', 'RSA Versions'],
-    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/dilithium2_avx2', './output/falcon2_avx2', './output/sphincs128_avx2', './output/rsa_128_sha256'], 'TM_KG_128bit_security_level.png', 'Security Level 1 & 2'],
-    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/dilithium3_avx2', './output/sphincs192_avx2', './output/rsa_192_sha256'], 'TM_KG_192bit_security_level.png', 'Security Level 3'],
-    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/dilithium5_avx2', './output/falcon5_avx2', './output/sphincs256_avx2', './output/rsa_256_sha256'], 'TM_KG_256bit_security_level.png', 'Security Level 5'],
-    [['./output/dilithium2_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './output/dilithium3_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/TM_KG_dilithium.png', 'Dilithium Version - Double Check'],
-    [['./output/falcon2_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/TM_KG_falcon.png', 'Falcon Version - Double Check'],
-    [['./output/sphincs128_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './output/sphincs192_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/TM_KG_sphincs.png', 'Sphincs+ Version - Double Check']
+    [['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref', './output/dilithium2_avx2', './output/dilithium3_avx2', './output/dilithium5_avx2'], 'TM_KG_dilithium.png', 'Dilithium Versions',12,7],
+    [['./output/falcon2_ref', './output/falcon5_ref', './output/falcon2_avx2', './output/falcon5_avx2'], 'TM_KG_falcon.png', 'Falcon Versions',12,7],
+    [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref', './output/sphincs128_avx2', './output/sphincs192_avx2', './output/sphincs256_avx2'], 'TM_KG_sphincs.png', 'Sphincs+ Versions',12,7],
+    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'TM_KG_rsa.png', 'RSA Versions',12,4],
+    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/dilithium2_avx2', './output/falcon2_avx2', './output/sphincs128_avx2', './output/rsa_128_sha256'], 'TM_KG_128bit_security_level.png', 'Security Level 1 & 2',12,7],
+    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/dilithium3_avx2', './output/sphincs192_avx2', './output/rsa_192_sha256'], 'TM_KG_192bit_security_level.png', 'Security Level 3',12,7],
+    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/dilithium5_avx2', './output/falcon5_avx2', './output/sphincs256_avx2', './output/rsa_256_sha256'], 'TM_KG_256bit_security_level.png', 'Security Level 5',12,7],
+    [['./output/dilithium2_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './output/dilithium3_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/TM_KG_dilithium.png', 'Dilithium Version - Double Check',12,4],
+    [['./output/falcon2_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/TM_KG_falcon.png', 'Falcon Version - Double Check',12,4],
+    [['./output/sphincs128_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './output/sphincs192_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/TM_KG_sphincs.png', 'Sphincs+ Version - Double Check',12,4]
 ]
 
 # Aggiungi una progress bar
@@ -397,7 +399,7 @@ algorithm_name_mapping = {
 
 # Funzione per creare il grafico con simboli diversi per REF e AVX2
 def create_sign_time_plot(df_all, output_file, title):
-    plt.figure(figsize=(10,6))
+    plt.figure(figsize=(file_paths[3], file_paths[4]))
     
     # Definisci la palette di colori per gli algoritmi
     palette = sns.color_palette("tab10", n_colors=len(df_all['algorithm'].unique()))
@@ -415,8 +417,8 @@ def create_sign_time_plot(df_all, output_file, title):
     
     plt.xlabel('Message Length (bytes)')
     plt.ylabel('Sign Time (seconds)')
-    plt.title('Sign Time vs Message Length - ' + title)
-    plt.legend(title='Algorithm and Version')
+    plt.title('Sign Time - ' + title)
+    plt.legend(title='Algorithm and Version',fontsize=12)
     plt.grid(True)
     plt.xscale('log')
     plt.yscale('log')
@@ -427,47 +429,47 @@ def create_sign_time_plot(df_all, output_file, title):
 
 # Gruppi di file da confrontare + nome di salvataggio grafo
 file_groups = [# NORMAL VERSIONS
-    [['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref', './output/dilithium2_avx2', './output/dilithium3_avx2', './output/dilithium5_avx2'], 'TM_SG_dilithium.png', 'Dilithium Versions'],
-    [['./output/falcon2_ref', './output/falcon5_ref', './output/falcon2_avx2', './output/falcon5_avx2'], 'TM_SG_falcon.png', 'Falcon Versions'],
-    [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref', './output/sphincs128_avx2', './output/sphincs192_avx2', './output/sphincs256_avx2'], 'TM_SG_sphincs.png', 'Sphincs+ Versions'],
-    [['./output/rsa_80_sha256', './output/rsa_80_sha512', './output/rsa_112_sha256',  './output/rsa_112_sha512', './output/rsa_128_sha256', './output/rsa_128_sha512', './output/rsa_192_sha256', './output/rsa_192_sha512', './output/rsa_256_sha256', './output/rsa_256_sha512'], 'TM_SG_rsa.png', 'RSA Versions'],
+    [['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref', './output/dilithium2_avx2', './output/dilithium3_avx2', './output/dilithium5_avx2'], 'TM_SG_dilithium.png', 'Dilithium Versions',6,6],
+    [['./output/falcon2_ref', './output/falcon5_ref', './output/falcon2_avx2', './output/falcon5_avx2'], 'TM_SG_falcon.png', 'Falcon Versions',6,6],
+    [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref', './output/sphincs128_avx2', './output/sphincs192_avx2', './output/sphincs256_avx2'], 'TM_SG_sphincs.png', 'Sphincs+ Versions',6,6],
+    [['./output/rsa_80_sha256', './output/rsa_80_sha512', './output/rsa_112_sha256',  './output/rsa_112_sha512', './output/rsa_128_sha256', './output/rsa_128_sha512', './output/rsa_192_sha256', './output/rsa_192_sha512', './output/rsa_256_sha256', './output/rsa_256_sha512'], 'TM_SG_rsa.png', 'RSA Versions',6,6],
     # WITH SHA-256
-    [['./output/dilithium2_sha256_ref', './output/dilithium3_sha256_ref', './output/dilithium5_sha256_ref', './output/dilithium2_sha256_avx2', './output/dilithium3_sha256_avx2', './output/dilithium5_sha256_avx2'], 'deprecated/TM_SG_dilithium_sha256.png', 'Dilithium Versions with SHA-256'],
-    [['./output/falcon2_ref_sha256', './output/falcon5_ref_sha256', './output/falcon2_avx2_sha256', './output/falcon5_avx2_sha256'], 'deprecated/TM_SG_falcon_sha256.png', 'Falcon Versions with SHA-256'],
-    [['./output/sphincs128_sha256_ref', './output/sphincs192_sha256_ref', './output/sphincs256_sha256_ref', './output/sphincs128_sha256_avx2', './output/sphincs192_sha256_avx2', './output/sphincs256_sha256_avx2'], 'deprecated/TM_SG_sphincs_sha256.png', 'Sphincs+ Versions with SHA-256'],
-    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'deprecated/TM_SG_rsa_sha256.png', 'RSA Versions with SHA-256'],
+    [['./output/dilithium2_sha256_ref', './output/dilithium3_sha256_ref', './output/dilithium5_sha256_ref', './output/dilithium2_sha256_avx2', './output/dilithium3_sha256_avx2', './output/dilithium5_sha256_avx2'], 'deprecated/TM_SG_dilithium_sha256.png', 'Dilithium Versions with SHA-256',6,6],
+    [['./output/falcon2_ref_sha256', './output/falcon5_ref_sha256', './output/falcon2_avx2_sha256', './output/falcon5_avx2_sha256'], 'deprecated/TM_SG_falcon_sha256.png', 'Falcon Versions with SHA-256',6,6],
+    [['./output/sphincs128_sha256_ref', './output/sphincs192_sha256_ref', './output/sphincs256_sha256_ref', './output/sphincs128_sha256_avx2', './output/sphincs192_sha256_avx2', './output/sphincs256_sha256_avx2'], 'deprecated/TM_SG_sphincs_sha256.png', 'Sphincs+ Versions with SHA-256',6,6],
+    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'deprecated/TM_SG_rsa_sha256.png', 'RSA Versions with SHA-256',6,6],
     # WITH SHA-512
-    [['./output/dilithium2_sha512_ref', './output/dilithium3_sha512_ref', './output/dilithium5_sha512_ref', './output/dilithium2_sha512_avx2', './output/dilithium3_sha512_avx2', './output/dilithium5_sha512_avx2'], 'deprecated/TM_SG_dilithium_sha512.png', 'Dilithium Versions with SHA-512'],
-    [['./output/falcon2_ref_sha512', './output/falcon5_ref_sha512', './output/falcon2_avx2_sha512', './output/falcon5_avx2_sha512'], 'deprecated/TM_SG_falcon_sha512.png', 'Falcon Versions with SHA-512'],
-    [['./output/sphincs128_sha512_ref', './output/sphincs192_sha512_ref', './output/sphincs256_sha512_ref', './output/sphincs128_sha512_avx2', './output/sphincs192_sha512_avx2', './output/sphincs256_sha512_avx2'], 'deprecated/TM_SG_sphincs_sha512.png', 'Sphincs+ Versions with SHA-512'],
-    [['./output/rsa_80_sha512', './output/rsa_112_sha512', './output/rsa_128_sha512', './output/rsa_192_sha512', './output/rsa_256_sha512'], 'deprecated/TM_SG_rsa_sha512.png', 'RSA Versions with SHA-512'],
+    [['./output/dilithium2_sha512_ref', './output/dilithium3_sha512_ref', './output/dilithium5_sha512_ref', './output/dilithium2_sha512_avx2', './output/dilithium3_sha512_avx2', './output/dilithium5_sha512_avx2'], 'deprecated/TM_SG_dilithium_sha512.png', 'Dilithium Versions with SHA-512',6,6],
+    [['./output/falcon2_ref_sha512', './output/falcon5_ref_sha512', './output/falcon2_avx2_sha512', './output/falcon5_avx2_sha512'], 'deprecated/TM_SG_falcon_sha512.png', 'Falcon Versions with SHA-512',6,6],
+    [['./output/sphincs128_sha512_ref', './output/sphincs192_sha512_ref', './output/sphincs256_sha512_ref', './output/sphincs128_sha512_avx2', './output/sphincs192_sha512_avx2', './output/sphincs256_sha512_avx2'], 'deprecated/TM_SG_sphincs_sha512.png', 'Sphincs+ Versions with SHA-512',6,6],
+    [['./output/rsa_80_sha512', './output/rsa_112_sha512', './output/rsa_128_sha512', './output/rsa_192_sha512', './output/rsa_256_sha512'], 'deprecated/TM_SG_rsa_sha512.png', 'RSA Versions with SHA-512',6,6],
     # ONLY DILITHIUM 2,3,5
-    [['./output/dilithium2_ref', './output/dilithium2_sha256_ref', './output/dilithium2_sha512_ref', './output/dilithium2_avx2', './output/dilithium2_sha256_avx2', './output/dilithium2_sha512_avx2'], 'TM_SG_dilithium_2_All.png', 'Dilithium 2 Versions vs SHA'],
-    [['./output/dilithium3_ref', './output/dilithium3_sha256_ref', './output/dilithium3_sha512_ref', './output/dilithium3_avx2', './output/dilithium3_sha256_avx2', './output/dilithium3_sha512_avx2'], 'TM_SG_dilithium_3_All.png', 'Dilithium 3 Versions vs SHA'],
-    [['./output/dilithium5_ref', './output/dilithium5_sha256_ref', './output/dilithium5_sha512_ref', './output/dilithium5_avx2', './output/dilithium5_sha256_avx2', './output/dilithium5_sha512_avx2'], 'TM_SG_dilithium_5_All.png', 'Dilithium 5 Versions vs SHA'],
+    [['./output/dilithium2_ref', './output/dilithium2_sha256_ref', './output/dilithium2_sha512_ref', './output/dilithium2_avx2', './output/dilithium2_sha256_avx2', './output/dilithium2_sha512_avx2'], 'TM_SG_dilithium_2_All.png', 'Dilithium 2 Versions vs SHA',6,6],
+    [['./output/dilithium3_ref', './output/dilithium3_sha256_ref', './output/dilithium3_sha512_ref', './output/dilithium3_avx2', './output/dilithium3_sha256_avx2', './output/dilithium3_sha512_avx2'], 'TM_SG_dilithium_3_All.png', 'Dilithium 3 Versions vs SHA',6,6],
+    [['./output/dilithium5_ref', './output/dilithium5_sha256_ref', './output/dilithium5_sha512_ref', './output/dilithium5_avx2', './output/dilithium5_sha256_avx2', './output/dilithium5_sha512_avx2'], 'TM_SG_dilithium_5_All.png', 'Dilithium 5 Versions vs SHA',6,6],
     # ONLY FALCON 512 and 1024
-    [['./output/falcon2_ref', './output/falcon2_ref_sha256', './output/falcon2_ref_sha512', './output/falcon2_avx2', './output/falcon2_avx2_sha256', './output/falcon2_avx2_sha512'], 'TM_SG_falcon_2_All.png', 'Falcon 2 Versions vs SHA'],
-    [['./output/falcon5_ref', './output/falcon5_ref_sha256', './output/falcon5_ref_sha512', './output/falcon5_avx2', './output/falcon5_avx2_sha256', './output/falcon5_avx2_sha512'], 'TM_SG_falcon_5_All.png', 'Falcon 5 Versions vs SHA'],
+    [['./output/falcon2_ref', './output/falcon2_ref_sha256', './output/falcon2_ref_sha512', './output/falcon2_avx2', './output/falcon2_avx2_sha256', './output/falcon2_avx2_sha512'], 'TM_SG_falcon_2_All.png', 'Falcon 2 Versions vs SHA',6,6],
+    [['./output/falcon5_ref', './output/falcon5_ref_sha256', './output/falcon5_ref_sha512', './output/falcon5_avx2', './output/falcon5_avx2_sha256', './output/falcon5_avx2_sha512'], 'TM_SG_falcon_5_All.png', 'Falcon 5 Versions vs SHA',6,6],
     # ONLY SPHINCS+ 128,192,256
-    [['./output/sphincs128_ref', './output/sphincs128_sha256_ref', './output/sphincs128_sha512_ref', './output/sphincs128_avx2', './output/sphincs128_sha256_avx2', './output/sphincs128_sha512_avx2'], 'TM_SG_sphincs_128_All.png', 'SPHINCS+ 128 Versions vs SHA'],
-    [['./output/sphincs192_ref', './output/sphincs192_sha256_ref', './output/sphincs192_sha512_ref', './output/sphincs192_avx2', './output/sphincs192_sha256_avx2', './output/sphincs192_sha512_avx2'], 'TM_SG_sphincs_192_All.png', 'SPHINCS+ 192 Versions vs SHA'],
-    [['./output/sphincs256_ref', './output/sphincs256_sha256_ref', './output/sphincs256_sha512_ref', './output/sphincs256_avx2', './output/sphincs256_sha256_avx2', './output/sphincs256_sha512_avx2'], 'TM_SG_sphincs_256_All.png', 'SPHINCS+ 256 Versions vs SHA'],
+    [['./output/sphincs128_ref', './output/sphincs128_sha256_ref', './output/sphincs128_sha512_ref', './output/sphincs128_avx2', './output/sphincs128_sha256_avx2', './output/sphincs128_sha512_avx2'], 'TM_SG_sphincs_128_All.png', 'SPHINCS+ 128 Versions vs SHA',6,6],
+    [['./output/sphincs192_ref', './output/sphincs192_sha256_ref', './output/sphincs192_sha512_ref', './output/sphincs192_avx2', './output/sphincs192_sha256_avx2', './output/sphincs192_sha512_avx2'], 'TM_SG_sphincs_192_All.png', 'SPHINCS+ 192 Versions vs SHA',6,6],
+    [['./output/sphincs256_ref', './output/sphincs256_sha256_ref', './output/sphincs256_sha512_ref', './output/sphincs256_avx2', './output/sphincs256_sha256_avx2', './output/sphincs256_sha512_avx2'], 'TM_SG_sphincs_256_All.png', 'SPHINCS+ 256 Versions vs SHA',6,6],
     # DIFFERENT SECURITY LEVELS WITH NO SHA
-    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/dilithium2_avx2', './output/falcon2_avx2', './output/sphincs128_avx2'], 'TM_SG_128bit_security_level.png', 'Security Level 1 & 2'],
-    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/dilithium3_avx2', './output/sphincs192_avx2'], 'TM_SG_192bit_security_level.png', 'Security Level 3'],
-    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/dilithium5_avx2', './output/falcon5_avx2', './output/sphincs256_avx2'], 'TM_SG_256bit_security_level.png', 'Security Level 5'],
+    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/dilithium2_avx2', './output/falcon2_avx2', './output/sphincs128_avx2'], 'TM_SG_128bit_security_level.png', 'Security Level 1 & 2',6,6],
+    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/dilithium3_avx2', './output/sphincs192_avx2'], 'TM_SG_192bit_security_level.png', 'Security Level 3',6,6],
+    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/dilithium5_avx2', './output/falcon5_avx2', './output/sphincs256_avx2'], 'TM_SG_256bit_security_level.png', 'Security Level 5',6,6],
     # DIFFERENT SECURITY LEVELS WITH SHA-256
-    [['./output/dilithium2_sha256_ref', './output/falcon2_ref_sha256', './output/sphincs128_sha256_ref', './output/dilithium2_sha256_avx2', './output/falcon2_avx2_sha256', './output/sphincs128_sha256_avx2', './output/rsa_128_sha256'], 'deprecated/TM_SG_128bit_security_level_sha256.png', 'Security Level 1 & 2 with SHA-256'],
-    [['./output/dilithium3_sha256_ref', './output/sphincs192_sha256_ref', './output/dilithium3_sha256_avx2', './output/sphincs192_sha256_avx2', './output/rsa_192_sha256'], 'deprecated/TM_SG_192bit_security_level_sha256.png', 'Security Level 3 with SHA-256'],
-    [['./output/dilithium5_sha256_ref', './output/falcon5_ref_sha256', './output/sphincs256_sha256_ref', './output/dilithium5_sha256_avx2', './output/falcon5_avx2_sha256', './output/sphincs256_sha256_avx2', './output/rsa_256_sha256'], 'deprecated/TM_SG_256bit_security_level_sha256.png', 'Security Level 5 with SHA-256'],
+    [['./output/dilithium2_sha256_ref', './output/falcon2_ref_sha256', './output/sphincs128_sha256_ref', './output/dilithium2_sha256_avx2', './output/falcon2_avx2_sha256', './output/sphincs128_sha256_avx2', './output/rsa_128_sha256'], 'deprecated/TM_SG_128bit_security_level_sha256.png', 'Security Level 1 & 2 with SHA-256',6,6],
+    [['./output/dilithium3_sha256_ref', './output/sphincs192_sha256_ref', './output/dilithium3_sha256_avx2', './output/sphincs192_sha256_avx2', './output/rsa_192_sha256'], 'deprecated/TM_SG_192bit_security_level_sha256.png', 'Security Level 3 with SHA-256',6,6],
+    [['./output/dilithium5_sha256_ref', './output/falcon5_ref_sha256', './output/sphincs256_sha256_ref', './output/dilithium5_sha256_avx2', './output/falcon5_avx2_sha256', './output/sphincs256_sha256_avx2', './output/rsa_256_sha256'], 'deprecated/TM_SG_256bit_security_level_sha256.png', 'Security Level 5 with SHA-256',6,6],
     # DIFFERENT SECURITY LEVELS WITH SHA-512
-    [['./output/dilithium2_sha512_ref', './output/falcon2_ref_sha512', './output/sphincs128_sha512_ref', './output/dilithium2_sha512_avx2', './output/falcon2_avx2_sha512', './output/sphincs128_sha512_avx2', './output/rsa_128_sha512'], 'deprecated/TM_SG_128bit_security_level_sha512.png', 'Security Level 1 & 2 with SHA-512'],
-    [['./output/dilithium3_sha512_ref', './output/sphincs192_sha512_ref', './output/dilithium3_sha512_avx2', './output/sphincs192_sha512_avx2', './output/rsa_192_sha512'], 'deprecated/TM_SG_192bit_security_level_sha512.png', 'Security Level 3 with SHA-512'],
-    [['./output/dilithium5_sha512_ref', './output/falcon5_ref_sha512', './output/sphincs256_sha512_ref', './output/dilithium5_sha512_avx2', './output/falcon5_avx2_sha512', './output/sphincs256_sha512_avx2', './output/rsa_256_sha512'], 'deprecated/TM_SG_256bit_security_level_sha512.png', 'Security Level 5 with SHA-512'],
+    [['./output/dilithium2_sha512_ref', './output/falcon2_ref_sha512', './output/sphincs128_sha512_ref', './output/dilithium2_sha512_avx2', './output/falcon2_avx2_sha512', './output/sphincs128_sha512_avx2', './output/rsa_128_sha512'], 'deprecated/TM_SG_128bit_security_level_sha512.png', 'Security Level 1 & 2 with SHA-512',6,6],
+    [['./output/dilithium3_sha512_ref', './output/sphincs192_sha512_ref', './output/dilithium3_sha512_avx2', './output/sphincs192_sha512_avx2', './output/rsa_192_sha512'], 'deprecated/TM_SG_192bit_security_level_sha512.png', 'Security Level 3 with SHA-512',6,6],
+    [['./output/dilithium5_sha512_ref', './output/falcon5_ref_sha512', './output/sphincs256_sha512_ref', './output/dilithium5_sha512_avx2', './output/falcon5_avx2_sha512', './output/sphincs256_sha512_avx2', './output/rsa_256_sha512'], 'deprecated/TM_SG_256bit_security_level_sha512.png', 'Security Level 5 with SHA-512',6,6],
     # DOUBLE CHECK
-    [['./output/dilithium2_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './output/dilithium3_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/TM_SG_dilithium.png', 'Dilithium Version - Double Check'],
-    [['./output/falcon2_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/TM_SG_falcon.png', 'Falcon Version - Double Check'],
-    [['./output/sphincs128_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './output/sphincs192_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/TM_SG_sphincs.png', 'Sphincs+ Version - Double Check']
+    [['./output/dilithium2_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './output/dilithium3_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/TM_SG_dilithium.png', 'Dilithium - Double Check',6,6],
+    [['./output/falcon2_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/TM_SG_falcon.png', 'Falcon - Double Check',6,6],
+    [['./output/sphincs128_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './output/sphincs192_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/TM_SG_sphincs.png', 'Sphincs+ - Double Check',6,6]
 ]
 
 
@@ -490,7 +492,7 @@ with tqdm(total=len(file_groups), desc="Generating Sign Time Plots", unit="plot"
 
 # Funzione per creare il grafico a barre con il tempo medio di firma
 def create_sign_time_histogram_plot(df_all, output_file, title):
-    plt.figure(figsize=(12,7))
+    plt.figure(figsize=(file_paths[3], file_paths[4]))
     
     # Calcola il tempo medio di firma per ogni combinazione di algoritmo e versione
     avg_sign_times = df_all.groupby(['algorithm', 'version'])['sign_time'].mean().reset_index()
@@ -505,7 +507,7 @@ def create_sign_time_histogram_plot(df_all, output_file, title):
     
     plt.xlabel('Algorithm')
     plt.ylabel('Average Sign Time (seconds)')
-    plt.title('Average Sign Time by Algorithm and Version - ' + title)
+    plt.title('Average Sign Time - ' + title)
     plt.legend(title='Version')
     plt.grid(True)
     plt.yscale('log')
@@ -516,23 +518,23 @@ def create_sign_time_histogram_plot(df_all, output_file, title):
 
 # Gruppi di file da confrontare + nome di salvataggio grafo
 file_groups = [ # WITH SHA-256
-    [['./output/dilithium2_sha256_ref', './output/dilithium3_sha256_ref', './output/dilithium5_sha256_ref', './output/dilithium2_sha256_avx2', './output/dilithium3_sha256_avx2', './output/dilithium5_sha256_avx2'], 'TM_SG_H_dilithium_sha256.png', 'Dilithium Versions with SHA-256'],
-    [['./output/falcon2_ref_sha256', './output/falcon5_ref_sha256', './output/falcon2_avx2_sha256', './output/falcon5_avx2_sha256'], 'TM_SG_H_falcon_sha256.png', 'Falcon Versions with SHA-256'],
-    [['./output/sphincs128_sha256_ref', './output/sphincs192_sha256_ref', './output/sphincs256_sha256_ref', './output/sphincs128_sha256_avx2', './output/sphincs192_sha256_avx2', './output/sphincs256_sha256_avx2'], 'TM_SG_H_sphincs_sha256.png', 'Sphincs+ Versions with SHA-256'],
-    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'TM_SG_H_rsa_sha256.png', 'RSA Versions with SHA-256'],
+    [['./output/dilithium2_sha256_ref', './output/dilithium3_sha256_ref', './output/dilithium5_sha256_ref', './output/dilithium2_sha256_avx2', './output/dilithium3_sha256_avx2', './output/dilithium5_sha256_avx2'], 'TM_SG_H_dilithium_sha256.png', 'Dilithium Versions with SHA-256',12,7],
+    [['./output/falcon2_ref_sha256', './output/falcon5_ref_sha256', './output/falcon2_avx2_sha256', './output/falcon5_avx2_sha256'], 'TM_SG_H_falcon_sha256.png', 'Falcon Versions with SHA-256',12,7],
+    [['./output/sphincs128_sha256_ref', './output/sphincs192_sha256_ref', './output/sphincs256_sha256_ref', './output/sphincs128_sha256_avx2', './output/sphincs192_sha256_avx2', './output/sphincs256_sha256_avx2'], 'TM_SG_H_sphincs_sha256.png', 'Sphincs+ Versions with SHA-256',12,7],
+    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'TM_SG_H_rsa_sha256.png', 'RSA Versions with SHA-256',12,7],
     # WITH SHA-512
-    [['./output/dilithium2_sha512_ref', './output/dilithium3_sha512_ref', './output/dilithium5_sha512_ref', './output/dilithium2_sha512_avx2', './output/dilithium3_sha512_avx2', './output/dilithium5_sha512_avx2'], 'TM_SG_H_dilithium_sha512.png', 'Dilithium Versions with SHA-512'],
-    [['./output/falcon2_ref_sha512', './output/falcon5_ref_sha512', './output/falcon2_avx2_sha512', './output/falcon5_avx2_sha512'], 'TM_SG_H_falcon_sha512.png', 'Falcon Versions with SHA-512'],
-    [['./output/sphincs128_sha512_ref', './output/sphincs192_sha512_ref', './output/sphincs256_sha512_ref', './output/sphincs128_sha512_avx2', './output/sphincs192_sha512_avx2', './output/sphincs256_sha512_avx2'], 'TM_SG_H_sphincs_sha512.png', 'Sphincs+ Versions with SHA-512'],
-    [['./output/rsa_80_sha512', './output/rsa_112_sha512', './output/rsa_128_sha512', './output/rsa_192_sha512', './output/rsa_256_sha512'], 'TM_SG_H_rsa_sha512.png', 'RSA Versions with SHA-512'],
+    [['./output/dilithium2_sha512_ref', './output/dilithium3_sha512_ref', './output/dilithium5_sha512_ref', './output/dilithium2_sha512_avx2', './output/dilithium3_sha512_avx2', './output/dilithium5_sha512_avx2'], 'TM_SG_H_dilithium_sha512.png', 'Dilithium Versions with SHA-512',12,7],
+    [['./output/falcon2_ref_sha512', './output/falcon5_ref_sha512', './output/falcon2_avx2_sha512', './output/falcon5_avx2_sha512'], 'TM_SG_H_falcon_sha512.png', 'Falcon Versions with SHA-512',12,7],
+    [['./output/sphincs128_sha512_ref', './output/sphincs192_sha512_ref', './output/sphincs256_sha512_ref', './output/sphincs128_sha512_avx2', './output/sphincs192_sha512_avx2', './output/sphincs256_sha512_avx2'], 'TM_SG_H_sphincs_sha512.png', 'Sphincs+ Versions with SHA-512',12,7],
+    [['./output/rsa_80_sha512', './output/rsa_112_sha512', './output/rsa_128_sha512', './output/rsa_192_sha512', './output/rsa_256_sha512'], 'TM_SG_H_rsa_sha512.png', 'RSA Versions with SHA-512',12,7],
     # DIFFERENT SECURITY LEVELS WITH SHA-256
-    [['./output/dilithium2_sha256_ref', './output/falcon2_ref_sha256', './output/sphincs128_sha256_ref', './output/dilithium2_sha256_avx2', './output/falcon2_avx2_sha256', './output/sphincs128_sha256_avx2', './output/rsa_128_sha256'], 'TM_SG_H_128bit_security_level_sha256.png', 'Security Level 1 & 2 with SHA-256'],
-    [['./output/dilithium3_sha256_ref', './output/sphincs192_sha256_ref', './output/dilithium3_sha256_avx2', './output/sphincs192_sha256_avx2', './output/rsa_192_sha256'], 'TM_SG_H_192bit_security_level_sha256.png', 'Security Level 3 with SHA-256'],
-    [['./output/dilithium5_sha256_ref', './output/falcon5_ref_sha256', './output/sphincs256_sha256_ref', './output/dilithium5_sha256_avx2', './output/falcon5_avx2_sha256', './output/sphincs256_sha256_avx2', './output/rsa_256_sha256'], 'TM_SG_H_256bit_security_level_sha256.png', 'Security Level 5 with SHA-256'],
+    [['./output/dilithium2_sha256_ref', './output/falcon2_ref_sha256', './output/sphincs128_sha256_ref', './output/dilithium2_sha256_avx2', './output/falcon2_avx2_sha256', './output/sphincs128_sha256_avx2', './output/rsa_128_sha256'], 'TM_SG_H_128bit_security_level_sha256.png', 'Security Level 1 & 2 with SHA-256',12,7],
+    [['./output/dilithium3_sha256_ref', './output/sphincs192_sha256_ref', './output/dilithium3_sha256_avx2', './output/sphincs192_sha256_avx2', './output/rsa_192_sha256'], 'TM_SG_H_192bit_security_level_sha256.png', 'Security Level 3 with SHA-256',12,7],
+    [['./output/dilithium5_sha256_ref', './output/falcon5_ref_sha256', './output/sphincs256_sha256_ref', './output/dilithium5_sha256_avx2', './output/falcon5_avx2_sha256', './output/sphincs256_sha256_avx2', './output/rsa_256_sha256'], 'TM_SG_H_256bit_security_level_sha256.png', 'Security Level 5 with SHA-256',12,7],
     # DIFFERENT SECURITY LEVELS WITH SHA-512
-    [['./output/dilithium2_sha512_ref', './output/falcon2_ref_sha512', './output/sphincs128_sha512_ref', './output/dilithium2_sha512_avx2', './output/falcon2_avx2_sha512', './output/sphincs128_sha512_avx2', './output/rsa_128_sha512'], 'TM_SG_H_128bit_security_level_sha512.png', 'Security Level 1 & 2 with SHA-512'],
-    [['./output/dilithium3_sha512_ref', './output/sphincs192_sha512_ref', './output/dilithium3_sha512_avx2', './output/sphincs192_sha512_avx2', './output/rsa_192_sha512'], 'TM_SG_H_192bit_security_level_sha512.png', 'Security Level 3 with SHA-512'],
-    [['./output/dilithium5_sha512_ref', './output/falcon5_ref_sha512', './output/sphincs256_sha512_ref', './output/dilithium5_sha512_avx2', './output/falcon5_avx2_sha512', './output/sphincs256_sha512_avx2', './output/rsa_256_sha512'], 'TM_SG_H_256bit_security_level_sha512.png', 'Security Level 5 with SHA-512']
+    [['./output/dilithium2_sha512_ref', './output/falcon2_ref_sha512', './output/sphincs128_sha512_ref', './output/dilithium2_sha512_avx2', './output/falcon2_avx2_sha512', './output/sphincs128_sha512_avx2', './output/rsa_128_sha512'], 'TM_SG_H_128bit_security_level_sha512.png', 'Security Level 1 & 2 with SHA-512',12,7],
+    [['./output/dilithium3_sha512_ref', './output/sphincs192_sha512_ref', './output/dilithium3_sha512_avx2', './output/sphincs192_sha512_avx2', './output/rsa_192_sha512'], 'TM_SG_H_192bit_security_level_sha512.png', 'Security Level 3 with SHA-512',12,7],
+    [['./output/dilithium5_sha512_ref', './output/falcon5_ref_sha512', './output/sphincs256_sha512_ref', './output/dilithium5_sha512_avx2', './output/falcon5_avx2_sha512', './output/sphincs256_sha512_avx2', './output/rsa_256_sha512'], 'TM_SG_H_256bit_security_level_sha512.png', 'Security Level 5 with SHA-512',12,7]
 ]
 
 
@@ -553,7 +555,7 @@ with tqdm(total=len(file_groups), desc="Generating Sign Time H-Plots", unit="plo
 
 # Funzione per creare il grafico con simboli diversi per REF e AVX2
 def create_verify_time_plot(df_all, output_file, title):
-    plt.figure(figsize=(10,6))
+    plt.figure(figsize=(file_paths[3], file_paths[4]))
     
     # Definisci la palette di colori per gli algoritmi
     palette = sns.color_palette("tab10", n_colors=len(df_all['algorithm'].unique()))
@@ -571,8 +573,8 @@ def create_verify_time_plot(df_all, output_file, title):
     
     plt.xlabel('Message Length (bytes)')
     plt.ylabel('Verify Time (seconds)')
-    plt.title('Verify Time vs Message Length - ' + title)
-    plt.legend(title='Algorithm and Version')
+    plt.title('Verify Time - ' + title)
+    plt.legend(title='Algorithm and Version',fontsize=12)
     plt.grid(True)
     plt.xscale('log')
     plt.yscale('log')
@@ -583,47 +585,47 @@ def create_verify_time_plot(df_all, output_file, title):
 
 # Gruppi di file da confrontare + nome di salvataggio grafo
 file_groups = [# NORMAL VERSIONS
-    [['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref', './output/dilithium2_avx2', './output/dilithium3_avx2', './output/dilithium5_avx2'], 'TM_VF_dilithium.png', 'Dilithium Versions'],
-    [['./output/falcon2_ref', './output/falcon5_ref', './output/falcon2_avx2', './output/falcon5_avx2'], 'TM_VF_falcon.png', 'Falcon Versions'],
-    [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref', './output/sphincs128_avx2', './output/sphincs192_avx2', './output/sphincs256_avx2'], 'TM_VF_sphincs.png', 'Sphincs+ Versions'],
-    [['./output/rsa_80_sha256', './output/rsa_80_sha512', './output/rsa_112_sha256',  './output/rsa_112_sha512', './output/rsa_128_sha256', './output/rsa_128_sha512', './output/rsa_192_sha256', './output/rsa_192_sha512', './output/rsa_256_sha256', './output/rsa_256_sha512'], 'TM_VF_rsa.png', 'RSA Versions'],
+    [['./output/dilithium2_ref', './output/dilithium3_ref', './output/dilithium5_ref', './output/dilithium2_avx2', './output/dilithium3_avx2', './output/dilithium5_avx2'], 'TM_VF_dilithium.png', 'Dilithium Versions',6,6],
+    [['./output/falcon2_ref', './output/falcon5_ref', './output/falcon2_avx2', './output/falcon5_avx2'], 'TM_VF_falcon.png', 'Falcon Versions',6,6],
+    [['./output/sphincs128_ref', './output/sphincs192_ref', './output/sphincs256_ref', './output/sphincs128_avx2', './output/sphincs192_avx2', './output/sphincs256_avx2'], 'TM_VF_sphincs.png', 'Sphincs+ Versions',6,6],
+    [['./output/rsa_80_sha256', './output/rsa_80_sha512', './output/rsa_112_sha256',  './output/rsa_112_sha512', './output/rsa_128_sha256', './output/rsa_128_sha512', './output/rsa_192_sha256', './output/rsa_192_sha512', './output/rsa_256_sha256', './output/rsa_256_sha512'], 'TM_VF_rsa.png', 'RSA Versions',6,6],
     # WITH SHA-256
-    [['./output/dilithium2_sha256_ref', './output/dilithium3_sha256_ref', './output/dilithium5_sha256_ref', './output/dilithium2_sha256_avx2', './output/dilithium3_sha256_avx2', './output/dilithium5_sha256_avx2'], 'deprecated/TM_VF_dilithium_sha256.png', 'Dilithium Versions with SHA-256'],
-    [['./output/falcon2_ref_sha256', './output/falcon5_ref_sha256', './output/falcon2_avx2_sha256', './output/falcon5_avx2_sha256'], 'deprecated/TM_VF_falcon_sha256.png', 'Falcon Versions with SHA-256'],
-    [['./output/sphincs128_sha256_ref', './output/sphincs192_sha256_ref', './output/sphincs256_sha256_ref', './output/sphincs128_sha256_avx2', './output/sphincs192_sha256_avx2', './output/sphincs256_sha256_avx2'], 'deprecated/TM_VF_sphincs_sha256.png', 'Sphincs+ Versions with SHA-256'],
-    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'deprecated/TM_VF_rsa_sha256.png', 'RSA Versions with SHA-256'],
+    [['./output/dilithium2_sha256_ref', './output/dilithium3_sha256_ref', './output/dilithium5_sha256_ref', './output/dilithium2_sha256_avx2', './output/dilithium3_sha256_avx2', './output/dilithium5_sha256_avx2'], 'deprecated/TM_VF_dilithium_sha256.png', 'Dilithium Versions with SHA-256',6,6],
+    [['./output/falcon2_ref_sha256', './output/falcon5_ref_sha256', './output/falcon2_avx2_sha256', './output/falcon5_avx2_sha256'], 'deprecated/TM_VF_falcon_sha256.png', 'Falcon Versions with SHA-256',6,6],
+    [['./output/sphincs128_sha256_ref', './output/sphincs192_sha256_ref', './output/sphincs256_sha256_ref', './output/sphincs128_sha256_avx2', './output/sphincs192_sha256_avx2', './output/sphincs256_sha256_avx2'], 'deprecated/TM_VF_sphincs_sha256.png', 'Sphincs+ Versions with SHA-256',6,6],
+    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'deprecated/TM_VF_rsa_sha256.png', 'RSA Versions with SHA-256',6,6],
     # WITH SHA-512
-    [['./output/dilithium2_sha512_ref', './output/dilithium3_sha512_ref', './output/dilithium5_sha512_ref', './output/dilithium2_sha512_avx2', './output/dilithium3_sha512_avx2', './output/dilithium5_sha512_avx2'], 'deprecated/TM_VF_dilithium_sha512.png', 'Dilithium Versions with SHA-512'],
-    [['./output/falcon2_ref_sha512', './output/falcon5_ref_sha512', './output/falcon2_avx2_sha512', './output/falcon5_avx2_sha512'], 'deprecated/TM_VF_falcon_sha512.png', 'Falcon Versions with SHA-512'],
-    [['./output/sphincs128_sha512_ref', './output/sphincs192_sha512_ref', './output/sphincs256_sha512_ref', './output/sphincs128_sha512_avx2', './output/sphincs192_sha512_avx2', './output/sphincs256_sha512_avx2'], 'deprecated/TM_VF_sphincs_sha512.png', 'Sphincs+ Versions with SHA-512'],
-    [['./output/rsa_80_sha512', './output/rsa_112_sha512', './output/rsa_128_sha512', './output/rsa_192_sha512', './output/rsa_256_sha512'], 'deprecated/TM_VF_rsa_sha512.png', 'RSA Versions with SHA-512'],
+    [['./output/dilithium2_sha512_ref', './output/dilithium3_sha512_ref', './output/dilithium5_sha512_ref', './output/dilithium2_sha512_avx2', './output/dilithium3_sha512_avx2', './output/dilithium5_sha512_avx2'], 'deprecated/TM_VF_dilithium_sha512.png', 'Dilithium Versions with SHA-512',6,6],
+    [['./output/falcon2_ref_sha512', './output/falcon5_ref_sha512', './output/falcon2_avx2_sha512', './output/falcon5_avx2_sha512'], 'deprecated/TM_VF_falcon_sha512.png', 'Falcon Versions with SHA-512',6,6],
+    [['./output/sphincs128_sha512_ref', './output/sphincs192_sha512_ref', './output/sphincs256_sha512_ref', './output/sphincs128_sha512_avx2', './output/sphincs192_sha512_avx2', './output/sphincs256_sha512_avx2'], 'deprecated/TM_VF_sphincs_sha512.png', 'Sphincs+ Versions with SHA-512',6,6],
+    [['./output/rsa_80_sha512', './output/rsa_112_sha512', './output/rsa_128_sha512', './output/rsa_192_sha512', './output/rsa_256_sha512'], 'deprecated/TM_VF_rsa_sha512.png', 'RSA Versions with SHA-512',6,6],
     # ONLY DILITHIUM 2,3,5
-    [['./output/dilithium2_ref', './output/dilithium2_sha256_ref', './output/dilithium2_sha512_ref', './output/dilithium2_avx2', './output/dilithium2_sha256_avx2', './output/dilithium2_sha512_avx2'], 'TM_VF_dilithium_2_All.png', 'Dilithium 2 Versions vs SHA'],
-    [['./output/dilithium3_ref', './output/dilithium3_sha256_ref', './output/dilithium3_sha512_ref', './output/dilithium3_avx2', './output/dilithium3_sha256_avx2', './output/dilithium3_sha512_avx2'], 'TM_VF_dilithium_3_All.png', 'Dilithium 3 Versions vs SHA'],
-    [['./output/dilithium5_ref', './output/dilithium5_sha256_ref', './output/dilithium5_sha512_ref', './output/dilithium5_avx2', './output/dilithium5_sha256_avx2', './output/dilithium5_sha512_avx2'], 'TM_VF_dilithium_5_All.png', 'Dilithium 5 Versions vs SHA'],
+    [['./output/dilithium2_ref', './output/dilithium2_sha256_ref', './output/dilithium2_sha512_ref', './output/dilithium2_avx2', './output/dilithium2_sha256_avx2', './output/dilithium2_sha512_avx2'], 'TM_VF_dilithium_2_All.png', 'Dilithium 2 Versions vs SHA',6,6],
+    [['./output/dilithium3_ref', './output/dilithium3_sha256_ref', './output/dilithium3_sha512_ref', './output/dilithium3_avx2', './output/dilithium3_sha256_avx2', './output/dilithium3_sha512_avx2'], 'TM_VF_dilithium_3_All.png', 'Dilithium 3 Versions vs SHA',6,6],
+    [['./output/dilithium5_ref', './output/dilithium5_sha256_ref', './output/dilithium5_sha512_ref', './output/dilithium5_avx2', './output/dilithium5_sha256_avx2', './output/dilithium5_sha512_avx2'], 'TM_VF_dilithium_5_All.png', 'Dilithium 5 Versions vs SHA',6,6],
     # ONLY FALCON 512 and 1024
-    [['./output/falcon2_ref', './output/falcon2_ref_sha256', './output/falcon2_ref_sha512', './output/falcon2_avx2', './output/falcon2_avx2_sha256', './output/falcon2_avx2_sha512'], 'TM_VF_falcon_2_All.png', 'Falcon 2 Versions vs SHA'],
-    [['./output/falcon5_ref', './output/falcon5_ref_sha256', './output/falcon5_ref_sha512', './output/falcon5_avx2', './output/falcon5_avx2_sha256', './output/falcon5_avx2_sha512'], 'TM_VF_falcon_5_All.png', 'Falcon 5 Versions vs SHA'],
+    [['./output/falcon2_ref', './output/falcon2_ref_sha256', './output/falcon2_ref_sha512', './output/falcon2_avx2', './output/falcon2_avx2_sha256', './output/falcon2_avx2_sha512'], 'TM_VF_falcon_2_All.png', 'Falcon 2 Versions vs SHA',6,6],
+    [['./output/falcon5_ref', './output/falcon5_ref_sha256', './output/falcon5_ref_sha512', './output/falcon5_avx2', './output/falcon5_avx2_sha256', './output/falcon5_avx2_sha512'], 'TM_VF_falcon_5_All.png', 'Falcon 5 Versions vs SHA',6,6],
     # ONLY SPHINCS+ 128,192,256
-    [['./output/sphincs128_ref', './output/sphincs128_sha256_ref', './output/sphincs128_sha512_ref', './output/sphincs128_avx2', './output/sphincs128_sha256_avx2', './output/sphincs128_sha512_avx2'], 'TM_VF_sphincs_128_All.png', 'SPHINCS+ 128 Versions vs SHA'],
-    [['./output/sphincs192_ref', './output/sphincs192_sha256_ref', './output/sphincs192_sha512_ref', './output/sphincs192_avx2', './output/sphincs192_sha256_avx2', './output/sphincs192_sha512_avx2'], 'TM_VF_sphincs_192_All.png', 'SPHINCS+ 192 Versions vs SHA'],
-    [['./output/sphincs256_ref', './output/sphincs256_sha256_ref', './output/sphincs256_sha512_ref', './output/sphincs256_avx2', './output/sphincs256_sha256_avx2', './output/sphincs256_sha512_avx2'], 'TM_VF_sphincs_256_All.png', 'SPHINCS+ 256 Versions vs SHA'],
+    [['./output/sphincs128_ref', './output/sphincs128_sha256_ref', './output/sphincs128_sha512_ref', './output/sphincs128_avx2', './output/sphincs128_sha256_avx2', './output/sphincs128_sha512_avx2'], 'TM_VF_sphincs_128_All.png', 'SPHINCS+ 128 Versions vs SHA',6,6],
+    [['./output/sphincs192_ref', './output/sphincs192_sha256_ref', './output/sphincs192_sha512_ref', './output/sphincs192_avx2', './output/sphincs192_sha256_avx2', './output/sphincs192_sha512_avx2'], 'TM_VF_sphincs_192_All.png', 'SPHINCS+ 192 Versions vs SHA',6,6],
+    [['./output/sphincs256_ref', './output/sphincs256_sha256_ref', './output/sphincs256_sha512_ref', './output/sphincs256_avx2', './output/sphincs256_sha256_avx2', './output/sphincs256_sha512_avx2'], 'TM_VF_sphincs_256_All.png', 'SPHINCS+ 256 Versions vs SHA',6,6],
     # DIFFERENT SECURITY LEVELS WITH NO SHA
-    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/dilithium2_avx2', './output/falcon2_avx2', './output/sphincs128_avx2'], 'TM_VF_128bit_security_level.png', 'Security Level 1 & 2'],
-    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/dilithium3_avx2', './output/sphincs192_avx2'], 'TM_VF_192bit_security_level.png', 'Security Level 3'],
-    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/dilithium5_avx2', './output/falcon5_avx2', './output/sphincs256_avx2'], 'TM_VF_256bit_security_level.png', 'Security Level 5'],
+    [['./output/dilithium2_ref', './output/falcon2_ref', './output/sphincs128_ref', './output/dilithium2_avx2', './output/falcon2_avx2', './output/sphincs128_avx2'], 'TM_VF_128bit_security_level.png', 'Security Level 1 & 2',6,6],
+    [['./output/dilithium3_ref', './output/sphincs192_ref', './output/dilithium3_avx2', './output/sphincs192_avx2'], 'TM_VF_192bit_security_level.png', 'Security Level 3',6,6],
+    [['./output/dilithium5_ref', './output/falcon5_ref', './output/sphincs256_ref', './output/dilithium5_avx2', './output/falcon5_avx2', './output/sphincs256_avx2'], 'TM_VF_256bit_security_level.png', 'Security Level 5',6,6],
     # DIFFERENT SECURITY LEVELS WITH SHA-256
-    [['./output/dilithium2_sha256_ref', './output/falcon2_ref_sha256', './output/sphincs128_sha256_ref', './output/dilithium2_sha256_avx2', './output/falcon2_avx2_sha256', './output/sphincs128_sha256_avx2', './output/rsa_128_sha256'], 'deprecated/TM_VF_128bit_security_level_sha256.png', 'Security Level 1 & 2 with SHA-256'],
-    [['./output/dilithium3_sha256_ref', './output/sphincs192_sha256_ref', './output/dilithium3_sha256_avx2', './output/sphincs192_sha256_avx2', './output/rsa_192_sha256'], 'deprecated/TM_VF_192bit_security_level_sha256.png', 'Security Level 3 with SHA-256'],
-    [['./output/dilithium5_sha256_ref', './output/falcon5_ref_sha256', './output/sphincs256_sha256_ref', './output/dilithium5_sha256_avx2', './output/falcon5_avx2_sha256', './output/sphincs256_sha256_avx2', './output/rsa_256_sha256'], 'deprecated/TM_VF_256bit_security_level_sha256.png', 'Security Level 5 with SHA-256'],
+    [['./output/dilithium2_sha256_ref', './output/falcon2_ref_sha256', './output/sphincs128_sha256_ref', './output/dilithium2_sha256_avx2', './output/falcon2_avx2_sha256', './output/sphincs128_sha256_avx2', './output/rsa_128_sha256'], 'deprecated/TM_VF_128bit_security_level_sha256.png', 'Security Level 1 & 2 with SHA-256',6,6],
+    [['./output/dilithium3_sha256_ref', './output/sphincs192_sha256_ref', './output/dilithium3_sha256_avx2', './output/sphincs192_sha256_avx2', './output/rsa_192_sha256'], 'deprecated/TM_VF_192bit_security_level_sha256.png', 'Security Level 3 with SHA-256',6,6],
+    [['./output/dilithium5_sha256_ref', './output/falcon5_ref_sha256', './output/sphincs256_sha256_ref', './output/dilithium5_sha256_avx2', './output/falcon5_avx2_sha256', './output/sphincs256_sha256_avx2', './output/rsa_256_sha256'], 'deprecated/TM_VF_256bit_security_level_sha256.png', 'Security Level 5 with SHA-256',6,6],
     # DIFFERENT SECURITY LEVELS WITH SHA-512
-    [['./output/dilithium2_sha512_ref', './output/falcon2_ref_sha512', './output/sphincs128_sha512_ref', './output/dilithium2_sha512_avx2', './output/falcon2_avx2_sha512', './output/sphincs128_sha512_avx2', './output/rsa_128_sha512'], 'deprecated/TM_VF_128bit_security_level_sha512.png', 'Security Level 1 & 2 with SHA-512'],
-    [['./output/dilithium3_sha512_ref', './output/sphincs192_sha512_ref', './output/dilithium3_sha512_avx2', './output/sphincs192_sha512_avx2', './output/rsa_192_sha512'], 'deprecated/TM_VF_192bit_security_level_sha512.png', 'Security Level 3 with SHA-512'],
-    [['./output/dilithium5_sha512_ref', './output/falcon5_ref_sha512', './output/sphincs256_sha512_ref', './output/dilithium5_sha512_avx2', './output/falcon5_avx2_sha512', './output/sphincs256_sha512_avx2', './output/rsa_256_sha512'], 'deprecated/TM_VF_256bit_security_level_sha512.png', 'Security Level 5 with SHA-512'],
+    [['./output/dilithium2_sha512_ref', './output/falcon2_ref_sha512', './output/sphincs128_sha512_ref', './output/dilithium2_sha512_avx2', './output/falcon2_avx2_sha512', './output/sphincs128_sha512_avx2', './output/rsa_128_sha512'], 'deprecated/TM_VF_128bit_security_level_sha512.png', 'Security Level 1 & 2 with SHA-512',6,6],
+    [['./output/dilithium3_sha512_ref', './output/sphincs192_sha512_ref', './output/dilithium3_sha512_avx2', './output/sphincs192_sha512_avx2', './output/rsa_192_sha512'], 'deprecated/TM_VF_192bit_security_level_sha512.png', 'Security Level 3 with SHA-512',6,6],
+    [['./output/dilithium5_sha512_ref', './output/falcon5_ref_sha512', './output/sphincs256_sha512_ref', './output/dilithium5_sha512_avx2', './output/falcon5_avx2_sha512', './output/sphincs256_sha512_avx2', './output/rsa_256_sha512'], 'deprecated/TM_VF_256bit_security_level_sha512.png', 'Security Level 5 with SHA-512',6,6],
     # DOUBLE CHECK
-    [['./output/dilithium2_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './output/dilithium3_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/TM_VF_dilithium.png', 'Dilithium Version - Double Check'],
-    [['./output/falcon2_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/TM_VF_falcon.png', 'Falcon Version - Double Check'],
-     [['./output/sphincs128_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './output/sphincs192_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/TM_VF_sphincs.png', 'Sphincs+ Version - Double Check']
+    [['./output/dilithium2_avx2', './liboqs_double_check/risultati_Dilithium2_avx2', './output/dilithium3_avx2', './liboqs_double_check/risultati_Dilithium3_avx2', './output/dilithium5_avx2', './liboqs_double_check/risultati_Dilithium5_avx2'], 'double_check/TM_VF_dilithium.png', 'Dilithium - Double Check',6,6],
+    [['./output/falcon2_avx2', './liboqs_double_check/risultati_Falcon-512_avx2', './output/falcon5_avx2', './liboqs_double_check/risultati_Falcon-1024_avx2'], 'double_check/TM_VF_falcon.png', 'Falcon - Double Check',6,6],
+     [['./output/sphincs128_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-128f-simple_avx2', './output/sphincs192_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-192f-simple_avx2', './output/sphincs256_avx2', './liboqs_double_check/risultati_SPHINCS+-SHA2-256f-simple_avx2'], 'double_check/TM_VF_sphincs.png', 'Sphincs+ - Double Check',6,6]
 ]
 
 # Aggiungi una progress bar
@@ -645,7 +647,7 @@ with tqdm(total=len(file_groups), desc="Generating Verify Time Plots", unit="plo
 
 # Funzione per creare il grafico a barre con il tempo medio di firma
 def create_verify_time_histogram_plot(df_all, output_file, title):
-    plt.figure(figsize=(12,7))
+    plt.figure(figsize=(file_paths[3], file_paths[4]))
     
     # Calcola il tempo medio di firma per ogni combinazione di algoritmo e versione
     avg_verify_times = df_all.groupby(['algorithm', 'version'])['verify_time'].mean().reset_index()
@@ -660,7 +662,7 @@ def create_verify_time_histogram_plot(df_all, output_file, title):
     
     plt.xlabel('Algorithm')
     plt.ylabel('Average Verify Time (seconds)')
-    plt.title('Average Verify Time by Algorithm and Version - ' + title)
+    plt.title('Average Verify Time - ' + title)
     plt.legend(title='Version')
     plt.grid(True)
     plt.yscale('log')
@@ -671,23 +673,23 @@ def create_verify_time_histogram_plot(df_all, output_file, title):
 
 # Gruppi di file da confrontare + nome di salvataggio grafo
 file_groups = [ # WITH SHA-256
-    [['./output/dilithium2_sha256_ref', './output/dilithium3_sha256_ref', './output/dilithium5_sha256_ref', './output/dilithium2_sha256_avx2', './output/dilithium3_sha256_avx2', './output/dilithium5_sha256_avx2'], 'TM_VF_H_dilithium_sha256.png', 'Dilithium Versions with SHA-256'],
-    [['./output/falcon2_ref_sha256', './output/falcon5_ref_sha256', './output/falcon2_avx2_sha256', './output/falcon5_avx2_sha256'], 'TM_VF_H_falcon_sha256.png', 'Falcon Versions with SHA-256'],
-    [['./output/sphincs128_sha256_ref', './output/sphincs192_sha256_ref', './output/sphincs256_sha256_ref', './output/sphincs128_sha256_avx2', './output/sphincs192_sha256_avx2', './output/sphincs256_sha256_avx2'], 'TM_VF_H_sphincs_sha256.png', 'Sphincs+ Versions with SHA-256'],
-    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'TM_VF_H_rsa_sha256.png', 'RSA Versions with SHA-256'],
+    [['./output/dilithium2_sha256_ref', './output/dilithium3_sha256_ref', './output/dilithium5_sha256_ref', './output/dilithium2_sha256_avx2', './output/dilithium3_sha256_avx2', './output/dilithium5_sha256_avx2'], 'TM_VF_H_dilithium_sha256.png', 'Dilithium Versions with SHA-256',12,7],
+    [['./output/falcon2_ref_sha256', './output/falcon5_ref_sha256', './output/falcon2_avx2_sha256', './output/falcon5_avx2_sha256'], 'TM_VF_H_falcon_sha256.png', 'Falcon Versions with SHA-256',12,7],
+    [['./output/sphincs128_sha256_ref', './output/sphincs192_sha256_ref', './output/sphincs256_sha256_ref', './output/sphincs128_sha256_avx2', './output/sphincs192_sha256_avx2', './output/sphincs256_sha256_avx2'], 'TM_VF_H_sphincs_sha256.png', 'Sphincs+ Versions with SHA-256',12,7],
+    [['./output/rsa_80_sha256', './output/rsa_112_sha256', './output/rsa_128_sha256', './output/rsa_192_sha256', './output/rsa_256_sha256'], 'TM_VF_H_rsa_sha256.png', 'RSA Versions with SHA-256',12,7],
     # WITH SHA-512
-    [['./output/dilithium2_sha512_ref', './output/dilithium3_sha512_ref', './output/dilithium5_sha512_ref', './output/dilithium2_sha512_avx2', './output/dilithium3_sha512_avx2', './output/dilithium5_sha512_avx2'], 'TM_VF_H_dilithium_sha512.png', 'Dilithium Versions with SHA-512'],
-    [['./output/falcon2_ref_sha512', './output/falcon5_ref_sha512', './output/falcon2_avx2_sha512', './output/falcon5_avx2_sha512'], 'TM_VF_H_falcon_sha512.png', 'Falcon Versions with SHA-512'],
-    [['./output/sphincs128_sha512_ref', './output/sphincs192_sha512_ref', './output/sphincs256_sha512_ref', './output/sphincs128_sha512_avx2', './output/sphincs192_sha512_avx2', './output/sphincs256_sha512_avx2'], 'TM_VF_H_sphincs_sha512.png', 'Sphincs+ Versions with SHA-512'],
-    [['./output/rsa_80_sha512', './output/rsa_112_sha512', './output/rsa_128_sha512', './output/rsa_192_sha512', './output/rsa_256_sha512'], 'TM_VF_H_rsa_sha512.png', 'RSA Versions with SHA-512'],
+    [['./output/dilithium2_sha512_ref', './output/dilithium3_sha512_ref', './output/dilithium5_sha512_ref', './output/dilithium2_sha512_avx2', './output/dilithium3_sha512_avx2', './output/dilithium5_sha512_avx2'], 'TM_VF_H_dilithium_sha512.png', 'Dilithium Versions with SHA-512',12,7],
+    [['./output/falcon2_ref_sha512', './output/falcon5_ref_sha512', './output/falcon2_avx2_sha512', './output/falcon5_avx2_sha512'], 'TM_VF_H_falcon_sha512.png', 'Falcon Versions with SHA-512',12,7],
+    [['./output/sphincs128_sha512_ref', './output/sphincs192_sha512_ref', './output/sphincs256_sha512_ref', './output/sphincs128_sha512_avx2', './output/sphincs192_sha512_avx2', './output/sphincs256_sha512_avx2'], 'TM_VF_H_sphincs_sha512.png', 'Sphincs+ Versions with SHA-512',12,7],
+    [['./output/rsa_80_sha512', './output/rsa_112_sha512', './output/rsa_128_sha512', './output/rsa_192_sha512', './output/rsa_256_sha512'], 'TM_VF_H_rsa_sha512.png', 'RSA Versions with SHA-512',12,7],
     # DIFFERENT SECURITY LEVELS WITH SHA-256
-    [['./output/dilithium2_sha256_ref', './output/falcon2_ref_sha256', './output/sphincs128_sha256_ref', './output/dilithium2_sha256_avx2', './output/falcon2_avx2_sha256', './output/sphincs128_sha256_avx2', './output/rsa_128_sha256'], 'TM_VF_H_128bit_security_level_sha256.png', 'Security Level 1 & 2 with SHA-256'],
-    [['./output/dilithium3_sha256_ref', './output/sphincs192_sha256_ref', './output/dilithium3_sha256_avx2', './output/sphincs192_sha256_avx2', './output/rsa_192_sha256'], 'TM_VF_H_192bit_security_level_sha256.png', 'Security Level 3 with SHA-256'],
-    [['./output/dilithium5_sha256_ref', './output/falcon5_ref_sha256', './output/sphincs256_sha256_ref', './output/dilithium5_sha256_avx2', './output/falcon5_avx2_sha256', './output/sphincs256_sha256_avx2', './output/rsa_256_sha256'], 'TM_VF_H_256bit_security_level_sha256.png', 'Security Level 5 with SHA-256'],
+    [['./output/dilithium2_sha256_ref', './output/falcon2_ref_sha256', './output/sphincs128_sha256_ref', './output/dilithium2_sha256_avx2', './output/falcon2_avx2_sha256', './output/sphincs128_sha256_avx2', './output/rsa_128_sha256'], 'TM_VF_H_128bit_security_level_sha256.png', 'Security Level 1 & 2 with SHA-256',12,7],
+    [['./output/dilithium3_sha256_ref', './output/sphincs192_sha256_ref', './output/dilithium3_sha256_avx2', './output/sphincs192_sha256_avx2', './output/rsa_192_sha256'], 'TM_VF_H_192bit_security_level_sha256.png', 'Security Level 3 with SHA-256',12,7],
+    [['./output/dilithium5_sha256_ref', './output/falcon5_ref_sha256', './output/sphincs256_sha256_ref', './output/dilithium5_sha256_avx2', './output/falcon5_avx2_sha256', './output/sphincs256_sha256_avx2', './output/rsa_256_sha256'], 'TM_VF_H_256bit_security_level_sha256.png', 'Security Level 5 with SHA-256',12,7],
     # DIFFERENT SECURITY LEVELS WITH SHA-512
-    [['./output/dilithium2_sha512_ref', './output/falcon2_ref_sha512', './output/sphincs128_sha512_ref', './output/dilithium2_sha512_avx2', './output/falcon2_avx2_sha512', './output/sphincs128_sha512_avx2', './output/rsa_128_sha512'], 'TM_VF_H_128bit_security_level_sha512.png', 'Security Level 1 & 2 with SHA-512'],
-    [['./output/dilithium3_sha512_ref', './output/sphincs192_sha512_ref', './output/dilithium3_sha512_avx2', './output/sphincs192_sha512_avx2', './output/rsa_192_sha512'], 'TM_VF_H_192bit_security_level_sha512.png', 'Security Level 3 with SHA-512'],
-    [['./output/dilithium5_sha512_ref', './output/falcon5_ref_sha512', './output/sphincs256_sha512_ref', './output/dilithium5_sha512_avx2', './output/falcon5_avx2_sha512', './output/sphincs256_sha512_avx2', './output/rsa_256_sha512'], 'TM_VF_H_256bit_security_level_sha512.png', 'Security Level 5 with SHA-512']
+    [['./output/dilithium2_sha512_ref', './output/falcon2_ref_sha512', './output/sphincs128_sha512_ref', './output/dilithium2_sha512_avx2', './output/falcon2_avx2_sha512', './output/sphincs128_sha512_avx2', './output/rsa_128_sha512'], 'TM_VF_H_128bit_security_level_sha512.png', 'Security Level 1 & 2 with SHA-512',12,7],
+    [['./output/dilithium3_sha512_ref', './output/sphincs192_sha512_ref', './output/dilithium3_sha512_avx2', './output/sphincs192_sha512_avx2', './output/rsa_192_sha512'], 'TM_VF_H_192bit_security_level_sha512.png', 'Security Level 3 with SHA-512',12,7],
+    [['./output/dilithium5_sha512_ref', './output/falcon5_ref_sha512', './output/sphincs256_sha512_ref', './output/dilithium5_sha512_avx2', './output/falcon5_avx2_sha512', './output/sphincs256_sha512_avx2', './output/rsa_256_sha512'], 'TM_VF_H_256bit_security_level_sha512.png', 'Security Level 5 with SHA-512',12,7]
 ]
 
 # Aggiungi una progress bar
