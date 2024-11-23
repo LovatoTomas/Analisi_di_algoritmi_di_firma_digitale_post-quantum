@@ -1,0 +1,44 @@
+% <<< margins <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+\setlrmarginsandblock{3cm}{2cm}{*} % {spine}{edge}{ratio}
+\setulmarginsandblock{3cm}{3cm}{*} % {upper}{lower}{ratio}
+
+% >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+% <<< headers & footers <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+% c\setheadfoot{\baselineskip}{1.2cm} % {headheight}{footskip}
+\setheadfoot{\baselineskip}{1cm} % {headheight}{footskip}
+\setheaderspaces{2cm}{*}{*} % {headdrop}{headsep}{ratio}
+
+\makepagestyle{thesis} % create new page style
+
+% change roman page numbers font
+\makeatletter
+\def\@roman#1{{\alt\romannumeral #1}}
+\makeatother
+
+\makeevenhead{thesis}{\alt\thepage}{}{\alt\leftmark} % {style}{left}{center}{right}
+\makeoddhead{thesis}{\alt\rightmark}{}{\alt\thepage} % {style}{left}{center}{right}
+\makeheadrule{thesis}{\textwidth}{2\normalrulethickness}
+
+% \makeevenfoot{thesis}{\alt\thepage}{}{\alt\leftmark} % {style}{left}{center}{right}
+% \makeoddfoot{thesis}{\alt\rightmark}{}{\alt\thepage} % {style}{left}{center}{right}
+% \makefootrule{thesis}{\textwidth}{2\normalrulethickness}{5pt}
+
+% add custom page numbers for chapter pages
+% \makepagestyle{thesischap}
+% \let\oldchapter\chapter
+% \renewcommand{\chapter}[1]{
+%     \oldchapter{#1}
+%     \thispagestyle{thesischap}
+% }
+
+% \makeoddfoot{thesischap}{\alt\leftmark}{}{\alt\thepage} % {style}{left}{center}{right}
+% \makefootrule{thesischap}{\textwidth}{2\normalrulethickness}{5pt}
+
+\pagestyle{thesis} % apply thesis pagestyle
+\OnehalfSpacing % set linespread to 1.5
+
+% >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+

@@ -1,0 +1,312 @@
+\chapter{Signature Schemes analizzati}
+
+Come già anticipato nelle precedenti sezioni, per la selezione degli algoritmi e come fonte di informazione principale è stato utilizzato il progetto di standardizzazione del NIST\cite{nist-pqc}. Questo capitolo introdurrà nel dettaglio i punti chiave del progetto e i candidati presi in esame.
+
+\section{La standardizzazione attuata dal NIST}
+
+Il \textit{NIST Post-Quantum Cryptography Standardization Process} \cite{nist-pqc} è un'iniziativa avviata nel 2016 con l'obiettivo di sviluppare nuovi standard per la crittografia post-quantum. Questo processo, che si estende su un periodo di medio-lungo termine, ha invitato ricercatori e sviluppatori di tutto il mondo a proporre soluzioni per la crittografia post-quantum. Entro un anno sono state ricevute più di ottanta candidature di cui la maggior parte rispettava i requisiti minimi e di accettabilità imposti. Dunque, tra il Q4 2017 e Q1 2019 sono stati valutati tutti i candidati ed è stato rilasciato il primo \textit{NIST report}, con tutte le analisi e le conclusioni dedotte per ciascun candidato.
+
+\subsection{Svolgimento}
+
+Fin da subito il progetto è stato ideato come una selezione a \textit{round}: inizialmente ne erano stati preventivati tre per raggiungere un grado di rifinitura adeguato sugli algoritmi proposti, tuttavia, il NIST ha indetto il quarto \textit{round} per permettere ad alcune proposte di rientrare nella standardizzazione fin da subito. Nella tabella \ref{tab:cronologiaNIST} vengono elencati i momenti chiave riguardo lo sviluppo dei \textit{round}.
+
+Dal rilascio della reportistica sul secondo \textit{round} è stato introdotto il concetto di candidato finalista e candidato alternativo:
+\begin{itemize}
+    \item Finalista: algoritmo che soddisfa le richieste e che, al momento della produzione del report, sembra idoneo all'implementazione dei nuovi sistemi PQC.
+    \item Alternativo: algoritmo che per alcuni aspetti (di bassa rilevanza) non è adatto alla standardizzazione su cui però il NIST vuole continuare a dedicare ricerca e sviluppo per una miglior rifinitura.
+\end{itemize}
+Essenzialmente i candidati alternativi sono sistemi di firma digitale che raggiungono tutti i requisiti di sicurezza ma che hanno prestazioni inferiori rispetto ai finalisti. Per questo motivo il NIST permette loro di partecipare ai successivi \textit{rounds}, allo scopo di introdurre modifiche indirizzate all'incremento delle performance \cite{NISTthirdReport}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|p{11cm}|}
+\hline
+\textbf{Data} & \textbf{Evento} \\ \hline
+\textbf{Febbraio 2016} & Standardizzazione PQC: Annuncio e presentazione del bando del NIST, tenuta al PQCrypto 2016 \\ \hline
+\textbf{Dicembre 2016} & Avviso nel registro federale – Richiesta di nomine per algoritmi di crittografia post-quantum a chiave pubblica \\ \hline
+\textbf{Novembre 2017} & Scadenza per la sottomissione per il processo di standardizzazione PQC del NIST \\ \hline
+\textbf{Dicembre 2017} & Candidati del primo \textit{round} annunciati. Inizio del periodo di commento pubblico sui candidati del primo \textit{round}. \\ \hline
+\textbf{Gennaio 2019} & Candidati del secondo \textit{round} annunciati. NIST IR 8240, \textit{Rapporto sul Primo Round del Processo di Standardizzazione della Crittografia Post-Quantistica del NIST}, pubblicato. Inizio del periodo di commento pubblico sui candidati del secondo \textit{round}. \\ \hline
+\textbf{Aprile 2020} & Il NIST ha invitato commenti da parte dei sottomittenti e della comunità per informare il processo decisionale per la selezione dei candidati del terzo \textit{round}. \\ \hline
+\textbf{Luglio 2020} & Finalisti del terzo \textit{round} e candidati alternativi annunciati. NIST IR 8309, \textit{Rapporto sul Secondo Round del Processo di Standardizzazione della Crittografia Post-Quantistica del NIST}, pubblicato. Inizio del periodo di commento pubblico sui candidati del terzo \textit{round}. \\ \hline
+\textbf{Luglio 2022} & Algoritmi candidati per la standardizzazione annunciati, insieme ai candidati alternativi che avanzano al quarto round. NIST IR 8413, \textit{Rapporto sul Terzo Round del Processo di Standardizzazione della Crittografia Post-Quantistica del NIST}, pubblicato. \\ \hline
+\textbf{Agosto 2024} & Pubblicazione dei primi standard su i finalisti del terzo \textit{round}: CRYSTALS-Kyber, CRYSTALS Dilithium e SPHINCS+ \cite{nist2024article} \\ \hline
+\textbf{In corso} & Valutazione dei candidati inviati al quarto \textit{round}: produzione del nuovo commento pubblico sulla base dei nuovi sviluppi e dei feedback degli esperti. \\ \hline
+\end{tabular}
+\caption{Cronologia del processo di standardizzazione PQC del NIST \cite{NISTthirdReport}}
+\label{tab:cronologiaNIST}
+\end{table}
+
+Entrambe le tipologie di algoritmi vengono inviate al \textit{round} successivo per la valutazione.
+Ovviamente tra un \textit{round} e il successivo è possibile effettuare delle modifiche minori al proprio codice al fine di ottimizzare le prestazioni, le risorse richieste oppure al fine di correggere vulnerabilità individuate dal NIST o dal team di ricerca stesso.
+
+Le valutazioni non sono definitive, per cui è possibile che un candidato alternativo divenga finalista (del \textit{round}) oppure venga scartato. Ad esempio, uno dei finalisti del secondo report per quanto riguarda i \textit{Digital Signature Systems} (DSS) è \textit{Rainbow} \cite{rainbow-website}, che è stato rifiutato durante il terzo round a causa di una vulnerabilità importante rilevata nella sicurezza dell'algoritmo. Al contrario \textit{SPHINCS+} \cite{sphincs-plus-website} è passato da essere un candidato alternativo ad essere un finalista.
+
+\subsection{Regolamentazione}
+
+Durante la fase di raccolta candidature dei \textit{rounds}, tutti i partecipanti alla competizione hanno dovuto presentare un \textit{Submission Package}. Il pacchetto consegnato era strutturato in una maniera ben definita dal NIST, al fine di poter valutare più facilmente il singolo candidato e di poterlo confrontare equamente con gli altri \cite{NISTevaluationCriteria}.
+
+Ciascun \textit{Submission Package}, consegnato per via digitale, doveva presentare al suo interno:
+\begin{enumerate}
+    \item \textbf{Struttura dei file}: i file devono essere organizzati in cartelle con una separazione logica chiara. Il NIST non ha mai definito uno standard preciso, in generale l'idea è di suddividere il materiale in cartelle dedicate alla documentazione, al codice sorgente, ai test unitari e di performance.
+    \item \textbf{Documentazione}: ogni proposta deve essere accompagnata dai fondamenti teorici utilizzati, dalla documentazione del codice, un approfondimento su tutti gli aspetti implementativi e dalle istruzioni su come compilare ed eseguire il codice sorgente consegnato nei vari ambienti.
+    \item \textbf{API}: il NIST ha definito dei prototipi per le funzioni che accomunano tutti i sistemi di firma digitale, i candidati sono invitati a seguire tali prototipi per quanto possibile. Parte dei prototipi è riportato nella sezione di codice \ref{code:crypto_sign_prototypes} \cite{nist-pqc-api}.
+    \item \textbf{Codice sorgente}: deve essere incluso il codice C degli algoritmi necessari ad implementare il sistema di firma digitale. Possono essere incluse implementazioni anche in altri linguaggi di programmazione. È stato scelto il linguaggio C per l'ampia portabilità e il vasto supporto alla compilazione su vario hardware.
+    \item \textbf{Codice dei performance test}: vanno inclusi anche degli script per provare la correttezza e le performance di parte degli algoritmi o dell'intero sistema di firma digitale.
+\end{enumerate}
+
+\begin{listing}[H]
+    \begin{minted}[breaklines,mathescape,gobble=2,framesep=2mm,rulecolor=\color{black}]{C}
+        // === PROTOTIPO PER GENERAZIONE DELLE CHIAVI ===
+        // Questa funzione genera una coppia di chiavi pubblica e privata. La chiave pubblica viene memorizzata nel buffer 'pk', mentre la chiave privata viene memorizzata nel buffer 'sk'.
+        int crypto_sign_keypair(unsigned char *pk, unsigned char *sk);
+    
+        // === PROTOTIPO PER FIRMA DEL MESSAGGIO ===
+        // Firma un messaggio utilizzando la chiave privata 'sk'. La firma e il messaggio 'm' vengono concatenati e memorizzati nel buffer 'sm'. La lunghezza totale del messaggio firmato viene memorizzata in 'smlen'.
+        int crypto_sign(unsigned char *sm, unsigned long long *smlen,
+                   const unsigned char *m, unsigned long long mlen,
+                   const unsigned char *sk);
+    
+        // === PROTOTIPO PER VERIFICA DELLA FIRMA ===
+        // Verifica la firma di un messaggio utilizzando la chiave pubblica 'pk'. Se la verifica ha successo, il messaggio originale viene estratto e memorizzato nel buffer 'm' e la sua lunghezza in 'mlen'.
+        int crypto_sign_open(unsigned char *m, unsigned long long *mlen,
+                        const unsigned char *sm, unsigned long long smlen,
+                        const unsigned char *pk);
+    \end{minted}
+    \caption{Codice C dei prototipi rilasciati dal NIST per la firma digitale \cite{nist-pqc-api}.}
+    \label{code:crypto_sign_prototypes}
+\end{listing}
+
+Nel caso un team presenti nuovamente la propria ricerca ad un \textit{round} successivo, il \textit{submission package} deve contenere anche un \textit{changelog} con le modifiche apportate rispetto alla versione precedentemente valutata dal NIST.
+
+Il codice C da consegnare in realtà deve includere due (o più) implementazioni dello stesso sistema, di seguito le ulteriori disposizioni della consegna:
+\begin{itemize}
+    \item Versione di riferimento (\textit{REF Version}): questo codice ha lo scopo di verificare l'effettivo funzionamento del sistema di firma. Deve essere compatibile con tutte (o quasi) le piattaforme hardware (x84, x64, ARM, eccetera). Il codice deve essere commentato e facilmente leggibile.
+    \item Versione ottimizzata (spesso definita \textit{AVX2 Version}): il team di ricerca deve includere una o più versioni degli stessi algoritmi ma con delle ottimizzazioni che permettano migliori performance. Non è richiesto che il codice sia compatibile con tutte le piattaforme (alcune ottimizzazioni che sfruttano hardware dedicato potrebbero essere incompatibili con altri sistemi) e non deve essere necessariamente commentato.
+\end{itemize}
+
+Infine, dal secondo \textit{round} il NIST richiede ai candidati di produrre un ulteriore documentazione il cui scopo è comprendere il livello di sicurezza del proprio algoritmo e le eventuali vulnerabilità che possono colpirlo o aspetti a cui è sensibile. Questo lavoro di ricerca svolto dai vari team viene poi valutato dal NIST ed esteso (se necessario) durante la stesura del report sui candidati \cite{NISTevaluationCriteria}.
+
+\subsection{Criteri di valutazione}
+
+Per decidere quali algoritmi sono da considerarsi finalisti, alternativi oppure rifiutati, il NIST ha specificato gli aspetti considerati durante la valutazione nella pagina dedicata al progetto \cite{NISTevaluationCriteria}. Di seguito vengono elencati in ordine di importanza:
+\begin{enumerate}
+    \item \textbf{Sicurezza}: è il criterio più importante su cui vengono valutati i candidati. Vengono verificate le teorie matematiche alla base del sistema di firma e successivamente la resistenza ad attacchi provenienti da computer quantistici.
+    \item \textbf{Costi e performance}: include dei test sull'efficienza computazionale in termini di tempo e spazio richiesti dagli algoritmi che compongono il sistema di firma digitale.
+    \item \textbf{Particolarità e caratteristiche di implementazione}: si valutano aspetti come la flessibilità di un sistema e l'eventuale facilità di adozione. Questo criterio valuta anche l'eventuale interoperabilità con gli attuali protocolli e standard.
+\end{enumerate}
+
+\subsection{I livelli di sicurezza}
+
+Definire la sicurezza di una proposta post-quantum è complesso poiché la valutazione viene effettuata su ciò che attualmente si conosce dei quantum computers e degli algoritmi che, eseguiti su di essi, possono minacciare le tecniche attuali (ad esempio \textit{Shor's algorithm} e \textit{Grover's algorithm}). In parte, viene calcolata tenendo conto di ipotesi sulle future capacità dei computer quantistici.
+
+Anche la classificazione in livelli di sicurezza non è un aspetto banale da considerare. Una pubblicazione passata del NIST specifica un criterio con cui collegare la sicurezza degli algoritmi a chiave simmetrica con la sicurezza degli algoritmi a chiave asimmetrica in funzione della lunghezza delle chiavi in bits e dei tempi di compromissione richiesti. Questi stessi criteri ovviamente possono essere utilizzati per definire il grado di sicurezza atteso degli algoritmi post-quantum  \cite{NISTsecurityLevelsTable}.
+
+Il NIST si riferisce ai livelli di sicurezza tramite un numero da 1 a 5, dove 1 indica il livello di sicurezza più debole e 5 il più forte. Un livello è associato alla difficoltà computazionale richiesta per compromettere un certo algoritmo a chiave simmetrica. 
+Un algoritmo a chiave asimmetrica (tra cui gli algoritmi di PQC trattati in questa tesi) appartiene ad un certo livello di sicurezza se la difficoltà computazionale richiesta per comprometterlo è nello stesso ordine di quella dell'algoritmo a chiave simmetrica associato a tale livello \cite{NISTsecurityLevelsTable}.
+
+Nella maggior parte dei casi, i bits di sicurezza coincidono con la lunghezza delle chiavi degli algoritmi a chiave simmetrica associati al livello di sicurezza. Poiché l'indice di confronto del livello 3 è AES-128 (algoritmo a chiave simmetrica), i bit di sicurezza sono 128 per via della lunghezza della chiave.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ | m{5em} | m{9em}| m{9em} | m{9em} | }
+\hline
+\textbf{Livello di Sicurezza} & \textbf{Bits di Sicurezza} & \textbf{Algoritmo a Chiave Simmetrica} & \textbf{Lunghezza Modulus RSA (in bit)}\\ \hline
+1 & 80  & 2TDEA  & $L = 1024$ \\ \hline
+2 & 112 & 3TDEA & $L = 2048$ \\ \hline
+3 & 128 & AES-128 & $L = 3072$ \\ \hline
+4 & 192 & AES-192 & $L = 7680$ \\ \hline
+5 & 256 & AES-256 & $L = 15360$ \\ \hline
+\end{tabular}
+\caption{Definizione del livello di sicurezza secondo il NIST \cite{NISTsecurityLevelsTable}.}
+\label{tab:SecurityLevels}
+\end{table}
+
+Nella tabella \ref{tab:SecurityLevels} vengono riassunte le definizioni del NIST per i vari livelli di sicurezza. Ad esempio RSA con \textit{Modulus} da 3072 bits appartiene al livello di sicurezza 3, cioè la difficoltà computazionale richiesta da un computer attuale (\textit{legacy}) per la compromissione è circa quello richiesto per compromettere AES-128.
+
+Implementazioni di RSA con \textit{Modulus} inferiori hanno livelli di sicurezza inferiori. Per i sistemi \textit{legacy} RSA-1024 possiede una sicurezza di livello 1 (cioè comparabile con un algoritmo a chiave simmetrica ad 80 bits), tuttavia per la tabella \ref{tab:SecurityLevelsIntroLegacyQuantum} è noto anche che il livello di sicurezza rispetto ad attacco proveniente da un quantum computer è circa nullo (a causa della vulnerabilità all'algoritmo di Shor).
+
+Al contrario, gli attuali algoritmi PQC sono studiati per mantenere lo stesso livello di sicurezza assegnato e quindi i rispettivi tempi di computazione in caso di attacco, sia se l'attacco proviene da sistemi tradizionali, sia se proviene da computer quantistici.
+
+Il NIST è intenzionato a standardizzare per primi gli algoritmi PQC che offrano i livelli di sicurezza compresi tra 1 e 3, poiché essi sono i livelli attualmente più utilizzati per gli attuali sistemi di crittografia e firma (RSA e ECC) in quanto offrono il giusto equilibrio tra sicurezza e prestazioni. Tuttavia, il NIST è interessato anche a proposte che permettano di raggiungere i livelli di sicurezza più elevati così da poter essere già pronti ad un futuro più prossimo che necessita di maggior sicurezza \cite{NISTthirdReport}. 
+
+\subsection{Ulteriori aspetti di sicurezza}
+
+Il NIST infine valuta la sicurezza dei candidati anche in maniere alternative alla definizione di livello di sicurezza. Quest'ultimo valuta la debolezza ad attacchi crittanalitici diretti, cioè attacchi il cui obiettivo è compromettere i sistemi attraverso analisi matematica o combinatoria delle informazioni di input e output (ad esempio attacchi \textit{brute force} per la ricerca della chiave).
+
+Il secondo aspetto valutato per tutti i candidati è la resistenza a:
+\begin{enumerate}
+    \item \textbf{Side Channel Attacks}: attacchi informatici che sfruttando informazioni \textit{collaterali} al processo di firma o crittografia, ad esempio i tempi di esecuzione o le risorse utilizzate per un singolo processo \cite{NISTthirdReport}.
+    \item \textbf{Multikey Attacks}: sfruttando uno scenario in cui sono utilizzate più chiavi, gli attaccanti possono cercare di dedurre informazioni sulle chiavi sfruttando le correlazioni tra gli input e gli output delle operazioni effettuate con le diverse chiavi.
+\end{enumerate}
+
+Infine, un altro aspetto rilevante è la \textit{Forward Secrecy}: è una proprietà dei sistemi crittografici o di firma digitale. Essa garantisce che in caso di compromissione della chiave privata in un certo momento, tutte le comunicazioni precedenti a tale data rimangano sicure e valide. È necessario quindi che ogni sessione di firma risulti indipendente dalle altre sebbene le chiavi coinvolte siano le stesse.
+
+\subsection{Algoritmi pronti per la standardizzazione}
+Come già anticipato, questa ricerca si concentra sul valutare i \textit{Signature Schemes} che hanno passato il terzo \textit{round}, siano essi finalisti oppure alternativi, e che sono stati dichiarati come pronti al processo di standardizzazione da parte del NIST.
+
+Tra questi, alcuni di essi hanno recentemente terminato il processo di standardizzazione, dunque il NIST invita gli amministratori dei sistemi che sfruttano principi di firma digitale (o algoritmi di crittografia a chiave asimmetrica) ad implementare le nuove specifiche rilasciate \cite{nist2024article}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ | m{10em} | m{9em}| m{14em} | }
+\hline
+\textbf{Signature Scheme} & \textbf{Stato di partenza} & \textbf{Stato di uscita}\\ \hline
+CRYSTALS Dilithium & Finalista & Standardizzato (08/2024) \\ \hline
+FALCON & Finalista & Standardizzazione in corso \\ \hline
+Rainbow & Finalista & Rifiutato \\ \hline
+GeMSS & Alternativo & Rifiutato \\ \hline
+Picnic & Alternativo & Rifiutato \\ \hline
+SPHINCS+ & Alternativo & Standardizzato (08/2024 \\ \hline
+\end{tabular}
+\caption{Schemi di firma digitale ammessi al terzo \textit{round} e i loro risultati \cite{NISTthirdReport}.}
+\label{tab:ThirdRoundFinalists}
+\end{table}
+
+La tabella \ref{tab:ThirdRoundFinalists} sottolinea che solo tre dei candidati al \textit{NIST Post-Quantum Cryptography Standardization Process} \cite{nist-pqc} sono stati selezionati per l'effettiva standardizzazione (di cui due recentemente standardizzati). Gli altri tre candidati sono stati rimossi poiché affetti da una vulnerabilità che ha compromesso in maniera significativa la sicurezza.
+
+Nelle prossime sezioni verranno approfondite nel dettaglio le caratteristiche di ciascuno dei tre candidati.
+
+\section{CRYSTALS Dilithium}
+
+CRYSTALS Dilithium è uno dei più promettenti schemi di firma digitale \textit{Lattice Based}, sviluppato come parte del progetto CRYSTALS (\textit{Cryptographic Suite for Algebraic Lattices})\cite{crystals-dilithium-website}. CRYSTALS è una suite che comprende due primitive appositamente studiate per la standardizzazione del NIST: \textit{Kyber} per i meccanismi di \textit{secure key-encapsulation} (KEM) e \textit{Dilithium} per i sistemi di firma digitale. Questo progetto partecipa quindi ad entrambe le partizioni della competizione indetta dal NIST per standardizzare gli algoritmi crittografici resistenti agli attacchi quantistici \cite{crystals-website}.
+
+\subsection{Sicurezza e basi teoriche}
+
+I problemi \textit{NP-Hard} su cui si basa CRYSTALS Dilithium sono:
+\begin{enumerate}
+    \item SVP (Shortest Vector Problem): ricerca del vettore più corto che collega due punti del reticolo senza passare per l'origine.
+    \item LWE (Learning With Errors): estensione del \textit{SIS problem} già citato in precedenza, costituisce il cuore della sicurezza della chiave pubblica \cite{NISTthirdReport}.
+\end{enumerate}
+
+Il processo di firma si basa sull'approccio \textit{Flat-Shamir with aborts}, una tecnica che riduce la probabilità di fallimento della firma tramite un \textit{riavvio controllato}: se durante il processo di firma alcuni vincoli non sono soddisfatti, l'intera procedura viene ripetuta più volte fino a che non si ottiene un risultato valido e sicuro \cite{crystalsdilithium-submissionpackage-one}.
+
+Per assicurarsi che tutti i tentativi siano diversi tra un riavvio e l'altro, viene mantenuto un contatore dei tentativi il cui valore è incluso nel contenuto da firmare, cosicché durante il calcolo degli hash si ottengano sempre valori unici. La robustezza di queste tecniche è supportata da numerose analisi che ne dimostrano la resistenza agli attacchi (tradizionali e quantistici) \cite{crystalsdilithium-submissionpackage-one}.
+
+CRYSTALS Dilithium implementa un algoritmo di firma \textit{zero-knowledge}, ovvero durante la produzione della firma e nella firma stessa non viene rilasciata alcuna informazione che può portare alla scoperta della chiave privata utilizzata. Questo aspetto è di cruciale importanza poiché garantisce sicurezza anche se la stessa chiave privata è utilizzata per un numero elevato di firme. Questa è un'altra delle conseguenze del \textit{rejection sampling} introdotto precedentemente con il tema del \textit{riavvio controllato} \cite{crystalsdilithium-submissionpackage-one}.
+
+\subsection{Caratteristiche}
+
+CRYSTALS Dilithium è progettato fin dalla sua prima versione per essere altamente modulare. Possiede numerosi parametri che permettono di adattare il suo livello di sicurezza in base alle necessità richieste, siano esse efficienza o maggiore protezione. Questa flessibilità permetterà allo schema di offrire un livello adeguato di sicurezza nel lungo temine \cite{crystalsdilithium-submissionpackage-three}.
+
+Un'altra caratteristica distintiva sono le ridotte dimensioni della chiave pubblica. Rispetto agli algoritmi Lattice Based che utilizzano campionamenti Gaussiani già esistenti CRYSTALS Dilithium presenta una chiave pubblica inferiore di circa 2.5 volte. Questo vantaggio è stato ottenuto dal team di ricerca rimuovendo completamente il campionamento Gaussiano. Quest'ultimo, negli algoritmi \textit{Lattice Based}, è utilizzato per generare vettori e polinomi necessari a costruire i reticoli su cui svolgere i problemi di SVP o LWE. La casualità dei vettori generati serve a rendere complessa la risoluzione di tali problemi.
+
+CRYSTALS Dilithium utilizza delle distribuzioni binomiali per generare campioni: esse sono molto più semplici da implementare e anche più efficienti. Tuttavia, il motivo che più giustifica la rimozione del campionamento gaussiano è la sua vulnerabilità ai \textit{side channel attacks}, soprattutto quelli basati sulla misura dei tempi di esecuzione.
+
+La novità di CRYSTALS Dilithium è che per primo, rispetto ad altri candidati, è stato in grado di offrire processi di firma, verifica e generazione delle chiavi a tempo costante, rendendo lo schema di firma resistente alle minacce basate sul \textit{timing} \cite{crystalsdilithium-submissionpackage-three}.
+
+Un altro fattore che offre protezione dai \textit{side channel attacks} è la dimensione costante delle firme prodotte. Questo aspetto non solo semplifica l'implementazione e la rende più compatibile con gli attuali protocolli, ma garantisce maggiore resistenza agli attacchi criptoanalitici che sfruttano le variazioni di dimensioni tra coppie di input e output \cite{crystalsdilithium-submissionpackage-three}.
+
+Purtroppo, CRYSTALS Dilithium non è ancora pronto per la sua esecuzione nell'ambito IoT (\textit{Internet of Things}). I dispositivi IoT sono sistemi caratterizzati da hardware limitato ma che possono offrire servizi di automazione, per questo motivo negli ultimi anni il loro utilizzo è in continua crescita. La ragione principale per cui questo schema di firma non è compatibile con parte di questi sistemi è l'utilizzo della memoria: spesso la richiesta di RAM (Random Access Memory) risulta essere eccessiva \cite{crystalsdilithium-submissionpackage-one}. Il team di ricerca di CRYSTALS Dilithium ha già annunciato che lavoreranno a miglioramenti per una maggiore compatibilità verso questi dispositivi.
+
+\subsection{Versioni disponibili}
+
+Nei \textit{submission packages} CRYSTALS-Dilithium è sempre stato consegnato nelle due versioni minime richieste. La versione di riferimento (REF) implementa i meccanismi fondamentali dello schema di firma digitale, tra cui le primitive fondamentali a garantire il tempo costante e le dimensioni costanti per la resistenza agli attacchi criptoanalitici. La versione ottimizzata viene definita, dal team di ricerca di CRYSTALS Dilithium, \textit{AVX2 Version}. Questa particolare implementazione dell'algoritmo sfrutta le ottimizzazioni hardware disponibili solo per alcune architetture di processori, tra cui quelle prodotte da \textit{Intel} e \textit{AMD}.
+
+Il termine \textit{AVX2} significa \textit{Advanded Vector Extensions 2}: i processori con questa funzionalità implementano una serie di istruzioni che ottimizzano le operazioni sui vettori a livello hardware. Per tale motivo, la \textit{AVX2 Version} di CRYSTALS Dilithium porta miglioramenti significativi nelle operazioni di espansione del \textit{seed} nelle matrici polinomiali e nelle operazioni di moltiplicazione polinomiale \cite{crystalsdilithium-submissionpackage-one}.
+
+Essendo che gli algoritmi \textit{Lattice Based} lavorano principalmente con reticoli, matrici e vettori, essi sono profondamente potenziati dall'introduzione di questo set di istruzioni macchina nei processori. Ovviamente questo implica che la versione ottimizzata di CRYSTALS Dilithium non è compatibile con tutti i sistemi. Ad esempio, a differenza della \textit{REF Version}, la \textit{AVX2 Version} non è compatibile con la maggior parte dei processori ARM \cite{nist-pqc}.
+
+\subsection{Changelog}
+
+CRYSTALS Dilithium partecipa fin dal primo \textit{round} al \textit{NIST Post-Quantum Cryptography Standardization Process}\cite{nist-pqc}, tuttavia con il tempo ha subito delle modifiche più o meno rilevanti. Di seguito un breve riassunto dei cambiamenti \cite{crystalsdilithium-submissionpackage-three}:
+\begin{enumerate}
+    \item Introduzione del comportamento randomizzato: inizialmente lo schema era esclusivamente deterministico. Con la nuova versione la generazione del \textit{seed} viene ottenuta in maniera casuale. Il \textit{seed} è un valore utilizzato a sua volta per generare numeri pseudo-casuali. Nella versione deterministica dell'algoritmo, tale valore era ottenuto da un hash della chiave privata: ciò garantiva efficienza e riproducibilità ma introduceva anche dei rischi [\textit{Round 1 $\rightarrow$ Round 2}].
+    \item Ottimizzazione e introduzione di nuovi parametri per tutte le versioni di CRYSTALS Dilithium: ciò ha aumentato la flessibilità dell'algoritmo, rendendolo più configurabile lato prestazioni o sicurezza [\textit{Round 2 $\rightarrow$ Round 3}].
+    \item Riduzione dei bit della chiave pubblica e semplificazione del meccanismo di campionamento, dal punto di vista implementativo [\textit{Round 2 $\rightarrow$ Round 3}].
+\end{enumerate}
+
+\section{FALCON}
+
+FALCON è l'acronimo di \textit{Fast Fourier Lattice Based Compact Signatures over NTRU}. Partecipa alla competizione dal primo \textit{round} ed è fin da subito diventato uno dei principali candidati alla standardizzazione per via delle sue peculiarità \cite{falcon-website}.
+
+\subsection{Sicurezza e basi teoriche}
+
+FALCON è uno \textit{signature scheme Lattice Based} ma, a differenza di CRYSTALS Dilithium, poggia le propria fondamenta teoriche su altri paradigmi e problemi. Più specificatamente utilizza il problema NTRU così definito:
+
+\begin{displayquote}[NIST IR 8413, 2022]
+    \textbf{Problema 3.6 (Il problema \textit{Search-NTRU}$_{R,q,D,\gamma}$)} 
+Sia $q$ un intero positivo, $\gamma$ un numero reale positivo, e sia $R$ un anello della forma $R = \mathbb{Z}_q[x]/\Phi$ (dove $\Phi$ è un polinomio monico). Dato un elemento $h \in R$ estratto da una distribuzione $D$, tale che esistano coppie non nulle $(f,g) \in R^2$ che soddisfano $h \cdot f = g \mod q$ e hanno piccole norme euclidee $\|f\|, \|g\| \leq \sqrt{q}/\gamma$, trovare una tale coppia $(f,g)$ \cite{NISTthirdReport}.
+\end{displayquote}
+
+La sicurezza di FALCON deriva dalla difficoltà di risolvere equazioni basate su questo tipo di reticoli, una caratteristica che lo rende particolarmente adatto a resistere agli algoritmi quantistici come quello di Shor, che compromettono gli schemi tradizionali come RSA \cite{falcon-submissionpackage-three}.
+
+Un'altra importante differenza rispetto a CRYSTALS Dilithium è il paradigma utilizzato. Mentre il precedente candidato basa il proprio processo sull'approccio \textit{Flat-Shamir with aborts} , FALCON utilizza lo schema \textit{hash-and-sign}. La sicurezza di questo schema è già stata dimostrata nel modello Oracle pre-quantistico e post-quantistico \cite{falcon-submissionpackage-three}.
+
+Come suggerisce la definizione dell'acronimo FALCON, l'obiettivo principale che il team di ricerca voleva raggiungere era la compattezza della chiave pubblica e della firma. Inizialmente avevano valutato di produrre un \textit{signature scheme Hash Based} tuttavia questo avrebbe portato a una dimensione delle chiavi molto ridotta a discapito di una dimensione eccessiva della firma del messaggio. Al contrario, implementando un \textit{Lattice Based} basato su NTRU, sono riusciti a minimizzare l'impatto in memoria di questi due oggetti \cite{falcon-submissionpackage-three}.
+
+La dimensione della firma non è costante, bensì firmando più volte lo stesso messaggio con la stessa chiave privata, si possono ottenere lunghezze della firma (in bit) diverse. Questo perché durante il processo di generazione della firma vengono utilizzati dei valori casuali inclusi nella firma stessa. Secondo gli studi del team di ricerca di FALCON durante la produzione del \textit{submission package}, questo aspetto non dovrebbe esporre vulnerabilità a \textit{side channel attacks}, tuttavia è possibile configurare FALCON per produrre firme di lunghezza costante, ottenute tramite lo \textit{zero-padding} della firma originale. 
+
+Nonostante FALCON utilizzi il \textit{gaussian sampling}, è stato comunque trovato un modo di implementare i processi di firma e verifica in tempi costanti, andando a rimuovere le vulnerabilità ai \textit{side channel attacks} legati ai tempi di esecuzione.
+
+Purtroppo nuovi studi, successivi al report del terzo \textit{round} del NIST, hanno rilevato che FALCON è suscettibile ad attacchi \textit{side channel} basati sull'analisi elettromagnetica (EM): questi studi hanno dimostrato che è possibile estrarre le chiavi segrete misurando la radiazione elettromagnetica emessa dalle CPU durante l'esecuzione dei processi di FALCON \cite{falcon-sidechannel-attack}.
+
+Gli studi in questione sono stati eseguiti su sistemi ARM Cortex-M4 e, secondo i test, sarebbero sufficienti qualche migliaio di operazioni di firma per ottenere abbastanza informazioni per la ricostruzione della chiave privata. Gli autori di questa ricerca suggeriscono anche dei metodi per mitigare la vulnerabilità \cite{falcon-sidechannel-attack}:
+\begin{enumerate}
+    \item \textbf{Hiding}: tecnica che mira a rendere costante il consumo energetico dell'hardware durante i procedimenti più delicati oppure che aggiunge un segnale di disturbo intervallando tali procedimenti con l'esecuzione di routine apposite.
+    \item \textbf{Masking}: tecnica il cui scopo è randomizzare i valori coinvolti nei procedimenti da mascherare. Rimuovere la correlazione tra i valori intermedi, input e output rende i \textit{side channel attacks} inefficienti.
+\end{enumerate}
+
+\subsection{Caratteristiche}
+
+Uno dei punti di forza di FALCON è l'efficienza computazionale ottenuta tramite l'uso del \textit{Fast Fourier Sampling}. Questo metodo permette allo schema di firma digitale di eseguire rapidamente le operazioni di generazione e verifica della firma.
+
+Durante il campionamento FALCON svolge molte operazioni che coinvolgono numeri \textit{floating point} (virgola mobile) con 53 bit di precisione. Questo aspetto tecnico rende l'implementazione degli algoritmi molto complessa ed efficiente solo per processori che possiedono una FPU (Floating Point Unit) dedicata. La precisione dei calcoli in virgola mobile è essenziale per garantire il livello adeguato di sicurezza: se si utilizza una bassa precisione la sicurezza diminuisce, al contrario aumentare troppo la precisione aumenta i tempi di esecuzione \cite{falcon-submissionpackage-three}.
+
+L'obiettivo principale di FALCON (ovvero la compattezza) è stato raggiunto: tra i candidati è quello ad ottenere la dimensione inferiore considerando l'unione di chiave pubblica e firma della comunicazione. Questo caratteristica abbatte di molto i tempi di trasmissione delle comunicazioni firmate, altro aspetto cruciale da valutare per l'implementazione degli algoritmi post-quantum nei sistemi di firma digitale \cite{NISTthirdReport}.
+
+Difatti, in relazione ai livelli di sicurezza raggiunti (1 e 5), i tempi di trasmissione sono pari o inferiori a quelli ottenibili con gli attuali sistemi, come RSA.
+
+Come CRYSTALS Dilithium, FALCON ha un design modulare, ovvero sono disponibili un insieme di parametri che permettono di configurare l'equilibrio tra sicurezza e prestazioni. Per rendere più sicura l'implementazione di NTRU e delle distribuzioni gaussiane, i set di parametri sono limitati. Per questo motivo i livelli di sicurezza raggiunti da FALCON sono \textit{solo} 1 e 5 \cite{falcon-submissionpackage-three}.
+
+L'utilizzo dell'approccio \textit{hash-and-sign} permette a FALCON di implementare una funzionalità unica tra i candidati, ovvero il Message Recovery: chi verifica una firma è in grado di recuperare l'intero messaggio attraverso delle elaborazioni sulla firma stessa \cite{falcon-submissionpackage-three}. Questo meccanismo ha diversi vantaggi e limitazioni:
+\begin{enumerate}
+    \item \textbf{Riduzione del tempo di trasmissione}: non è più necessario trasmettere la comunicazione originale e la firma separatamente ma è sufficiente trasmettere solo la firma. In certi casi può ridurre i tempi di trasmissione.
+    \item \textbf{Aumento delle dimensioni della firma}: includere sufficienti informazioni per la ricostruzione del messaggio aumenta la dimensione della firma.
+\end{enumerate}
+
+\subsection{Versioni disponibili}
+
+Le versioni del codice sorgente C consegnate dal team di ricerca di FALCON sono le stesse discusse per CRYSTALS Dilithium:
+\begin{enumerate}
+    \item \textbf{REF Version}: versione compatibile con la maggior parte dei sistemi esistenti, il cui scopo è documentare il modello di funzionamento dello schema di firma digitale.
+    \item \textbf{AVX2 Version}: versione ottimizzata per eseguire più velocemente calcoli che coinvolgono vettori e matrici. Questo codice sorgente tuttavia risulta compilabile solo su processori che supportano le istruzioni macchina AVX2.
+\end{enumerate}
+
+Nelle proprie pubblicazioni, il team di FALCON ha introdotto delle informazioni riguardo ai test effettuati. Sono riusciti ad eseguire FALCON su processori ARM, ad esempio il Cortex-M4, e hanno studiato come interfacciare FALCON con il protocollo TLS 1.3 \cite{falcon-submissionpackage-three}.
+
+Inoltre, come da direttive del NIST, dal secondo \textit{round} nella documentazione sono incluse anche le vulnerabilità di sicurezza che i candidati stessi hanno rilevato durante lo sviluppo \cite{falcon-submissionpackage-three}. Il team di FALCON ha identificato vulnerabilità contro i seguenti attacchi attualmente conosciuti:
+\begin{enumerate}
+    \item \textbf{Key Recovery}: l'attaccante cerca di ricostruire la chiave privata a partire da una serie di firme effettuate con tale chiave.
+    \item \textbf{Forgery}: l'attaccante riesce a generare una firma valida senza conoscere la chiave privata. Anche in questo caso l'attaccante deve entrare in possesso di diverse firme effettuate con tale chiave privata.
+\end{enumerate}
+
+\section{SPHINCS+}
+
+SPHINCS+ (\textit{Stateless Practical Hash Based Incredibly Nice Cryptographic Signature}) è uno \textit{signature scheme stateless Hash Based}, progettato per resistere agli attacchi quantistici. È stato il primo schema di questo tipo a essere proposto nel contesto del \textit{NIST Post-Quantum Cryptography Standardization Process}\cite{nist-pqc}, con l'obiettivo di garantire sicurezza anche contro attacchi criptoanalitici quantistici e mantenendo la resistenza classica basata su funzioni hash tradizionali \cite{sphincs-plus-website}.
+
+\subsection{Sicurezza e basi teoriche}
+
+SPHINCS+ rappresenta un'evoluzione significativa rispetto al suo predecessore SPHINCS. Una delle innovazioni chiave di SPHINCS+ è l'introduzione della struttura ad \textit{hypertree}, che consente l'uso di un numero molto elevato di coppie di chiavi per le \textit{few-time signature} (FTS) \cite{sphincs-changelog-round-three}. Questo permette a SPHINCS+ di mantenere la sicurezza anche in scenari dove è richiesto un gran numero di firme, migliorando la resistenza agli attacchi multi-target. Questi attacchi, che mirano a compromettere la sicurezza cercando di sfruttare la possibilità di generare molteplici firme con la stessa chiave, sono efficacemente mitigati grazie alla struttura e alle tecniche impiegate in SPHINCS+ \cite{sphincs-presentation-paper}.
+
+Tra i principali vantaggi di SPHINCS+ vi è la sua semplicità teorica e la ridotta dimensione delle chiavi (sia pubbliche che private). Questo deriva dall'utilizzo di algoritmi basati su hash che introducono poche nuove assunzioni teoriche rispetto ad altri approcci come quelli \textit{Lattice Based} \cite{sphincs-submissionpackage-three}. Tuttavia, il compromesso è una firma di dimensioni significativamente maggiori e una velocità di firma e verifica più lenta rispetto ad altri candidati \cite{sphincs-ieee-paper}.
+
+Un altro punto critico è la potenziale vulnerabilità di SPHINCS+ ai \textit{side channel attacks} di tipo elettromagnetico (EM). Il team di SPHINCS+ ha riconosciuto questa debolezza e sta esplorando metodi per mitigare tali attacchi modificando il modo in cui i valori privati vengono calcolati durante la generazione delle firme \cite{sphincs-changelog-round-three}.
+
+Attualmente, il team di SPHINCS+ non ha identificato attacchi specifici che possano sfruttare direttamente le strutture delle funzioni hash utilizzate per le operazioni di firma. Di conseguenza, le valutazioni di sicurezza di SPHINCS+ sono state basate principalmente su attacchi generici, che mirano a vulnerabilità comuni a tutte le implementazioni Hash Based. Questo approccio è stato considerato sufficiente, dato che molti studi hanno già confermato la robustezza degli algoritmi \textit{Hash Based} \cite{sphincs-submissionpackage-three}.
+
+\subsection{Caratteristiche}
+
+Il design di SPHINCS+ è incentrato sulla resistenza agli attacchi quantistici, una proprietà che lo distingue da altri \textit{signature schemes Hash Based}. Tuttavia, la scelta di implementare uno schema \textit{stateless} comporta dei compromessi significativi. Infatti, rispetto a soluzioni \textit{stateful}, SPHINCS+ presenta una dimensione della firma e un tempo di firma notevolmente maggiori. Questo incremento delle risorse necessarie per la firma deriva dalla necessità di mantenere l'integrità del sistema senza conservare uno stato tra una firma e l'altra \cite{NISTthirdReport}.
+
+Le prestazioni di SPHINCS+, in particolare per quanto riguarda il tempo di firma, sono generalmente inferiori rispetto agli altri candidati NIST, con differenze che possono arrivare fino a un ordine di grandezza. Nonostante ciò, SPHINCS+ offre potenzialità di ottimizzazione significativa, specialmente attraverso l'utilizzo di GPU o l'impiego di architetture multi-core per eseguire i calcoli in parallelo \cite{sphincs-ieee-paper}.
+
+\subsection{Versioni disponibili}
+
+SPHINCS+ offre implementazioni basate su tre diverse funzioni hash: SHA256, SHAKE256 e Haraka. Ognuna di queste implementazioni presenta caratteristiche uniche e livelli di ottimizzazione differenti. SHA256 e SHAKE256 sono le implementazioni più osservate e supportate, in parte perché Haraka, pur offrendo output di dimensioni inferiori, non raggiunge i livelli di sicurezza richiesti dal NIST \cite{sphincs-submissionpackage-three}.
+
+Mentre con le prime due implementazioni si è in grado di raggiungere i livelli di sicurezza 1, 3 e 5, con l'implementazione Haraka lo stesso team di SPHINCS+ sostiene che attualmente non sia possibile superare il livello di sicurezza 2. Il NIST inoltre afferma che sono necessari ulteriori studi per la ricerca di vulnerabilità su questa versione, prima di un eventuale ammissione alla standardizzazione. SHA256 e SHAKE256 invece sono più standard, motivo per cui sono già state approvate \cite{sphincs-submissionpackage-three}.
+
+Ogni implementazione si suddivide poi in due istanze, \textit{simple} e \textit{robust}, che danno origine a 6 combinazioni totali. Esse differiscono principalmente per il compromesso tra velocità e sicurezza. Le istanze \textit{simple} offrono prestazioni più elevate, ma a scapito di un leggero decremento del livello di sicurezza rispetto alle istanze \textit{robust} \cite{sphincs-submissionpackage-three}.
+
+Anche se le versioni ottimizzate utilizzano istruzioni AVX2, simili a quelle utilizzate in altri schemi come Falcon e Dilithium, SPHINCS+ rimane comunque uno schema con prestazioni relativamente inferiori in termini di tempo di firma \cite{NISTthirdReport}.

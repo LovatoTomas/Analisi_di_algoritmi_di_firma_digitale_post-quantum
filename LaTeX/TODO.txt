@@ -1,0 +1,79 @@
+STILE DI PAROLE
+- Post-Quantum Cryptography
+- Lattice Based
+- Hash Based
+- CRYSTALS Dilithium
+- NP-Hard
+- Side Channel Attacks / side channel attacks
+- post-quantum
+- pre-quantum
+
+
+SEMPRE REGULAR
+- Post-Quantum Cryptography
+- National Istitute of Standards anmd Tecnology (NIST esteso)
+- CRYSTALS Dilithium
+- FALCON
+- SPHINCS+ (tranne prima occorrenza)
+- post-quantum
+- pre-quantum
+
+
+
+SEMPRE CORSIVO
+- Shor's Algorithm
+- legacy
+- Retrospective Decryption
+- round
+- NIST Post-Quantum Cryptography Standardization Process
+- signature schemes
+- public-key encryption
+- Lattice Based
+- Hash Based
+- REF / REF Version
+- AVX2 / AVX2 Version
+- Modulus
+- NP-Hard
+- Side Channel Attacks / side channel attacks
+
+
+
+ARTICOLI
+- i Signature Schemes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{itemize}
+    \item \textit{CRYSTALS-dilithium}: cartella che contiene il progetto Dilithium.
+        \begin{itemize}
+            \item \textit{/[VERSIONE]/test/test\_dilithium.c}: script di test per la versione di Dilithium della sottocartella omonima (REF e AVX2). Per tale implementazione vengono provati tutti i livelli di sicurezza di Dilithium.
+        \end{itemize}
+    \item \textit{FALCON}: cartella che contiene il progetto FALCON.
+        \begin{itemize}
+            \item \textit{/[VERSIONE]/test\_falcon.c}: script di test per la versione di FALCON della sottocartella omonima (REF e AVX2). In questa versione non viene effettuato l'hashing del messaggio. I test sono effettuati per tutti i livelli di sicurezza di FALCON.
+            \item \textit{/[VERSIONE]/test\_falcon\_sha256.c}: script di test per la versione di FALCON della sottocartella omonima (REF e AVX2). In questa versione viene effettuato l'hashing del messaggio con SHA-256. I test sono effettuati per tutti i livelli di sicurezza di FALCON.
+            \item \textit{/[VERSIONE]/test\_falcon\_sha512.c}: script di test per la versione di FALCON della sottocartella omonima (REF e AVX2). In questa versione viene effettuato l'hashing del messaggio con SHA-512. I test sono effettuati per tutti i livelli di sicurezza di FALCON.
+        \end{itemize}
+    \item \textit{SPHINCS+}: cartella che contiene il progetto SPHINCS+.
+        \begin{itemize}
+            \item \textit{/[VERSIONE]/test/spx.c}: script di test per la versione di SPHINCS+ della sottocartella omonima (REF e AVX2). Per tale implementazione vengono provati tutti i livelli di sicurezza di SPHINCS+.
+        \end{itemize}
+    \item \textit{RSA}: cartella con l'implementazione dei test su RSA, tutti gestiti dal file \textit{test_rsa.c}. 
+    \item \textit{output}: cartella con i file di testo di output dei test
+    \item \textit{plot}: cartella con i grafici di output dallo script Python
+    \item \textit{liboqs\_double\_check}: implementazione dei test s LibOQS.
+    \item \textit{start\_analytics.c}: script che avvia la procedura di compilazione, di testing e infine di generazione dei grafici.
+    \item \textit{20240713\_performancegraphs.py}: script python per la generazione dei grafici.   
+\end{itemize}

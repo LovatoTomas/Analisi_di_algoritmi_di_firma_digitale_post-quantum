@@ -1,0 +1,77 @@
+\chapter{Introduzione}
+
+Da oltre due decenni la ricerca e sviluppo nel settore del Quantum Computing e, più in generale, della Quantum Technology, sta ottenendo risultati significativi che presto permetteranno a tali sistemi di interagire con la vita quotidiana. L'introduzione di principi della meccanica quantistica, come la \textit{Quantum Superposition} (la teoria secondo cui le particelle subatomiche possono esistere in più stati contemporaneamente) e il \textit{Quantum Entanglement} (il fenomeno che lega e fa interagire un gruppo di particelle anche a grandi distanze), promette di rivoluzionare il settore informatico. Tuttavia, queste innovazioni presenteranno nuove sfide per la sicurezza delle informazioni.
+
+In particolare, i computer quantistici potranno sfruttare tecniche avanzate per compromettere i sistemi di crittografia e firma digitale attualmente utilizzati. Questo non è un problema che riguarda solo gli utenti più \textit{specializzati} (che fanno uso di queste tecnologie per fini lavorativi e commerciali), ma interessa qualsiasi persona che utilizzi sistemi digitali. Molte tecnologie, tra cui il web, si basano sul protocollo TLS (Transport Layer Security). Ogni volta che accediamo a risorse del World Wide Web utilizzando il metodo HTTPS o inviamo una email, ci affidiamo a meccanismi integrati nel protocollo TLS che, mediante l'uso di chiavi simmetriche e asimmetriche, garantiscono la confidenzialità, integrità e autenticità dei contenuti. Queste caratteristiche sono essenziali: assicurano che la sorgente delle informazioni ricevute sia chi dichiara di essere (Autenticità), che i dati non vengano modificati durante il trasporto (Integrità) e che rimangano privati lungo tutto il percorso (Confidenzialità).
+
+In una sorta di \textit{effetto a cascata}, un attacco riuscito da parte di un computer quantistico potrebbe avere conseguenze devastanti su larga scala: ad esempio, gli aggiornamenti dei sistemi operativi, che prima dell'installazione automatica vengono verificati tramite meccanismi simili, potrebbero essere compromessi consentendo la diffusione di patch modificate con l'obiettivo di introdurre vulnerabilità nei sistemi operativi più diffusi.
+
+Questi scenari sono preoccupanti se continueremo ad utilizzare i sistemi crittografici attuali fino all'effettiva introduzione dei computer quantistici nel mercato. Per questo motivo, molti enti si stanno mobilitando per sostenere e favorire la ricerca nel campo della Post-Quantum Cryptography, con l'obiettivo di raggiungere uno standard e una transizione prima che tali minacce diventino realtà.
+
+\section{Tecnologie di firma digitale: il presente}
+
+Gli attuali sistemi di firma digitale più utilizzati si basano su AdES (Advanced Electronic Signature), una tipologia di firma elettronica progettata per offrire un elevato livello di sicurezza contro le tecnologie di attacco attualmente esistenti, dette anche \textit{legacy}. 
+
+Questi sistemi sono ideali per dimostrare l'integrità della comunicazione firmata e l'unicità del firmatario, difatti AdES è uno standard a livello Europeo: la firma digitale prodotta con questi mezzi ha valore legale, cioè ha valore probatorio e difficilmente può essere ripudiata senza prove concrete \cite{EU2024_1183}.
+
+Il processo di firma e verifica si basa su sistemi a chiave asimmetrica: il firmatario utilizza la propria chiave privata (\textit{secret key}) per firmare un documento, e i destinatari possono verificare la validità della firma utilizzando la chiave pubblica (\textit{public key}) del mittente \cite{ETSI31910201}. Esistono diverse tipologie di firma AdES, tra cui:
+\begin{enumerate}
+    \item AdES-BES (Basic Electronic Signature): è la forma più semplice, l'output del processo di firma del documento è composta dal documento stesso, la firma del documento (ottenuto tramite procedure di \textit{hashing} e \textit{padding}), più la concatenazione di eventuali attributi del documento.
+    \item AdES-T (Timestamped Electronic Signature): tra le informazioni in output vengono aggiunti dei campi (anch'essi firmati per maggiore integrità) che permettono di identificare la data e ora in cui è avvenuta la firma del documento.
+    \item AdES-C (Advanced Electronic Signature with Certificate Reference): in alcuni casi i documenti firmati devono rimanere verificabili nel lungo termine, per cui nell'output vengono aggiunti riferimenti alla chiave pubblica del firmatario oppure la chiave pubblica stessa.
+\end{enumerate}
+
+Le diverse tipologie di firme AdES vengono inoltre declinate in quattro specifiche varianti, ciascuna ottimizzata per differenti tipi di documenti e contesti: 
+\begin{enumerate}
+    \item XAdES (XML AdES) è utilizzata per firmare documenti XML (Extensible Markup Language) \cite{etsi_ts_102918}.
+    \item CAdES (CMS AdES) è basato sul formato Cryptographic Message Syntax (CMS), anche noto come PKCS\#7. Questo standard permette di firmare file PDF, Word, o altri documenti elettronici non XML. CAdES garantisce l'integrità e l'autenticità dei documenti firmati, supportando funzionalità come il timestamping, l'inclusione di certificati e altre informazioni aggiuntive per conformarsi ai requisiti legali e normativi \cite{etsi_ts_102918}   .
+    \item PAdES è utilizzata per firmare esclusivamente file PDF (Portable Document Format) \cite{etsi_ts_319142}.
+    \item ASiC (Associated Signature Containers) permette di raggruppare in un unico contenitore (in formato ZIP) uno o più documenti e le loro firme elettroniche avanzate. È compatibile con le altre specifiche di firma elettronica avanzata come XAdES, CAdES, e PAdES, consentendo l'uso di queste firme all'interno del contenitore \cite{etsi_ts_102918}.
+\end{enumerate}
+
+Questi sistemi fanno uso di algoritmi come RSA (Rivest-Shamir-Adleman Algorithm) oppure altri algoritmi basati su ECC (Elliptic Curve Cryptography). La debolezza di questi specifici sistemi basati su chiavi asimmetriche nei confronti dei quantum computers è nota da  tempo: nel 1994, Peter Shor ha ideato un algoritmo quantistico (conosciuto come \textit{Shor's Algorithm} \cite{nature-pqc}) che sfrutta le caratteristiche di RSA per comprometterne la sicurezza.
+
+La sicurezza di RSA nei sistemi tradizionali (\textit{legacy}) si basa sulla difficoltà di calcoli riguardanti i numeri primi e l'operazione di fattorizzazione. Tuttavia, i computer quantistici saranno in grado di violare la sicurezza di RSA utilizzando l'algoritmo di \textit{Shor} in tempi esponenzialmente più rapidi rispetto agli attuali metodi di attacco.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ | m{5em} | m{7em}| m{10em} | m{10em} | }
+\hline
+\textbf{Algoritmo} & \textbf{Dimensione della chiave (in bit)} & \textbf{Livello di sicurezza in bit (computer attuale)} & \textbf{Livello di sicurezza in bit (computer quantistico)} \\ \hline
+RSA-1024 & 1024 & 80 & $\sim$0 \\ \hline
+RSA-2048 & 2048 & 112 & $\sim$0 \\ \hline
+ECC-256 & 256 & 128 & $\sim$0 \\ \hline
+ECC-384 & 384 & 192 & $\sim$0 \\ \hline
+AES-128 & 128 & 128 & $\sim$64 \\ \hline
+AES-256 & 256 & 256 & $\sim$128 \\ \hline
+\end{tabular}
+\caption{Confronto del livello di sicurezza di un algoritmo se attaccato da un computer attuale e da un computer quantistico \cite{security-levels-symm-asymm-algorithms}.}
+\label{tab:SecurityLevelsIntroLegacyQuantum}
+\end{table}
+
+Per quanto riguarda i sistemi di crittografia basati su chiave simmetrica, questi risultano meno vulnerabili alla minaccia quantistica: si stima che il loro livello di sicurezza sarà dimezzato quando attaccati da computer quantistici \cite{nature-pqc}. Di conseguenza, mentre per gli algoritmi a chiave asimmetrica sono necessarie riformulazioni basate su nuovi costrutti matematici, per quelli a chiave simmetrica potrebbe essere sufficiente raddoppiare la lunghezza delle chiavi per mantenere l'attuale livello di sicurezza. Anche in questo caso, la decisione di procedere in tale direzione dipende dall'interoperabilità con i sistemi attuali \cite{security-levels-symm-asymm-algorithms}.
+
+
+\section{Il futuro della sicurezza: algoritmi Post-Quantum}
+
+Sebbene l'introduzione di computer quantistici sufficientemente potenti non sia prevista nel breve termine, è essenziale avviare la ricerca e la standardizzazione della Post-Quantum Cryptography quanto prima. 
+
+Gli attacchi non sono attualmente possibili, ma nulla impedisce a malintenzionati di effettuare una fase di \textit{store} in questo periodo, cioè immagazzinare dati crittografati o firmati con le tecniche attuali per poi, una volta raggiunta la maturità tecnologica, de-crittografarli o calcolare le chiavi private a partire dalle firme. Questa tecnica è nota come \textit{Retrospective Decryption} \cite{enisa-pqc}: in sintesi, tutti i dati elaborati con sistemi crittografici asimmetrici attuali dovrebbero essere considerati compromessi al momento dell'introduzione delle tecnologie quantistiche sul mercato.
+
+Molte organizzazioni statali ed enti specializzati nel settore stanno proponendo attività di sviluppo per evitare anche questo tipo di scenario. Tra questi vi è il National Istitute of Standards and Tecnology \cite{nist-website}. Il progetto di standardizzazione avviato dal NIST nel Dicembre 2016 è stato utilizzato come base per la presente ricerca. L'intero processo è stato concepito come un'opera a medio-lungo termine, organizzata in \textit{round}, in cui solo alcune tecnologie candidate possono procedere per ulteriori approfondimenti e perfezionamenti.
+
+La standardizzazione riguarda le tecniche di PQC (Post-Quantum Cryptography), detta anche crittografia Quantum-Safe o Quantum-Resistant. Nel contesto della PQC si suppone che l'attaccante abbia a disposizione tecnologie comuni e quantistiche, mentre l'informazione attaccata è prodotta da algoritmi eseguiti su computer tradizionali.
+
+Questa si differenzia dalla Quantum Cryptography (QC), in cui l'informazione da attaccare è anch'essa prodotta da tecnologia quantistica. La QC fa uso dei principi della meccanica quantistica per sviluppare tecniche di sicurezza che sono fondamentalmente diverse dalle tradizionali crittografie basate su algoritmi matematici. Invece di implementare algoritmi su un computer quantistico, QC sfrutta fenomeni quantistici come l'\textit{entanglement} e il principio di indeterminazione per garantire la sicurezza dei dati. Un esempio noto di QC è la Quantum Key Distribution (QKD), che permette di generare e distribuire chiavi crittografiche in modo che qualsiasi tentativo di intercettazione venga immediatamente rilevato.
+
+Il \textit{NIST Post-Quantum Cryptography Standardization Process} \cite{nist-pqc} si concentra specificamente su algoritmi crittografici Quantum-Resistant basati su meccanismi a chiave asimmetrica. Inoltre, la competizione è stata divisa tra \textit{signature schemes}, ovvero algoritmi per la firma digitale, e meccanismi di \textit{public-key encryption}, cioè algoritmi di codifica e decodifica di informazioni. Nel primo caso, l'obiettivo è garantire l'autenticità e l'integrità del dato, mentre nel secondo si mira a mantenere la confidenzialità delle informazioni. Sebbene la teoria matematica e le tecniche utilizzate siano comuni ai due ambiti, i criteri di valutazione sono stati differenziati per esaminare ogni candidato in base all'obiettivo da raggiungere.
+
+\section{Obiettivi della ricerca}
+
+Lo scopo di questo elaborato è valutare i \textit{signature schemes} candidati alla standardizzazione avviata dal NIST, concentrandosi in particolare sugli algoritmi che hanno partecipato e superato il terzo round del processo di selezione. Questi algoritmi rappresentano le soluzioni attualmente più promettenti per garantire la sicurezza delle firme digitali nell'era post-quantum.
+
+L'obiettivo principale di questa ricerca non è quello di esplorare in dettaglio i principi matematici che rendono questi algoritmi resistenti ai computer quantistici, né di analizzare nel dettaglio il processo di selezione condotto dal NIST. L'intento è invece di confrontare le prestazioni di questi algoritmi, valutando la loro efficienza in termini di tempo di esecuzione, utilizzo delle risorse computazionali, e la loro interoperabilità con i sistemi esistenti.
+
+Questa valutazione è cruciale in vista della transizione verso sistemi di firma digitale basati su Post-Quantum Cryptography. Infatti, mentre la sicurezza è la priorità assoluta, la praticabilità e l'efficacia operativa di questi algoritmi si riveleranno un ruolo decisivo per la loro adozione. Algoritmi che offrono un buon equilibrio tra sicurezza e prestazioni avranno maggiori probabilità di essere implementati su larga scala nei prossimi anni, soprattutto in contesti dove la compatibilità con i sistemi \textit{legacy} è un fattore determinante.
+
+Nei prossimi capitoli verranno descritti in dettaglio i test condotti, insieme all'ambiente di prova utilizzato e agli algoritmi candidati esaminati. L'obiettivo finale è fornire una valutazione alternativa a quella effettuata dal NIST, che possa guidare la scelta degli algoritmi più idonei per le future implementazioni di sistemi di firma digitale post-quantum, nell' ottica di un futuro in cui i computer quantistici saranno una realtà.

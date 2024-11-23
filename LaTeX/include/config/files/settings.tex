@@ -1,0 +1,234 @@
+% custom commands
+\renewcommand{\vec}[1]{\bm{#1}}
+
+% numbered dividers depth & TOC depth
+\setsecnumdepth{subsection}
+\settocdepth{subsection}
+
+% set dividers style (font and size)
+
+% chapters head
+\renewcommand{\chapnumfont}{\Huge\bfseries\alt}
+\renewcommand{\chaptitlefont}{\Huge\bfseries\alt}
+
+\renewcommand{\printchaptername}{} % remove "Capitolo" in chapter title
+\renewcommand{\printchapternum}{} % remove chapter num in chapter title
+
+% remove page numbers from chapter pages (using empty pagestyle)
+\let\oldchapter\chapter
+\renewcommand{\chapter}[1]{
+    \oldchapter{#1}
+    \thispagestyle{empty}
+}
+
+% chapter title style
+\renewcommand{\printchaptertitle}[1]{
+    \centering\chaptitlefont
+    \ifnum\value{chapter} > 0
+        \raisebox{15pt}{\scalebox{.4}{\pgfornament{11}}}\hspace{5pt}
+        {\fontsize{50pt}{0pt}\alt\thechapter}
+        \hspace{5pt}\raisebox{15pt}{\scalebox{.4}{\pgfornament{14}}}
+        \\[10pt]
+        \hrule height 2pt \vspace{2pt} \hrule height 1pt \vspace{10pt}
+        #1
+        \vspace{10pt} \hrule height 1pt \vspace{2pt} \hrule height 2pt
+    \else
+        \raisebox{15pt}{\scalebox{.45}{\pgfornament{46}}}\\[10pt]
+        {\fontsize{40pt}{0pt}\alt #1}\\
+        \raisebox{15pt}{\scalebox{.6}{\pgfornament{88}}}\\
+    \fi
+}
+
+% define custom font size
+\makeatletter
+\newcommand{\fortypt}{\@setfontsize\fortypt{40}{0}} % Adjust the numbers as needed
+\newcommand{\twentytwopt}{\@setfontsize\twentytwopt{22}{0}}
+\makeatother
+
+% sections head
+\setsecheadstyle{\Large\bfseries\alt}
+\setsubsecheadstyle{\large\bfseries\alt}
+\setsubsubsecheadstyle{\bfseries\alt}
+
+% abstract config
+\addto{\captionsitalian}{\renewcommand{\abstractname}{
+        \raisebox{15pt}{\scalebox{.5}{\pgfornament{45}}}\\[10pt]
+        Abstract\\[15pt]
+        \raisebox{15pt}{\scalebox{.6}{\pgfornament{88}}}\\
+}}
+
+% image path config
+\graphicspath{{assets/figures/}}
+
+% bibliography config
+\addbibresource{include/back/refs.bib}
+\defbibheading{bibliography}[\refname]{
+    \centering
+    \vspace*{1cm}
+    \alt\bfseries\fortypt Bibliografia \\[15pt]
+    \raisebox{15pt}{\scalebox{.7}{\pgfornament{88}}}\\
+    \vspace{.5cm}
+}
+
+% hyperref setup
+\definecolor{indigo}{HTML}{3085ac}
+\definecolor{unipd}{HTML}{9B0014}
+\definecolor{grayfiller}{RGB}{245, 245, 245}
+\definecolor{grayborder}{RGB}{230, 230, 230}
+
+\hypersetup{
+    colorlinks = true,
+    linkbordercolor = white,
+    linkcolor = unipd,
+    urlcolor = indigo,
+    citecolor = unipd
+}
+
+% change the url font
+\renewcommand{\UrlFont}{\alt}
+
+% fix compile warning PDF string (hyperref)
+\pdfstringdefDisableCommands{
+    \def\alt{}
+}
+
+% code snippets config
+\newcommand{\algtitle}[3]{\alt
+    {\bfseries Algoritmo}: {\jbm #1} \\
+    {\bfseries Input}: #2 \\
+    {\bfseries Output}: #3
+}
+
+\newmdenv[style=listing]{internalcode}
+
+\newenvironment{code}[2]{
+    \begin{internalcode}[
+        frametitle=#1,
+        frametitlealignment=#2
+     ]
+}
+{
+    \end{internalcode}
+}
+
+\newenvironment{captioncode}[1]{
+    \captionof{lstlisting}{#1}
+    \begin{internalcode}
+}
+{
+    \end{internalcode}
+}
+
+\newenvironment{wrapper}{}{}
+
+\mdfdefinestyle{listing}{
+   backgroundcolor = grayfiller,
+   linecolor = grayborder,
+   linewidth = 2pt,
+   frametitlefont = \alt,
+   frametitlealignment = \centering,
+   frametitlebelowskip = 5pt,
+   frametitlerule = true,
+   frametitlerulewidth = 1.5pt,
+}
+
+\lstdefinestyle{default}{
+    basicstyle = \jbm,
+    tabsize = 4,
+    numbers = left,
+    numberstyle = \small\jbm,
+    numbersep = 5pt,
+    numberblanklines = false,
+    columns = flexible,
+    breaklines = true,
+    captionpos = t,
+    abovecaptionskip = -5pt,
+    belowcaptionskip = 5pt,
+    keywordstyle = \bfseries\color{indigo},
+    commentstyle = \itshape\color[HTML]{157F1F},
+    stringstyle = \color[HTML]{F45B69},
+    showstringspaces = false,
+    escapechar = §,
+    xleftmargin = 15pt,
+    breakatwhitespace = true,
+    breakautoindent = true,
+}
+
+% theorems config
+
+\declaretheoremstyle[
+    numberwithin=chapter,
+    headfont={\color{darkgray}\large\fontseries{sb}\alt},
+    notefont={\fontseries{mid}\alt},
+    postheadspace=5pt,
+    spaceabove=10pt,
+    spacebelow=10pt,
+]{defstyle}
+
+\declaretheorem[
+    style=defstyle,
+    name=Definizione,
+    refname={definizione,definizioni},
+    Refname={Definizione,Definizioni},
+]{definition}
+
+\declaretheorem[
+    style=defstyle,
+    name=Teorema,
+    refname={teorema,teoremi},
+    Refname={Teorema,Teoremi}
+]{theorem}
+
+\declaretheorem[
+    style=defstyle,
+    name={Teorema Fondamentale della Programmazione Lineare},
+    numbered=no
+]{LPTheorem}
+
+\mdfdefinestyle{definition}{
+    linewidth=2pt,
+    topline=false,
+    bottomline=false,
+    rightline=true,
+    leftline=true,
+    innertopmargin=-5pt,
+    linecolor=grayborder,
+    backgroundcolor=grayfiller,
+}
+
+\mdfdefinestyle{theorem}{
+    linewidth=2pt,
+    topline=true,
+    bottomline=true,
+    rightline=false,
+    leftline=false,
+    innertopmargin=0pt,
+    innerbottommargin=10pt,
+    linecolor=grayborder,
+    backgroundcolor=grayfiller,
+}
+
+\surroundwithmdframed[style=definition]{definition}
+\surroundwithmdframed[style=theorem]{theorem}
+\surroundwithmdframed[style=theorem]{LPTheorem}
+
+\makeatletter
+\newenvironment{breakablealgorithm}
+  {% \begin{breakablealgorithm}
+   \begin{center}
+     \refstepcounter{algorithm}% New algorithm
+     \hrule height.8pt depth0pt \kern2pt% \@fs@pre for \@fs@ruled
+     \renewcommand{\caption}[2][\relax]{% Make a new \caption
+       {\raggedright\textbf{\fname@algorithm~\thealgorithm} ##2\par}%
+       \ifx\relax##1\relax % #1 is \relax
+         \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##2}%
+       \else % #1 is not \relax
+         \addcontentsline{loa}{algorithm}{\protect\numberline{\thealgorithm}##1}%
+       \fi
+       \kern2pt\hrule\kern2pt
+     }
+  }{% \end{breakablealgorithm}
+     \kern2pt\hrule\relax% \@fs@post for \@fs@ruled
+   \end{center}
+  }
+\makeatother

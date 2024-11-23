@@ -1,0 +1,33 @@
+\documentclass[a4paper, 12pt, twoside, onecolumn, openright, final]{memoir}
+\input{include/config/preamble}
+
+\usepackage{lipsum}
+\usepackage[format=plain, hypcap=false, position=bottom, skip=10pt]{caption}
+
+\checkandfixthelayout
+\begin{document}
+
+\frontmatter % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+\input{include/front/titlepage}
+\input{include/front/quote}
+\input{include/front/abstract}
+\input{include/front/ack}
+\input{include/front/toc}
+
+% >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+\mainmatter % <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+\input{include/chapters/01_Introduzione}
+\input{include/chapters/02_PQC}
+\input{include/chapters/03_Alg_Analizzati}
+\input{include/chapters/04_Metodologia}
+\input{include/chapters/05_Analisi}
+\input{include/chapters/06_Conclusioni}
+\input{include/chapters/07_Bibliografia}
+
+% >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+\backmatter
+\pagestyle{plain}
+\end{document}

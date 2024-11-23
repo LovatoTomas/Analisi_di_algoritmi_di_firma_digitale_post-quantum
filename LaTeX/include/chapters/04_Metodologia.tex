@@ -1,0 +1,434 @@
+\chapter{Metodologia}
+
+L'obiettivo di questo capitolo è presentare l'approccio implementativo utilizzato per eseguire il \textit{performance testing} di ciascuno dei candidati selezionati, al fine di trarre ulteriori conclusioni rispetto ai report del NIST che dal terzo \textit{round} hanno avviato le attività di standardizzazione.
+
+
+
+\section{Metriche di Performance}
+
+Le metriche di performance significative per gli obiettivi della ricerca sono:
+\begin{enumerate}
+    \item \textbf{Key Sizes}: dimensione della chiave pubblica e della chiave privata. Spesso quella ritenuta più rilevante è la \textit{public key} poiché viene solitamente inglobata nella firma della comunicazione, quindi necessita di una fase di trasferimento il cui tempo e costo deve essere minimizzato. La \textit{private key} deve rimanere nei dispositivi del firmatario, dunque la sua lunghezza ha meno valore in termini di costi associati all'intero sistema di firma.
+    \item \textbf{Signature Sizes}: sono molto rilevanti anche le dimensioni delle firme. Quando inglobate in dei pacchetti, la loro dimensione influenza i tempi di comunicazione associati al loro trasferimento da mittente a destinatario. Inoltre, le firme possono essere rilevanti anche da un punto di vista di sicurezza. Firme di lunghezza variabile potrebbero implicare vulnerabilità ai \textit{side channel attacks}.
+    \item \textbf{Signature Time}: il tempo richiesto all'algoritmo per firmare un determinato messaggio con la chiave privata. L'output del processo di firma è la produzione della firma stessa.
+    \item Validation Time: il tempo necessario all'algoritmo per verificare se una firma è stata generata dalla chiave privata corretta, cioè per verificare l'autenticità ed integrità del messaggio.
+    \item \textbf{Key Generation Time}: questo tempo misura la generazione della coppi di chiavi. Rispetto ai precedenti due tempi è considerato meno rilevante poiché tale procedura è eseguita un numero inferiore di volte rispetto alla firma e verifica delle comunicazione. Una volta generata una coppia di chiavi, la cui validità può durare anni, si possono eseguire un elevato numero di operazioni di firma e verifica.
+\end{enumerate}
+
+Oltre alle metriche sopra elencate, altre caratteristiche non misurate direttamente, ma rilevanti per l’analisi, includono:
+\begin{enumerate}
+    \item \textbf{Occupazione in memoria}: in certi casi, come per lo sviluppo di algoritmi compatibili con dispositivi IoT (Internet of Things), è necessario monitorare le dimensioni di RAM e ROM necessarie all'esecuzione dell'algoritmo a causa di risorse hardware limitate. L'esecuzione di algoritmi di firma è fondamentale anche nei dispositivi IoT poiché essi interagiscono con altre risorse on-line o nella stessa rete privata, dovendo quindi utilizzare protocolli come TLS per verificare l'autenticità e integrità delle trasmissioni \cite{NISTthirdReport}.
+    \item \textbf{Costi di trasmissione}: anche se difficili da misurare direttamente a causa delle variazioni nella connessione di rete, è importante comprendere le dimensioni totali delle comunicazioni per ottimizzarle \cite{NISTthirdReport}.
+    \item \textbf{Natura dell'algoritmo}: gli obiettivi secondari degli algoritmi PQC non sono tutti uguali. Ciascun team di ricerca ha dato importanza a diversi aspetti dell'ottimizzazione. Alcuni si sono concentrati sulle procedure \textit{constant time}, tendenzialmente più lente ma sicure, altri ad implementazioni a basso utilizzo di memoria, altri alla minimizzazione delle dimensioni degli output.     
+\end{enumerate}
+
+\section{Ambiente di Sviluppo}
+
+In questa sezione viene descritto l'ambiente di sviluppo utilizzato per la realizzazione dei test, includendo i linguaggi di programmazione, gli strumenti, e l'hardware impiegato.
+
+\subsection{Linguaggi di Programmazione}
+Per lo sviluppo del \textit{performance testing} sono stati utilizzati due linguaggi:
+\begin{itemize}
+    \item C: Utilizzato per la compilazione dei codici sorgente degli schemi di firma digitale e per la creazione ed esecuzione dei test di performance.
+    \item Python: Impiegato per la fase di raccolta e rappresentazione dei dati di output dei vari test di performance.
+\end{itemize}
+
+\subsection{Sistema Operativo}
+Il sistema operativo utilizzato per lo sviluppo è \textit{Ubuntu 22.04.4} in esecuzione su \textit{Windows Subsystem for Linux (WSL)}. Ubuntu è stato fondamentale poiché è un ambiente adatto alla compilazione ed esecuzione di codice sorgente C, allo stesso tempo Windows ha supportato la fase di ricerca e di visualizzazione dei grafici ottenuti.
+
+\subsection{Versionamento del Codice}
+Per la gestione del codice sorgente è stato utilizzato \textit{Git}, con repository ospitati su \textit{GitHub}. Il suo utilizzo è stato fondamentale per la gestione del versioning: il controllo delle modifiche e delle revisioni del codice.
+
+\subsection{Hardware Utilizzato}
+Lo sviluppo e l'esecuzione dei test è stato eseguito su macchine dotate delle seguenti specifiche hardware:
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|}
+\hline
+ & \textbf{PC \#1} & \textbf{PC \#2} \\ \hline
+\textbf{Modello} & Samsung Book 4 Ultra & Dell Inspiron 5406 2n1 \\ \hline
+\textbf{CPU} & Intel Ultra U9 185H & Intel Core i7-1165G7 \\ \hline
+\textbf{Numero di Core/Thread} & 12 Core / 24 Thread & 4 Core / 8 Thread \\ \hline
+\textbf{Frequenza Max CPU} & 5.1 GHz & 4.7 GHz \\ \hline
+\textbf{Hyper-Threading Attivo} & Sì & Sì \\ \hline
+\textbf{Virtualizzazione Attiva} & Sì & Sì \\ \hline
+\textbf{Cache L3} & 24 MB & 12 MB \\ \hline
+\textbf{GPU} & NVIDIA RTX 4070 & Integrated Intel Iris Xe \\ \hline
+\textbf{RAM} & 32 GB DDR5 & 16 GB DDR4 \\ \hline
+\end{tabular}
+\caption{Configurazioni hardware dei PC utilizzati per lo sviluppo e il testing}
+\label{tab:hardware}
+\end{table}
+
+Il PC \#1 è stato utilizzato per lo sviluppo e il testing. Considerare solo i test eseguiti su questa macchina, in particolare i tempi di esecuzione, può risultare fuorviante a causa della potenza computazionale sopra alla media. Per tale motivo i test sono stati ripetuti anche nel PC \#2, dalle prestazioni più limitate.
+
+\subsection{Strumenti di sviluppo}
+L'ambiente di sviluppo integrato (IDE) utilizzato per la scrittura e il debugging del codice è \textit{Visual Studio Code}, scelto per la sua leggerezza, estensibilità e il supporto avanzato per l'integrazione con sistemi di sviluppo remoto.
+Per la compilazione del codice C è stato utilizzato \textit{gcc 11.4.0}, mentre per l'esecuzione del codice Python è stato impiegato l'interprete \textit{Python 3.12}, entrambi in esecuzione su Ubuntu all'interno di WSL. Inoltre, Visual Studio Code è stato configurato con l'estensione per l'integrazione di WSL, facilitando lo sviluppo e il debug direttamente all'interno dell'ambiente Ubuntu.
+
+\section{Implementazione}
+
+Prima di procedere all'analisi, in questa sezione vengono presentate più a fondo le modalità di testing dal punto di vista dello sviluppo.
+
+\subsection{Sorgenti del codice}
+
+Come prima fase è stato necessario ottenere il codice sorgente C dei vari schemi di firma digitale (in tutte le loro versioni) da una fonte ufficiale, in particolare l'interesse era rivolto alle pubblicazioni che hanno partecipato al terzo \textit{round} del \textit{NIST Post-Quantum 
+Cryptography Standardization Process} \cite{nist-pqc}. 
+
+Di seguito una lista delle sorgenti per ciascun candidato:
+\begin{itemize}
+    \item CRYSTALS-Dilithium: ottenuto direttamente dal repository GitHub del progetto. \\
+            \url{https://github.com/pq-crystals/dilithium} \cite{crystals-dilithium-github}
+    \item FALCON: il codice sorgente è disponibile nel sito dedicato. \\
+            \url{https://falcon-sign.info/impl/falcon.h.html} \cite{falcon-github}
+    \item SPHINCS+: ottenuto dal repository GitHub del progetto. \\
+            \url{https://github.com/sphincs/sphincsplus} \cite{sphincs-plus-github}
+    \item RSA: per i test su RSA verranno utilizzate le libreria del sistema operativo per OpenSSL.
+\end{itemize}
+
+Il codice sviluppato per l'esecuzione dei test è disponibile in un repository pubblico su GitHub: \url{https://github.com/LovatoTomas/Analisi_di_algoritmi_di_firma_digitale_post-quantum} \cite{project-github}
+
+\subsection{Obiettivi e struttura del codice}
+
+Per l'implementazione dei performance test sono stati utilizzati come base gli script di test scritti dai team di ricerca per ciascuna delle loro implementazioni. Tuttavia, i loro erano dei \textit{validation test}, ovvero script il cui scopo era simulare il naturale funzionamento dello schema di firma e di verificare che ciascun modulo riportasse risultati corretti.
+
+Ad esempio, dopo la firma di un messaggio fisso con una specifica chiave privata, alcuni di questi \textit{validation test} controllavano che:
+\begin{itemize}
+    \item la firma fosse valida con la chiave pubblica corretta: in questo caso il test di verifica doveva ritornare esito positivo.
+    \item la firma fosse valida con la chiave pubblica corretta ma con l'alterazione del messaggio originale oppure della firma di esso: in questo caso l'esito doveva essere negativo.
+    \item la firma fosse valida con una chiave pubblica differente: anche in questo caso l'esito doveva essere negativo.
+\end{itemize}
+
+Per evitare di modificare la struttura dei singoli repository e le configurazioni di compilazione, i \textit{performance test} sono stati implementati come modifica dei file di \textit{validation test}. Sono stati rimosse tutte le prove superflue, lasciando la struttura principale del processo di firma:
+\begin{enumerate}
+    \item Generazione della coppia di chiavi
+    \item Firma di un messaggio con la chiave privata
+    \item Verifica della firma con la chiave pubblica
+\end{enumerate}
+
+Partendo da questa base comune è stato introdotto il codice per:
+\begin{enumerate}
+    \item Misurare i tempi di ciascuna operazione
+    \item Misurare le dimensioni delle chiavi e delle firme
+    \item Esportare in formato \textit{standard} tutti i risultati dei test
+\end{enumerate}
+
+Per rendere la misura dei tempi più precisa, ciascuna operazione viene eseguita ripetutamente un numero elevato di volte, successivamente i tempi raccolti da ciascuna iterazione vengono mediati per ottenere una stima più fine del tempo trascorso. Con la tecnica utilizzata, la precisione nella misurazione dei tempi può arrivare ai nanosecondi.
+
+Per rendere ancor più generico il contesto di misurazione dei tempi, non è stato utilizzato un messaggio fisso per le operazioni di firma e verifica ma ad ogni ripetizione del flusso \textit{firma e verifica} viene generato un nuovo messaggio casuale. Generando dinamicamente il messaggio sono state sviluppate due ulteriori classi di test per confrontare tra loro i vari schemi di firma. La prima modalità potrebbe essere definita come \textit{stress test} poiché i messaggi generati hanno una lunghezza incrementale, partendo da stringhe di decine di bytes fino ad arrivare a milioni di caratteri. Questi test hanno un significato limitato: permettono di comprendere come i vari algoritmi di firma e verifica si comportano dal punto di vista dei tempi a dei messaggi di lunghezza sempre maggiore. Ad esempio, potrebbero evidenziare la differenza tra firmare il testo di una mail corta e firmare un intero documento PDF. Tuttavia, negli attuali sistemi di firma digitale il processo di firma e verifica non viene mai applicato direttamente al messaggio in sé, ma ad una sua versione ridotta ottenuta tramite funzioni hash.
+
+Per questo motivo, la seconda classe di test prevede di effettuare l'hashing del messaggio generato e di misurare i tempi di firma e verifica non sul messaggio stesso ma sul suo \textit{hashcode}. Così facendo si ottengono dei risultati più simili alla reale implementazione di questi sistemi qualora vengano standardizzati.
+
+Ovviamente durante la fase di analisi verrà data maggiore rilevanza a questa seconda classe di test, mentre i test eseguiti direttamente sul messaggio di lunghezza incrementale saranno utilizzati per fare brevi note, qualora venissero assunti comportamenti particolari.
+
+Per effettuare l'hashing dei messaggi è stata installata la libreria \textit{OpenSSL} nel sistema operativo Ubuntu, successivamente nel codice C dei vari test è stata inclusa tale libreria per utilizzarne le seguenti funzioni:
+\begin{minted}[breaklines,mathescape,gobble=2,frame=lines,framesep=2mm,rulecolor=\color{black},escapeinside=||]{C}
+// Includere la libreria OpenSSL per l'hashing
+#include <openssl/sha.h>
+// Funzione per calcolare l'hash SHA256, parametri:
+// - const unsigned char *data: puntatore al messaggio da hashare.
+// - size_t len: lunghezza del messaggio in byte.
+// - unsigned char *out: puntatore al buffer per l'hash (32 byte).
+unsigned char *SHA256(const unsigned char *data, size_t len, unsigned char *out);
+// Funzione per calcolare l'hash SHA512, parametri:
+// - const unsigned char *data: puntatore al messaggio da hashare.
+// - size_t len: lunghezza del messaggio in byte.
+// - unsigned char *out: puntatore al buffer per l'hash (64 byte).
+unsigned char *SHA512(const unsigned char *data, size_t len, unsigned char *out);
+\end{minted}
+
+
+Al termine dei test, gli script salvano i risultati in un file di testo organizzato per record strutturati tramite caratteri separatori. La struttura dei record in output è riportata nella sezione di codice successiva.
+\begin{minted} [breaklines,mathescape,gobble=2,frame=lines,framesep=2mm,rulecolor=\color{black}]{C}
+    |MLEN|MTOTLEN|PUBLEN|PRVLEN|SIGLEN|KGTM|SIGTM|CHECKTM|HASHSZ|
+
+    // Descrizione dei campi:
+    // MLEN = Lunghezza in byte del messaggio in input
+    // MTOTLEN = Lunghezza in byte messaggio + firma del messaggio
+    // PUBLEN = Lunghezza in byte della chiave pubblica generata
+    // PRVLEN = Lunghezza in byte della chiave privata generata
+    // SIGLEN = Lunghezza in byte della firma del messaggio
+    // KGTM = Tempo di generazione chiavi in nanosecondi
+    // SIGTM = Tempo di firma in nanosecondi
+    // CHECKTM = Tempo di verifica in nanosecondi
+    // HASHSZ = Dimensione dell'hashcode del messaggio
+\end{minted}
+
+Per gestire in maniera centralizzata la configurazione e l'avvio dei test per ogni tipologia di schema di firma, è stato creato uno script centralizzato (chiamato \texttt{start\textunderscore analytics.c}) il cui scopo è avviare i comandi di compilazione dei singoli progetti e successivamente avviare i performance test per ogni versione degli schemi di firma, tutti con gli stessi parametri (numero di iterazioni delle operazioni). Di seguito un estratto di tali comandi:
+\begin{minted} [breaklines,mathescape,gobble=2,frame=lines,framesep=2mm,rulecolor=\color{black},escapeinside=||]{C}
+// Compilazione dell'implementazione di FALCON AVX2
+make -C ./FALCON/avx2/
+// Esecuzione dei test su FACLON con hashing del messaggio con SHA-256
+// - FILE_OUTPUT_1 = nome file dei risultati di FALCON 512 AVX2
+// - FILE_OUTPUT_2 = nome file dei risultati di FALCON 1024 AVX2
+// - NUM_IT = numero di iterazioni su cui mediare i tempi
+// - INCR = fattore di incremento della lunghezza del messaggio generato
+./FALCON/avx2/test_falcon_sha256 FILE_OUTPUT_1 FILE_OUTPUT_2 NUM_IT INCR
+\end{minted}
+
+\subsection{Generazione dei grafici}
+
+Al termine della fase di test, viene avviato un ultimo script python il cui scopo è leggere tutti i file di testo in output e generare i grafici che confrontano tra loro versioni dello stesso schema oppure tra loro schemi diversi. Per la generazione dei grafici in output è stata utilizzata la libreria \textit{matplotlib}.
+
+Sono state create diverse tipologie di grafici, ciascuna per intrecciare sorgenti dati differenti e visualizzarle nella modalità che più si adatta al contesto. La tabella \ref{tab:grafici} presenta l'insieme dei grafici generati nella cartella \texttt{plot} del repository GitHub \cite{project-github}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{2.3cm}|p{2.3cm}|p{10cm}|}
+\hline
+\textbf{Input dati} & \textbf{Tipologia} & \textbf{Descrizione} \\
+\hline
+Dimensione chiavi & Istogramma & Per ogni algoritmo evidenzia la dimensione della chiave privata e della chiave pubblica e le mette in scala con quelle degli altri algoritmi candidati \\
+\hline
+Dimensione firma & Istogramma & In questo caso, per ogni algoritmo è presente una sola colonna che rappresenta la dimensione (in bytes) della firma del messaggio \\
+\hline
+Tempistiche di keygen & Istogramma & Ogni algoritmo (definito per tipologia e metodo di implementazione) vengono mostrati i tempi di generazione delle chiavi e comparate con quelle di altri algoritmi \\
+\hline
+Tempistiche di firma & Istogramma e diagramma a linee & Vengono messi in relazione i tempi di firma degli algoritmi, differenziati per famiglia, implementazione e messaggio in input (se a lunghezza variabile o fissa) \\
+\hline
+Tempistiche di verifica & Istogramma e diagramma a linee & Comparazione dei tempi di verifica degli algoritmi analizzati, differenziati per famiglia, implementazione e messaggio in input (se a lunghezza variabile o fissa) \\
+\hline
+\end{tabular}
+\caption{Tipologie di grafici generati a partire dai dati raccolti}
+\label{tab:grafici}
+\end{table}
+
+Nel prossimo capitolo sarà possibile visualizzare i grafici di ciascuna delle categorie presentate nella tabella \ref{tab:grafici}. Ciascun diagramma coinvolge un insieme di circa 3 o 4 algoritmi. Solitamente le analisi vengono effettuate:
+\begin{enumerate}
+    \item Tra le differenti versioni di una stessa famiglia di algoritmi, ad esempio CRYSTALS Dilithium 2, CRYSTALS Dilithium 3 e CRYSTALS Dilithium 5.
+    \item Tra differenti implementazioni di uno stesso algoritmo, ad esempio le implementazioni \textit{REF} e \textit{AVX2} di CRYSTALS Dilithium 2.
+    \item Tra le stesse implementazioni di diverse famiglie di algoritmi. Questi insiemi di diagrammi sono i più utili per poter confrontare direttamente i candidati tra loro.
+\end{enumerate}
+
+Inoltre, i diagrammi sono stati generati per ogni hardware di test: per il PC\#1 le immagini si trovano nella cartella \texttt{/plot/20240822\textunderscore i9/} mentre per il PC\#2 è stato utilizzato il percorso \texttt{/plot/20240822\textunderscore i7/}. Le due cartelle contengono rispettivamente i grafici i cui dati in input sono esclusivamente gli output dei \textit{performance test} su quello specifico hardware. Il responsabile della generazione di questi plots è lo script \texttt{start\textunderscore performancegraphs.py}.
+
+Per mettere a confronto i comportamenti dei vari algoritmi, se eseguiti in hardware differenti, è stato sviluppato lo script \texttt{start\textunderscore comparisongraphs.py}: nella cartella \texttt{/plot/comparison/} del repository sono contenuti i grafici che evidenziano la differenza di prestazioni di uno stesso algoritmo se eseguito in macchine differenti.
+
+Di seguito viene proposto un estratto del codice python necessario alla generazione del diagramma a linee per i tempi di generazione delle chiavi. Questa versione del grafico è specializzata nella comparazione di algoritmi eseguiti in diverso hardware.
+
+\begin{minted} [linenos, breaklines, frame=lines, framesep=2mm]{python}
+# Definizione delle librerie utilizzate
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+
+# Gruppi di file di output da confrontare + nome e titolo del grafico
+file_groups = [ ... ]
+# Dizionario per mappare i nomi degli algoritmi a nomi user-friendly
+algorithm_name_mapping = { ... }
+# Dizionario per mappare ciascun algoritmo ad un colore fisso
+plot_colors = { ... }
+
+# Per ogni insieme / gruppo di algoritmi va generato un grafico: 
+for file_paths in file_groups:
+    # Lettura del gruppo di files di output (uno per algoritmo)
+    df_all = read_multiple_files(file_paths[0])
+    # Mapping user-friendly del nome degli algoritmi
+    df_all['algorithm'] = df_all['algorithm'].map(algorithm_name_mapping)
+    # Creazione del grafico con la media dei tempi di keygen
+    create_keygen_time_histogram(df_all, './plot/comparison/Time_Keygen/' + file_paths[1], file_paths[2])
+
+# Funzione per leggere e unire i dati da più file (confronto algoritmi)
+# Aggiunge anche colonne di metadati sull'esecuzione dell'algoritmo
+def read_multiple_files(filenames):
+    dataframes = [read_data(file) for file in filenames]
+    for df, file in zip(dataframes, filenames):
+        df['algorithm'] = file.split('/')[3]  # estrai il nome dell'algoritmo dal nome del file
+        # Aggiunta colonna per distinguere tra REF e AVX2
+        if 'avx2' in file:
+            df['version'] = 'AVX2'
+        else:
+            df['version'] = 'REF'
+        # Aggiunta colonna per distinguere tra PC#1 e PC#2
+        if 'i9' in file:
+            df['device'] = 'PC#1 i9 - AVX2'
+        else:
+            df['device'] = 'PC#2 i7 - AVX2'
+    return pd.concat(dataframes, ignore_index=True)
+
+# Funzione per leggere i dati dal file
+def read_data(filename):
+    # Apertura e lettura file di output
+    with open(filename, 'r') as file:
+        lines = file.readlines()
+    # Tokenizzazione dei dati in "tabelle"
+    data = []
+    for line in lines:
+        line = line.strip()
+        # Divisione dei dati in varie colonne, in base allo standard di output
+        if line:
+            fields = line.split('|')
+            data.append([int(fields[1]), int(fields[2]), int(fields[3]), int(fields[4]), int(fields[5]), float(fields[6]), float(fields[7]), float(fields[8]), int(fields[9])])
+    # Impostazione nome delle colonne
+    columns = ['msg_len', 'signed_msg_len', 'pub_key_size', 'priv_key_size', 'signature_size', 'keygen_time', 'sign_time', 'verify_time', 'hash_len']
+    df = pd.DataFrame(data, columns=columns)
+    return df
+
+# Funzione per creare un istogramma per la media dei tempi di keygen
+def create_keygen_time_histogram(df_all, output_file, title):
+    # Calcola la media dei tempi di keygen per ogni algoritmo e versione
+    df_mean_keygen_time = df_all.groupby(['algorithm', 'device'])['keygen_time'].mean().reset_index()
+    # Forzare l'ordine degli algoritmi come appare nell'elenco di input
+    df_mean_keygen_time['algorithm'] = pd.Categorical(df_mean_keygen_time['algorithm'], categories=df_all['algorithm'].unique(), ordered=True)
+    # Crea un grafico a barre (istogramma)
+    plt.figure(12,4)
+    sns.barplot(x='algorithm', y='keygen_time', hue='device', data=df_mean_keygen_time, palette=plot_colors)
+    # Configurazione etichette e legenda
+    plt.xlabel('Algorithms and Versions')
+    plt.ylabel('Average Keygen Time (seconds)')
+    plt.title('Device Comparison - Average Keygen Time - ' + title)
+    plt.legend(title='Device')
+    # L'asse y utilizza una scala logaritmica
+    plt.yscale('log')
+    # Salvataggio del grafico
+    save_or_show_plot(nome_output_file)
+\end{minted}
+
+Per la generazione delle altre tipologie di grafici vengono definite funzioni molto similari, che variano principalmente per i dati presi in esame durante la creazione del \texttt{plot}. Le funzioni di lettura dei dati da file di testo, di mapping dei nomi e di salvataggio delle immagini rimangono in comune al codice specializzato nella produzione dei diagrammi. Il codice completo è disponibile nel repository del progetto \cite{project-github}.
+
+\subsection{Verifica dei risultati}
+
+Per verificare l'affidabilità dei risultati ottenuti implementando i test direttamente sui codici sorgenti degli schemi di firma digitale, sono stati effettuati dei test di verifica su un ulteriore libreria open-source: \textit{LibOQS} \cite{liboqs}.
+
+\textit{LibOQS} è una libreria in linguaggio C sviluppata dal progetto Open Quantum Safe (OQS) che fornisce implementazioni di algoritmi crittografici resistenti agli attacchi da parte di computer quantistici. Il vantaggio di utilizzare \textit{LibOQS} rispetto ad un implementazione diretta degli schemi di firma è che \textit{LibOQS} si comporta come un \textit{wrapper} su tutti gli algoritmi che ingloba, ovvero fornisce un interfaccia comune con cui utilizzarli tutti alla stessa maniera. Per tale motivo l'implementazione degli stessi \textit{performance test} è risultata semplificata poiché l'algoritmo di test è stato unico per tutti gli schemi provati. 
+
+Il processo di verifica ha avuto successo: nella maggior parte dei casi i risultati ottenuti sono compatibili con quelli ottenuti dalle prove dirette. I casi che portano differenze rilevanti verranno discusse nel prossimo capitolo. Tali risultati sono disponibili, oltre che in forma testuale (file di output), anche in forma visiva. Difatti, le categorie di grafici elencate nella tabella \ref{tab:grafici} sono state utilizzate anche per mettere a confronto le singole caratteristiche degli algoritmi eseguiti con l'implementazione diretta, prodotta ad hoc, e con l'implementazione di \textit{LibOQS}. Alcuni di questi grafici sono inclusi nel successivo capitolo.
+
+\subsection{Pseudocodice dei test} 
+
+In questa sezione viene riportato lo pseudocodice utilizzato per lo svolgimento dei \textit{performance test}. Essendo una scrittura ad alto livello, essa è compatibile con gli script scritti per tutti i sistemi di firma digitale considerati (CRYSTALS Dilithium, FALCON e SPHINCS+) e anche per i test effettuati tramite la libreria \textit{LibOQS}.
+
+Il risultato della sua esecuzione è la creazione di file di output contenenti i dati sulle prestazioni dei vari algoritmi analizzati, per ogni loro versione eseguita.
+
+\begin{breakablealgorithm}
+\caption{Test delle Prestazioni degli Schemi di Firma Post-Quantum}
+\begin{algorithmic}[1]
+\State \textbf{Input:} ITER (Numero di ripetizioni per ogni configurazione, valore di default 100), OUT (Nome del file di output), HASHING (Booleano per attivare/disattivare l'hashing del messaggio), HASH (Algoritmo di hashing, "sha256" o "sha512")
+\State \textbf{Output:} File di output con i risultati dei test per ogni configurazione del messaggio
+
+\State Inizializza le variabili locali:
+\State $keypair \gets None$
+\State $message \gets None$
+\State$signature \gets None$
+\State $gen\_times \gets [ ]$  //Array dei tempi (da mediare) per la generazione delle chiavi
+\State $sign\_times \gets [ ]$  //Array dei tempi (da mediare) per la firma del messaggio
+\State $verify\_times \gets [ ]$  //Array dei tempi (da mediare) per la verifica della firma
+\State file.\textbf{open}(OUT, \texttt{'w'})
+
+\For{lunghezza del messaggio $msg\_len = 64$ B \textbf{to} $16$ MB con step di $msg\_len \times 2$}
+    \For{$i = 1$ \textbf{to} ITER}
+        \State Memorizza il tempo di generazione chiavi e lo inserisce nell'array: 
+        \State $start\_timer \gets \text{time.now()}$
+        \State $keypair \gets \text{pqc\_keygen()}$
+        \State $end\_timer \gets \text{time.now()}$
+        \State $gen\_times.\text{append}(end\_timer - start\_timer)$
+    \EndFor
+    
+    \State Memorizza la dimensione finale delle chiavi: 
+    \State $pub\_key\_len \gets \text{len}(keypair.public\_key)$
+    \State $priv\_key\_len \gets \text{len}(keypair.private\_key)$
+
+    \State Calcola il tempo medio di keygen: 
+    \State $avg\_gen\_time \gets \text{sum}(gen\_times) / ITER$
+
+    \State Misurazione delle performance di firma e verifica
+    \For{$i = 1$ \textbf{to} ITER}
+
+        \State Genera un messaggio random di lunghezza $msg\_len$: 
+        \State $message \gets \text{generate\_random\_message}(msg\_len)$
+        \State Esegue l'hashing del messaggio se la prova corrente lo prevede:
+        \If{HASHING è attivo}
+            \If{HASH = "sha256"}
+                \State $message \gets \text{sha256}(message)$
+            \ElsIf{HASH = "sha512"}
+                \State $message \gets \text{sha512}(message)$
+            \EndIf
+        \EndIf
+        \State Memorizzo la lunghezza dell'attuale messaggio (o hashcode):
+        \State $message\_len \gets \text{len}(message)$
+    
+        \State $start\_timer \gets \text{time.now()}$
+        \State Firma il messaggio: 
+        \State $signature \gets \text{pqc\_sign}(keypair.private\_key, message)$
+        \State $end\_timer \gets \text{time.now()}$
+        \State $sign\_times.\text{append}(end\_timer - start\_timer)$
+
+        \State $start\_timer \gets \text{time.now()}$
+        \State Verifica la firma: 
+        \State $valid \gets \text{pqc\_verify}(keypair.public\_key, signature, message)$
+        \State $end\_timer \gets \text{time.now()}$
+        \State $verify\_times.\text{append}(end\_timer - start\_timer)$
+    \EndFor
+    
+    \State Memorizza la dimensione della firma: 
+    \State $signature\_len \gets \text{len}(signature)$
+
+    \State Calcola i tempi medi di firma e verifica:
+    \State $avg\_sign\_time \gets \text{sum}(sign\_times) / ITER$
+    \State $avg\_verify\_time \gets \text{sum}(verify\_times) / ITER$
+
+    \State Scrivi i risultati nel file $OUT$ e stampa a schermo:
+    \State $out\_res \gets$ \textbf{format\_output\_record}($msg\_len$, $msg\_len + signature\_len$, $pub\_key\_len$, $priv\_key\_len$, $signature\_len$, $avg\_gen\_time$, $avg\_sign\_time$, $avg\_verify\_time$, $message\_len$)
+    \State \textbf{print}($out\_res$) 
+    \State file.\textbf{write}(OUT, $out\_res$)
+\EndFor
+\State file.\textbf{close}(OUT)
+\end{algorithmic}
+\label{alg:performancetest}
+\end{breakablealgorithm}
+
+Di seguito viene proposto uno dei file di output generati dall'algoritmo \ref{alg:performancetest}. In particolare questi risultati sono legati all'esecuzione di CRYSTALS Dilithium 2, in versione \textit{AVX2}, senza \textit{hashing} del messaggio.
+\begin{minted} [breaklines,mathescape,gobble=2,frame=lines,framesep=2mm,rulecolor=\color{black}]{C}
+    |MLEN|MTOTLEN|PUBLEN|PRVLEN|SIGLEN|KGTM|SIGTM|CHECKTM|HASHSZ|
+    |32|2452|1312|2528|2420|0.000025|0.000117|0.000019|32|
+    |64|2484|1312|2528|2420|0.000017|0.000049|0.000018|64|
+    |128|2548|1312|2528|2420|0.000020|0.000064|0.000029|128|
+    |256|2676|1312|2528|2420|0.000018|0.000064|0.000021|256|
+    |512|2932|1312|2528|2420|0.000019|0.000060|0.000021|512|
+    |1024|3444|1312|2528|2420|0.000018|0.000056|0.000022|1024|
+    |2048|4468|1312|2528|2420|0.000021|0.000059|0.000023|2048|
+    |4096|6516|1312|2528|2420|0.000018|0.000100|0.000028|4096|
+    |8192|10612|1312|2528|2420|0.000018|0.000177|0.000036|8192|
+    |16384|18804|1312|2528|2420|0.000019|0.000088|0.000073|16384|
+    |32768|35188|1312|2528|2420|0.000025|0.000116|0.000108|32768|
+    |65536|67956|1312|2528|2420|0.000020|0.000211|0.000176|65536|
+    |131072|133492|1312|2528|2420|0.000019|0.000334|0.000330|131072|
+    |262144|264564|1312|2528|2420|0.000031|0.000613|0.000677|262144|
+    |524288|526708|1312|2528|2420|0.000023|0.001232|0.001293|524288|
+    |1048576|1050996|1312|2528|2420|0.000027|0.002656|0.002760|1048576|
+    |2097152|2099572|1312|2528|2420|0.000035|0.005268|0.005662|2097152|
+    |4194304|4196724|1312|2528|2420|0.000039|0.010812|0.011078|4194304|
+    |8388608|8391028|1312|2528|2420|0.000037|0.021413|0.021896|8388608|
+    |16777216|16779636|1312|2528|2420|0.000041|0.043897|0.044748|16777216|
+\end{minted}
+
+Attivando la funzionalità di \textit{hashing} con \textit{SHA-256} invece, i risultati delle prestazione temporali cambiano radicalmente e l'ultimo parametro di ciascun output viene adattato al contesto.
+
+La sezione successiva si riferisce sempre a CRYSTALS Dilithium 2, in versione \textit{AVX2}, per semplicità di comparazione.
+
+\begin{minted} [breaklines,mathescape,gobble=2,frame=lines,framesep=2mm,rulecolor=\color{black}]{C}
+    |MLEN|MTOTLEN|PUBLEN|PRVLEN|SIGLEN|KGTM|SIGTM|CHECKTM|HASHSZ|
+    |32|2452|1312|2528|2420|0.000020|0.000054|0.000022|32|
+    |64|2452|1312|2528|2420|0.000028|0.000067|0.000027|32|
+    |128|2452|1312|2528|2420|0.000020|0.000051|0.000021|32|
+    |256|2452|1312|2528|2420|0.000025|0.000048|0.000022|32|
+    |512|2452|1312|2528|2420|0.000025|0.000049|0.000022|32|
+    |1024|2452|1312|2528|2420|0.000026|0.000052|0.000018|32|
+    |2048|2452|1312|2528|2420|0.000021|0.000051|0.000023|32|
+    |4096|2452|1312|2528|2420|0.000018|0.000048|0.000018|32|
+    |8192|2452|1312|2528|2420|0.000019|0.000055|0.000021|32|
+    |16384|2452|1312|2528|2420|0.000019|0.000051|0.000019|32|
+    |32768|2452|1312|2528|2420|0.000020|0.000056|0.000018|32|
+    |65536|2452|1312|2528|2420|0.000021|0.000056|0.000019|32|
+    |131072|2452|1312|2528|2420|0.000019|0.000054|0.000021|32|
+    |262144|2452|1312|2528|2420|0.000024|0.000058|0.000021|32|
+    |524288|2452|1312|2528|2420|0.000023|0.000054|0.000020|32|
+    |1048576|2452|1312|2528|2420|0.000026|0.000063|0.000021|32|
+    |2097152|2452|1312|2528|2420|0.000032|0.000089|0.000022|32|
+    |4194304|2452|1312|2528|2420|0.000035|0.000065|0.000027|32|
+    |8388608|2452|1312|2528|2420|0.000035|0.000057|0.000020|32|
+    |16777216|2452|1312|2528|2420|0.000038|0.000055|0.000025|32|
+\end{minted}
+
+I grafici generati a partire da tali files di output verranno introdotti nel prossimo capitolo.

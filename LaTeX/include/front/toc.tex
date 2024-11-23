@@ -1,0 +1,38 @@
+% toc config
+\renewcommand{\cftchapterfont}{\large\bfseries\alt}
+\renewcommand{\cftchapterpagefont}{\large\bfseries\alt}
+
+\renewcommand{\cftsectionfont}{\alt}
+\renewcommand{\cftsectionpagefont}{\alt}
+
+\renewcommand{\cftsubsectionfont}{\alt}
+\renewcommand{\cftsubsectionpagefont}{\alt}
+
+% Colori link indice in stampa rossa anche su carta
+% \renewcommand{\cftchapterfont}{\color{unipd}\large\bfseries\alt}
+% \renewcommand{\cftchapterpagefont}{\color{unipd}\large\bfseries\alt}
+% \renewcommand{\cftsectionfont}{\color{unipd}\alt}
+% \renewcommand{\cftsectionpagefont}{\color{unipd}\alt}
+% \renewcommand{\cftsubsectionfont}{\color{unipd}\alt}
+% \renewcommand{\cftsubsectionpagefont}{\color{unipd}\alt}
+
+% toc rendering
+\cleardoublepage
+\pagenumbering{roman}
+\pagestyle{plain}
+\begin{KeepFromToc}
+    \tableofcontents
+\end{KeepFromToc}
+\cleardoublepage
+
+\begin{KeepFromToc}
+    \listoffigures
+\end{KeepFromToc}
+\cleardoublepage % Il prossimo capitolo deve iniziare con la pagina di destra 
+
+\begin{KeepFromToc}
+    \listoftables
+\end{KeepFromToc}
+\cleardoublepage % Il prossimo capitolo deve iniziare con la pagina di destra
+
+\pagestyle{thesis}
